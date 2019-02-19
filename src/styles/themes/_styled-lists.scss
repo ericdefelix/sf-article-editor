@@ -1,0 +1,65 @@
+//============================================================
+// Styled Lists
+//============================================================
+$listCounterName: listCounter;
+
+%list-unstyled {
+  margin: 0;
+  padding: 0;
+  list-style-type: none;
+}
+
+.list-bullet-circular {
+  @extend %list-unstyled;
+
+  list-style-type: none !important;
+  counter-reset: $listCounterName;
+  margin-bottom: 2rem;
+  margin-top: 2rem;
+
+  > li {
+    padding-left: 3rem;
+    position: relative;
+    &:before {
+      position: absolute;
+    }
+  }
+}
+
+ol.list-bullet-circular {
+  > li {
+    margin-bottom: 1.8rem;
+
+    &:before {
+      counter-increment: $listCounterName;
+      content: counter($listCounterName);
+      left: 0;
+      top: -8px;
+      text-align: center;
+      font-size: 1.1rem;
+      font-weight: 500;
+      background-color: lighten($theme-text-color,70%);
+      line-height: 1;
+      padding: 8px 12px;
+      border-radius: 10rem;
+      color: lighten($theme-text-color,10%);
+    }
+  }
+}
+
+ul.list-bullet-circular {
+  > li {
+    $dim: 0.5rem;
+    margin-bottom: 0.5rem;
+    &:before {
+      content: '';
+      width: $dim;
+      height: $dim;
+      top: calc(50% - #{$dim / 2});
+      top: -webkit-calc(50% - #{$dim / 2});
+      left: 0.9rem;
+      border-radius: 100%;
+      background-color: lighten($theme-text-color,10%);
+    }
+  }
+}

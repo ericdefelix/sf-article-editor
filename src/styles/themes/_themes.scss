@@ -1,0 +1,11 @@
+$product-namespaces: 'leap','lawconnect','rapidpay';
+$theme-font-family: '';
+$theme-text-color: #333;
+$theme-border-radius: 2px;
+
+@import 'blockquotes';
+@import 'custom-tabs';
+@import 'styled-lists';
+
+@each $namespace in $product-namespaces {
+}

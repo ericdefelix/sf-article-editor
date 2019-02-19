@@ -1,0 +1,304 @@
+.container {
+	width: 100%;
+	height: 100%;
+	position: relative;
+	justify-content: center;
+	display: flex;
+}
+
+.output-container {
+  position: fixed;
+  z-index: 100;
+  width: 80vw;
+  height: 75vh;
+  padding: $canvas-gui-padding;
+  background-color: white;
+  border-radius: $canvas-gui-border-radius;
+  width: 80vw;
+  @include box-shadow(0, 6px, 30px, 0, rgba(0,0,0,0.2));
+
+  &:after {
+
+  }
+}
+
+.canvas-container {
+	background-color: white;
+	min-height: 10vh;
+  display: flex;
+  align-items: center;
+  align-content: stretch;
+  justify-content: center;
+  flex-direction: column;
+  width: 100%;
+  // overflow: hidden;
+
+	@include border-radius();
+	@include box-shadow(0, 2px, 3px, 0, rgba(0,0,0,0.1));
+
+	@media (min-width: 1400px) {
+		width: $min-container-width;
+	}
+}
+
+.canvas-content-block {
+	width: 100%;
+  // overflow: hidden;
+  &:first-of-type {
+    > .canvas-content-config {
+      border-top: none;
+      margin-top: 0;
+    }
+  }
+
+  &:hover > .canvas-content-config {
+    opacity: 1;
+  }
+
+  &:first-of-type {
+    .canvas-content-config {
+      border-top-left-radius: $canvas-gui-border-radius;
+      border-top-right-radius: $canvas-gui-border-radius;
+    }
+
+    .tab-content .canvas-content-config {
+      border-radius: $canvas-gui-border-radius !important;
+    }
+  }
+}
+
+.canvas-content-config {
+  padding: 0.3rem;
+  margin: 0.2rem 0 0 0;
+  background: #fbfbfb;
+  display: flex;
+  justify-content: flex-end;
+  opacity: 0.6;
+  position: relative;
+  overflow: hidden;
+  @include box-shadow(0,0,0,1px,lighten($canvas-gui-color,36%));
+
+  > button {
+    margin-left: 0.2rem;
+  }
+}
+
+.canvas-content-snippet {
+  padding: 1rem;
+
+  &.cke_editable_inline {
+    ol,ul {
+      &:not(.list-bullet-circular) {
+        margin: 1rem; 
+      }
+    }
+  }
+}
+
+.canvas-add-subcontent {
+  padding: 0 1rem;
+  margin-top: -1rem;
+  position: relative;
+
+  // override
+  .toolbox.in:after {
+    left: calc(30% - 8px) !important;
+    left: -webkit-calc(30% - 8px) !important;
+  }
+
+  [data-ui-label="genericTabs"] {
+    display: none !important;
+  }
+}
+
+.canvas-content-draggable {
+  $h: 18px;
+  $drb-color: #969696;
+  cursor: move;
+  display: block;
+  position: absolute;
+  top: -1px;
+  left: -2px;
+  bottom: -1px;
+  z-index: 1;
+  width: 2.6rem;
+  @include box-shadow(0,0,0,1px,$light-grey,inset);
+  // border-right: 1px solid $light-grey;
+
+  &:hover {
+    background-color: $light-grey;
+    @include box-shadow(0,0,0,1px,darken($light-grey, 15%),true);
+    &:before, &:after {
+      border-color: darken($drb-color,15%);
+    }  
+  }
+
+  &:before, &:after {
+    content: '';
+    width: 4px;
+    height: $h;
+    display: block;
+    border: 2px dotted $drb-color;
+    border-bottom: none;
+    border-top: none;
+    position: absolute;
+    top: calc(50% - #{$h / 2});
+  }
+
+  &:before { left: calc(50% - 10px); }
+  &:after { right: calc(50% - 10px); }
+}
+
+.canvas-content-ghost {
+  position: relative;
+  opacity: 0.5;
+  @include no-select();
+  overflow: hidden;
+
+  &:before {
+    position: absolute;
+    background-color: rgba(255,255,255,0);
+    content: '';
+    top: 0;
+    left: 0;
+    bottom: 0;
+    right: 0;
+    z-index: 100;
+  }
+}
+
+.canvas-content-dragging {
+  background-color: white;
+  @include box-shadow(0,2px,10px,$box-shadow-color);
+}
+
+.canvas-content-action {
+  padding: 0;
+  margin: 0;
+  margin: 1em 0;
+
+  .content-action-hotspot {
+    padding: 2px 0;
+    border: 1px dashed $canvas-content-action-gray;
+    border-left: none;
+    border-right: none;
+    position: relative;
+    margin: 0;
+  }
+
+  &.subcontent-action > .content-action-hotspot {
+    margin-left: 0 !important;
+    margin-right: 0 !important;
+  }
+
+ 	button {
+    padding: 0;
+    position: absolute;
+    width: 1.5rem;
+    height: 1.5rem;
+    color: $blue;
+    border-radius: 2rem;
+    left: calc(50% - 1rem);
+    top: calc(50% - 0.8rem);
+    transform: translateZ(0);
+    z-index: 1;
+    @include box-shadow(0,1px,4px,rgba(0, 0, 0, 0.6));
+		@include hardware();
+
+		&:active {
+			background-color: darken($canvas-gui-color,30%) !important;
+		}
+  }
+
+  .icon-plus {
+  	font-weight: 500;
+  	font-size: 1.5rem;
+  	-webkit-text-stroke: transparent;
+  	@include no-select();
+  }
+
+  &:hover {
+  	.content-action-hotspot {
+  		background-color: #efefef;
+  		border-color: darken($canvas-content-action-gray,10%);
+  	}
+
+  	button {
+  		background-color: $canvas-gui-color;
+  		color: white;
+  		transform: translateZ(0);
+  		@include hardware();
+
+      &:hover {
+        background-color: darken($canvas-gui-color,10%);
+      }
+  	}
+  }
+}
+
+.canvas-btn {
+	@include button();
+	@include button-config-color($light-grey);
+
+  &[disabled] {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+}
+
+.canvas-form-control {
+  display: inline-block;
+  height: 26px;
+  padding: 1rem;
+  line-height: 1.2;
+  color: $canvas-text-color;
+  background-color: white;
+  background-image: none;
+  border: none;
+  border-radius: $canvas-gui-border-radius;
+  outline: none;
+  @include box-shadow(0,0,0,1px,rgba(171, 171, 171, 0.2));
+
+  &:hover {
+    @include box-shadow(0,0,0,2px, $blue,inset);
+  }
+}
+
+select.canvas-form-control {
+  line-height: 1;
+  padding: 1px;
+}
+
+.canvas-btn-action {
+}
+
+.canvas-btn-primary {
+	@include button-config-color($blue);
+	color: white;
+}
+
+.canvas-btn-xs {
+	@include button-config-size('xs');
+}
+
+#htmlOutputContainer,
+#viewSourcePreview {
+  margin-top: $canvas-gui-padding;
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+
+#viewSourcePreview {
+  width: 100%;
+  height: calc(100% - 2.5rem);
+  padding: 0;
+  overflow: hidden auto;
+  resize: none;
+}
+
+#btnCloseOutputContainer {
+  padding: 8px 14px;
+  position: absolute;
+  top: 5px;
+  right: 5px;
+}

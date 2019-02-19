@@ -1,0 +1,82 @@
+// Internal Variables. Re-assign to global vars if present
+$comp_tab-link-color-active: #333;
+$comp_tab-link-color: #696969;
+$comp_tab-nav-border-color: #dbe7f1;
+$comp_tab-nav-border-color-active: #f69139;
+$comp_tab-nav-border-thickness: 4px;
+$comp_tab-content-padding: 1rem;
+$comp_tab-link-padding: 1.5rem 1.5rem .5rem;
+
+.tabs {
+	width: 100%;
+	position: relative;
+
+	.tabs-bar {
+		display: block;
+		width: 100%;
+		border-bottom: $comp_tab-nav-border-thickness solid $comp_tab-nav-border-color;
+
+		> .tab-nav {
+			margin: 0;
+			padding: 0;
+			list-style: none;
+		}
+	}
+
+	> .tab-content {
+		display: none;
+		width: auto;
+		padding: $comp_tab-content-padding;
+
+		&.in {
+			display: block !important;
+		}
+	}
+}
+
+.tab-nav {
+	display: flex;
+	align-content: flex-start;
+
+	> .tab-item {
+		display: block;
+		position: relative;
+
+		> .tab-item-link {
+			display: block;
+			text-align: center;
+			color: $comp_tab-link-color;
+			font-weight: bold;
+			font-size: 1rem;
+			padding: $comp_tab-link-padding;
+			text-decoration: none;
+			position: relative;
+			outline: none;
+
+			&:focus, &:active, &:hover {
+				color: $comp_tab-link-color-active;
+			}
+
+			&:after {
+				content: '';
+				position: absolute;
+				bottom: -$comp_tab-nav-border-thickness;
+				z-index: 1;
+				left: 0;
+				right: 0;
+				height: $comp_tab-nav-border-thickness;
+				background-color: transparent;
+				display: none;
+			}
+		}
+
+		&.active > .tab-item-link {
+			color: $comp_tab-link-color-active;
+
+			&:after {
+				display: block;
+				background-color: $comp_tab-nav-border-color-active;
+			}
+		}
+	}	
+}

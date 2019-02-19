@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="author" content="LEAP Dev: Eric De Felix">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>Knowledge Article Advanced Editor</title>
+
+	<link href="https://fonts.googleapis.com/css?family=Roboto:400,500,600" rel="stylesheet">
+	<script src="https://cdn.ckeditor.com/4.11.2/standard-all/ckeditor.js"></script>
+</head>
+<body>
+	<div class="container">
+		<header class="header">
+			<div class="heading-text">
+				<h2>Visual Editor</h2>
+			</div>
+			<div class="header-actions">
+				<button type="button" class="canvas-btn" id="btnPreview">Distraction-free View</button>
+				<button type="button" class="canvas-btn canvas-btn-primary">Save and Close</button>
+			</div>
+		</header>
+
+		<main class="canvas-container" id="canvasContainer">
+		</main>
+
+		<div id="outputContainer" class="output-container" style="display: none;">
+			<select name="outputContainerToggleView" id="outputContainerToggleView" class="canvas-form-control" value="html">
+				<option value="html" selected="selected">HTML View</option>
+				<option value="source">Source Code View</option>
+			</select>
+			<button type="button" id="btnCloseOutputContainer" class="canvas-btn canvas-btn-xs"><span style="font-size: 2em;">&times;</span></button>
+			<div id="htmlOutputContainer"></div>
+			<textarea id="viewSourcePreview" cols="30" rows="10" class="canvas-form-control" style="display: none;"></textarea>
+		</div>
+	</div>
+</body>
+</html>

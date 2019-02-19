@@ -1,0 +1,30 @@
+$canvas-text-color: #333;
+$canvas-text-muted: lighten($canvas-text-color,30%);
+$canvas-gui-color: #6f6f6f;
+$body-bg: #e3e3e3;
+$light-grey: #e6e6e6;
+$blue: #067fd0;
+$box-shadow-color: rgba(0,0,0,0.3);
+$canvas-content-action-gray: #d8d8d8;
+
+$canvas-gui-border-radius: 0.2rem;
+
+$canvas-gui-padding: 1rem;
+$canvas-gui-margin: 1.5rem;
+
+$canvas-bg: $canvas-gui-color;
+$canvas-border: darken($canvas-gui-color,10%);
+$canvas-action-easing: cubic-bezier(.39,-0.31,.32,1.57);
+$canvas-toolbox-easing: cubic-bezier(.14,.62,.41,.99);
+
+$container-width: 100%;
+$toolbox-width: 300px;
+$min-container-width: 800px;
+
+$font-family: 'Roboto', sans-serif;
+
+
+// Iteration
+$canvas-content-class-base: '.canvas-content';
+$vendors: '-moz-', '-webkit-', '-ms-', '';
+$btn-sizes: 'lg', 'xs';
