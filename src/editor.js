@@ -5,12 +5,13 @@ import UserInterfaceBuilder from './modules/UserInterfaceBuilder';
 import Sortable from '../node_modules/sortablejs/Sortable.min';
 
 let editor = {
-	outputPane: document.getElementById('outputContainer'),
-	htmlSection: document.getElementById('htmlOutputContainer'),
-	sourceSection: document.getElementById('viewSourcePreview'),
-	btnPreview: document.getElementById('btnPreview'),
-	btnClose: document.getElementById('btnCloseOutputContainer'),
-	toggleView: document.getElementById('outputContainerToggleView'),
+	outputPane: 		document.getElementById('outputContainer'),
+	htmlSection: 		document.getElementById('htmlOutputContainer'),
+	sourceSection: 	document.getElementById('viewSourcePreview'),
+	btnPreview: 		document.getElementById('btnPreview'),
+	btnSave: 				document.getElementById('btnSave'),
+	btnClose: 			document.getElementById('btnCloseOutputContainer'),
+	toggleView: 		document.getElementById('outputContainerToggleView'),
 	existing_data: [],
 	toolbox: undefined,
 	init: function() {
@@ -23,6 +24,7 @@ let editor = {
 		editor.btnPreview.onclick = editor.preview;
 		editor.toggleView.onchange = editor.html_view;
 		editor.btnClose.onclick = editor.close_preview;
+		editor.btnSave.onclick = editor.save_html;
 	},
 	build_ui: function() {
 		UserInterfaceBuilder.render('canvas', { 
@@ -86,8 +88,9 @@ let editor = {
 					btn.onclick = editor._bindEvtDisplayToolbox;
 				});
 
+				const targetSnippet = document.getElementById('snippet-' + domID);
+
 				if (targetComponentPointer == 'genericTabs') {
-					const targetSnippet = document.getElementById('snippet-' + domID);
 					const targetTabContent = targetSnippet.querySelectorAll('.tab-content');
 					targetTabContent.forEach(function(targtTab,y){
 						const targetTabID = targtTab.getAttribute('id');
@@ -101,12 +104,26 @@ let editor = {
 
 				if (targetComponentPointer == 'blockQuotes') {
 					const blockquoteStyleSelector = document.querySelector('[data-target="snippet-'+ domID +'"]');
+					const blockquoteHeading = document.querySelector('#snippet-' + domID + ' .blockquote-content-header');
+					const blockquoteBody = document.querySelector('#snippet-' + domID + ' .blockquote-content-body');
+
 					blockquoteStyleSelector.onchange = editor._bindEvtSelectionDropdown;
+					blockquoteHeading.onblur = editor._bindEvtBlockquoteHeaderInput;
+					blockquoteHeading.contentEditable = true;
+					blockquoteBody.contentEditable = true;
+					blockquoteBody.id = 'contentEditableBody-' + domID;
 				}
 
 				if (hasCKEDITOR) {
+					const containerID = (targetComponentPointer == 'blockQuotes' || targetComponentPointer == 'wellContainers') ?
+						'contentEditableBody-'+ domID : 'snippet-'+ domID;
+
+					if (targetComponentPointer == 'styledLists' || targetComponentPointer == 'textEditor') {
+						targetSnippet.contentEditable = true;
+					}
+
 					editor.init_ckeditor({
-						container: 'snippet-'+ domID,
+						container: containerID,
 						value: ContentBlocks.elems[targetComponentPointer].template(),
 						config: ContentBlocks.elems[targetComponentPointer].ckeditorConfig
 					});
@@ -133,6 +150,9 @@ let editor = {
 
 		blockquote.className = 'blockquote';
 		blockquote.classList.add('blockquote-' + selectedStyle);
+	},
+	_bindEvtBlockquoteHeaderInput: function() {
+		if (this.textContent == '') this.textContent = 'Click here to edit header';
 	},
 	init_sortable: function(config) {
 		const sortableConfig = {
@@ -168,37 +188,63 @@ let editor = {
 		const contentBlocksDom = document.querySelectorAll('#canvasContainer > .canvas-content-block');
 		let htmlOutputString = '';
 
-		contentBlocksDom.forEach(function(block,b_index){
-			const snippet = block.querySelector('.canvas-content-snippet');
-			const tabs = snippet.firstElementChild;
+		if (editor.existing_data.length > 0) {
+			contentBlocksDom.forEach((block,b_index) => {
+				const snippet = block.querySelector('.canvas-content-snippet');
+				const elemChild = snippet.firstElementChild;
 
-			if (tabs.className == 'tabs') {
-				const tabsContent = tabs.querySelectorAll('.tab-content');
-				let tabsHTML = `<div class="tabs">`;
+				if (elemChild.classList.contains('tabs')) {
+					const tabsContent = elemChild.querySelectorAll('.tab-content');
+					let tabsHTML = `<div class="tabs">`;
 
-				tabsHTML += snippet.firstElementChild.firstElementChild.innerHTML;
+					tabsHTML += snippet.firstElementChild.firstElementChild.innerHTML;
 
-				tabsContent.forEach(function(tabcontent,tc_index){
-					console.log(tabcontent);
-					let tabContentBlocksHTML = ``;
-					const tabSnippets = tabcontent.querySelectorAll('.canvas-content-block .canvas-content-snippet');
+					tabsContent.forEach((tabcontent,tc_index) => {
+						let tabContentBlocksHTML = ``;
+						const tabSnippets = tabcontent.querySelectorAll('.canvas-content-block .canvas-content-snippet');
 
-					tabSnippets.forEach(function(tabSnippet,ts_index){
-						tabContentBlocksHTML += extractHTML(tabSnippet);
+						tabSnippets.forEach((tabSnippet,ts_index) => {
+							const elemSubChild = tabSnippet.firstElementChild;
+							tabContentBlocksHTML += (elemSubChild.classList.contains('blockquote') || elemSubChild.classList.contains('well')) ?
+								extractHTMLFromInnerCKEDITABLE(elemSubChild) : extractHTML(tabSnippet);
+						});
+
+						tabsHTML += `<section class="${tabcontent.className}" id="${tabcontent.id}">${tabContentBlocksHTML}</section>`;
 					});
 
-					tabsHTML += `<section class="${tabcontent.className}" id="${tabcontent.id}">${tabContentBlocksHTML}</section>`;
-				});
+					htmlOutputString += tabsHTML + `</div>`;
+				}
+				else if (elemChild.classList.contains('blockquote') || elemChild.classList.contains('well')) {
+					htmlOutputString += extractHTMLFromInnerCKEDITABLE(elemChild);
+				}
+				else {
+					htmlOutputString += extractHTML(snippet);
+				}
+			});
+		}
 
-				htmlOutputString += tabsHTML + `</div>`;
-			}
-			else {
-				htmlOutputString += extractHTML(snippet);
-			}
+		editor.htmlSection.innerHTML = editor.existing_data.length > 0 ? htmlOutputString : '<strong>Nothing to display here.</strong>';
+		editor.sourceSection.value = editor.htmlSection.innerHTML;
+
+		const contentEditableBlockquoteHeadings = document.querySelectorAll('#outputContainer .blockquote-content-header');
+		contentEditableBlockquoteHeadings.forEach((heading,h_index) => {
+			heading.removeAttribute('contenteditable');
 		});
 
-		editor.htmlSection.innerHTML = htmlOutputString;
-		editor.sourceSection.value = htmlOutputString;
+		function extractHTMLFromInnerCKEDITABLE(elemChild) {
+			const clone = elemChild.cloneNode(true);
+			const contentEditableBodySnippet = clone.querySelector('.cke_editable');
+			const contentEditableBodySnippetClassName = contentEditableBodySnippet.classList[0];
+			const contentEditableBodySnippetData = extractHTML(contentEditableBodySnippet);
+			contentEditableBodySnippet.remove();
+
+			const contentEditableBodySnippetHTML = `
+						<section class="${contentEditableBodySnippetClassName}">${contentEditableBodySnippetData}</section`;
+
+			clone.lastElementChild.insertAdjacentHTML('beforeend',contentEditableBodySnippetHTML);
+
+			return clone.outerHTML;
+		}
 
 		function extractHTML(snippet) {
 			let innerHTML = '';
@@ -211,6 +257,16 @@ let editor = {
 			}
 			return innerHTML;
 		}
+	},
+	save_html: function() {
+		const config = {
+			method: 'save',
+			origin: window.location.origin,
+			data: { html: editor.sourceSection.value }
+		};
+
+		window.postMessage(config, window.location.origin);
+		console.log(config);
 	},
 	run: function() {
 		this.init();

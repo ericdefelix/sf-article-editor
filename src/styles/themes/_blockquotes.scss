@@ -53,7 +53,12 @@ $blockquotes: (
 	background-color: $blockquote-default-bg-color;
 	border-radius: $theme-border-radius;
 	min-height: 7rem;
+  margin-bottom: 1rem;
   @include box-shadow(0,0,4px,0,rgba(0, 0, 0, 0.2));
+
+  &:last-of-type {
+    margin-bottom: 0;
+  }
 }
 
 .blockquote-addon {

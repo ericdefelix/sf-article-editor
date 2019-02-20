@@ -6,6 +6,7 @@ $theme-border-radius: 2px;
 @import 'blockquotes';
 @import 'custom-tabs';
 @import 'styled-lists';
+@import 'well';
 
 @each $namespace in $product-namespaces {
 }

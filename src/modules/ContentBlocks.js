@@ -11,7 +11,6 @@ module.exports = {
 			hasChildContent: false,
 			isInlineCKEDITOR: true,
 			ckeditorConfig: {
-
 			}
 		},
 		'styledLists' : {
@@ -100,9 +99,14 @@ module.exports = {
 				return tmpl;
 			},
 			hasChildContent: false,
-			isInlineCKEDITOR: false,
+			isInlineCKEDITOR: true,
 			ckeditorConfig: {
-
+				toolbar: [
+					{ name: 'clipboard', items: [ 'Cut', 'Copy', 'Paste', 'PasteFromWord', '-', 'Undo', 'Redo' ] },
+					{ name: 'basicstyles', items: [ 'Bold', 'Italic', 'Underline', 'Strike', 'Subscript', 'Superscript', '-', 'CopyFormatting', 'RemoveFormat' ] },
+					{ name: 'links', items: [ 'Link', 'Unlink' ] }
+				],
+	    	disaAllowedContent: 'h1 h2 h3 h4 p span blockquote img embed'
 			}
 		},
 		'genericTabs' : {

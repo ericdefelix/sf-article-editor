@@ -69,7 +69,7 @@ module.exports = {
 					<i class="icon-delete"></i> Remove
 				</button>
 			</div>
-			<div class="canvas-content-snippet" id="snippet-${obj.id}" ${(obj.hasCKEDITOR ? `contenteditable="true"` : ``)}>
+			<div class="canvas-content-snippet" id="snippet-${obj.id}">
         ${elementTemplate}
       </div>
 			${ obj.data.hasChildContent ? renderAddSubContent() : `` }

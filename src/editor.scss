@@ -17,8 +17,19 @@ body {
 	padding-top: 6rem;
 }
 
-.canvas-content-snippet {
-	ol, ul {
-		list-style-type: initial;
+.canvas-content-snippet, #htmlOutputContainer {
+	ol {
+		list-style-type: decimal;
+	} 
+
+	ul {
+		list-style-type: disc;
+	}
+}
+
+#htmlOutputContainer {
+	p {
+		margin-bottom: inherit;
+		margin-top: inherit;
 	}
 }
