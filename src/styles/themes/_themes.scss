@@ -2,6 +2,7 @@ $product-namespaces: 'leap','lawconnect','rapidpay';
 $theme-font-family: '';
 $theme-text-color: #333;
 $theme-border-radius: 2px;
+$theme-padding: 1rem;
 
 @import 'blockquotes';
 @import 'custom-tabs';

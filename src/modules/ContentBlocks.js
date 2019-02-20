@@ -89,12 +89,36 @@ module.exports = {
 						<i class="blockquote-icon"></i>
 					</span>
 					<div class="blockquote-content">
-						<h5 class="blockquote-content-header">Click here to edit header</h5>
+						<h5 class="blockquote-content-header">Click here to edit heading</h5>
 						<div class="blockquote-content-body">
 							<p>Click here to edit/paste content.</p>
 						</div>
 					</div>
 				</div>`;
+
+				return tmpl;
+			},
+			hasChildContent: false,
+			isInlineCKEDITOR: true,
+			ckeditorConfig: {
+				toolbar: [
+					{ name: 'clipboard', items: [ 'Cut', 'Copy', 'Paste', 'PasteFromWord', '-', 'Undo', 'Redo' ] },
+					{ name: 'basicstyles', items: [ 'Bold', 'Italic', 'Underline', 'Strike', 'Subscript', 'Superscript', '-', 'CopyFormatting', 'RemoveFormat' ] },
+					{ name: 'links', items: [ 'Link', 'Unlink' ] }
+				],
+	    	disaAllowedContent: 'h1 h2 h3 h4 p span blockquote img embed'
+			}
+		},
+		'wellContainer' : {
+			ui_label: 'Generic Box',
+			template: function(config) {
+				const dflt = typeof config === 'undefined' ? 'info' : config;
+
+				const tmpl = `
+					<div class="well">
+						<h5 class="well-heading">Click here to edit heading</h5>
+						<div class="well-body"><p>Click here to edit/paste content.</p></div>
+					</div>`;
 
 				return tmpl;
 			},

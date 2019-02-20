@@ -26,6 +26,7 @@
     "*://*/*"
   ],
   "web_accessible_resources": [
+    "https://cdn.ckeditor.com/4.11.2/standard-all/ckeditor.js",
     "/modules/utils/chromeExtensionUtils.js",
     "webpage.js",
     "editor.js",
