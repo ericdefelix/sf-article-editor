@@ -1,6 +1,6 @@
-# Webpack Frontend Starterkit
+# Salesforce Knowledge Article Advanced Editor
 
-A lightweight foundation for your next webpack based frontend project.
+A visual and sortable content editor for the article's edit page. A custom button will be added to the page via the chrome extension which when clicked will open the editor in a popup window.
 
 
 ### Installation
