@@ -73,8 +73,8 @@ let editor = {
 		toolbox.focus();
 	},
 	_bindEvtAddComponent: function() {
-		const targetComponentPointer = this.getAttribute('data-ui-label');
 		const domID = GenerateID();
+		const targetComponentPointer = this.getAttribute('data-ui-label');
 		const isAddingFromTab = this.closest('.canvas-add-subcontent');
 		const ckeditorBindToElem = ContentBlocks.elems[targetComponentPointer].ckeditorBindToElem;
 
@@ -83,39 +83,26 @@ let editor = {
 			data: ContentBlocks.elems[targetComponentPointer],
 			trigger: this,
 			callback: function(displayToolboxButtons) {
-				displayToolboxButtons.forEach(function(btn,index){
-					btn.onclick = editor._bindEvtDisplayToolbox;
-				});
-// REFACTOR
-				let targetSnippetContainer,
-						targetContentHeading,
-						targetContentBody,
-						containerID;
+				let containerID;
+        const targetSnippetContainer = document.getElementById('snippet-' + domID);
+				const attachAttributesForCKEDITOR = (id,headerClass,bodyClass) => {
+					const targetContentHeading = document.querySelector('#snippet-' + id + ' .' + headerClass),
+								targetContentBody = document.querySelector('#snippet-' + id + ' .' + bodyClass);
 
+					targetContentHeading.contentEditable = true;
+					targetContentBody.contentEditable = true;
 
-				document.getElementById('snippet-' + domID)
-
-
+					targetContentHeading.onblur = editor._bindEvtHeaderInput;
+					targetContentBody.id = 'contentEditableBody-' + id;
+				};
 
 				if (targetComponentPointer == 'blockQuotes') {
-					const blockquoteStyleSelector = document.querySelector('[data-target="snippet-'+ domID +'"]');
-					const blockquoteHeading = document.querySelector('#snippet-' + domID + ' .blockquote-content-header');
-					const blockquoteBody = document.querySelector('#snippet-' + domID + ' .blockquote-content-body');
-
-					blockquoteStyleSelector.onchange = editor._bindEvtSelectionDropdown;
-					blockquoteBody.id = 'contentEditableBody-' + domID;
-					blockquoteBody.contentEditable = true;
-					blockquoteHeading.contentEditable = true;
-					blockquoteHeading.onblur = editor._bindEvtHeaderInput;
+					attachAttributesForCKEDITOR(domID,'blockquote-content-header','blockquote-content-body');
+					document.querySelector('[data-target="snippet-'+ domID +'"]').onchange = editor._bindEvtSelectionDropdown;
 				}
 
 				if (targetComponentPointer == 'wellContainer') {
-					const wellHeading = document.querySelector('#snippet-' + domID + ' .well-heading');
-					const wellBody = document.querySelector('#snippet-' + domID + ' .well-body');
-					wellBody.id = 'contentEditableBody-' + domID;
-					wellBody.contentEditable = true;
-					wellHeading.contentEditable = true;
-					wellHeading.onblur = editor._bindEvtHeaderInput;
+					attachAttributesForCKEDITOR(domID,'well-heading','well-body');				
 				}
 
 				if (targetComponentPointer == 'genericTabs') {
@@ -129,36 +116,26 @@ let editor = {
 					});
 				}
 
-				if (ckeditorBindToElem === 'none') {
-
+				if (targetComponentPointer == 'styledLists' || targetComponentPointer == 'textEditor') {
+					targetSnippetContainer.contentEditable = true;
 				}
-				else {
-					if (ckeditorBindToElem === 'none') {}
 
+				if (ckeditorBindToElem !== 'none') {
 					editor.init_ckeditor({
-						container: containerID,
+						container: (ckeditorBindToElem == 'content' ? 'contentEditableBody-'+ domID : 'snippet-'+ domID),
 						value: ContentBlocks.elems[targetComponentPointer].template(),
 						config: ContentBlocks.elems[targetComponentPointer].ckeditorConfig
 					});
 				}
 
-				if (hasCKEDITOR) {
-					const containerID = (targetComponentPointer == 'blockQuotes' || targetComponentPointer == 'wellContainer') ?
-						'contentEditableBody-'+ domID : 'snippet-'+ domID;
-
-					if (targetComponentPointer == 'styledLists' || targetComponentPointer == 'textEditor') {
-						targetSnippetContainer.contentEditable = true;
-					}
-
-
-				}
-
-// REFACTOR
-
 				editor.existing_data.push({ 
 					id: domID, 
 					type: targetComponentPointer
 				});
+
+        displayToolboxButtons.forEach(function(btn,index){
+          btn.onclick = editor._bindEvtDisplayToolbox;
+        });
 
 				console.log(editor.existing_data);
 			}

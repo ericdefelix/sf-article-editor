@@ -9,7 +9,7 @@ module.exports = {
 				return tmpl;
 			},
 			hasChildContent: false,
-			isInlineCKEDITOR: true,
+			ckeditorBindToElem: 'container',
 			ckeditorConfig: {
 			}
 		},
@@ -27,7 +27,7 @@ module.exports = {
 				return tmpl;
 			},
 			hasChildContent: false,
-			isInlineCKEDITOR: true,
+			ckeditorBindToElem: 'container',
 			ckeditorConfig: {
 				toolbar: [
 					{ name: 'clipboard', items: [ 'Cut', 'Copy', 'Paste', 'PasteFromWord', '-', 'Undo', 'Redo' ] },
@@ -99,7 +99,7 @@ module.exports = {
 				return tmpl;
 			},
 			hasChildContent: false,
-			isInlineCKEDITOR: true,
+			ckeditorBindToElem: 'content',
 			ckeditorConfig: {
 				toolbar: [
 					{ name: 'clipboard', items: [ 'Cut', 'Copy', 'Paste', 'PasteFromWord', '-', 'Undo', 'Redo' ] },
@@ -123,7 +123,7 @@ module.exports = {
 				return tmpl;
 			},
 			hasChildContent: false,
-			isInlineCKEDITOR: true,
+			ckeditorBindToElem: 'content',
 			ckeditorConfig: {
 				toolbar: [
 					{ name: 'clipboard', items: [ 'Cut', 'Copy', 'Paste', 'PasteFromWord', '-', 'Undo', 'Redo' ] },
@@ -170,7 +170,7 @@ module.exports = {
 
 				return tmpl;
 			},
-			isInlineCKEDITOR: false,
+			ckeditorBindToElem: 'none',
 			hasChildContent: true
 		}
 	},
