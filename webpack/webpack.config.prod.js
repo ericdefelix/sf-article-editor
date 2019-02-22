@@ -6,12 +6,11 @@ const common = require('./webpack.common.js');
 
 module.exports = merge(common, {
   mode: 'production',
-  devtool: 'source-map',
+  devtool: 'none',
   stats: 'errors-only',
   bail: true,
   output: {
-    filename: 'js/[name].js', // [chunkhash:8]
-    chunkFilename: 'js/[name].js'
+    filename: 'editor.js'
   },
   plugins: [
     new Webpack.DefinePlugin({

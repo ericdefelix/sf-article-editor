@@ -5,6 +5,7 @@ import UserInterfaceBuilder from './modules/UserInterfaceBuilder';
 import Sortable from '../node_modules/sortablejs/Sortable.min';
 
 let editor = {
+	crxID: '',
 	outputPane: 		document.getElementById('outputContainer'),
 	htmlSection: 		document.getElementById('htmlOutputContainer'),
 	sourceSection: 	document.getElementById('viewSourcePreview'),
@@ -25,6 +26,12 @@ let editor = {
 		editor.toggleView.onchange = editor.html_view;
 		editor.btnClose.onclick = editor.close_preview;
 		editor.btnSave.onclick = editor.save_html;
+
+		editor.crxID = window.chrome.runtime.id;
+
+    window.chrome.runtime.onMessage.addListener(function(request, sender, sendResponse){
+      console.log(request);
+    });
 	},
 	build_ui: function() {
 		UserInterfaceBuilder.render('canvas', { 
@@ -121,8 +128,9 @@ let editor = {
 				}
 
 				if (ckeditorBindToElem !== 'none') {
+					const containerID = ckeditorBindToElem == 'content' ? 'contentEditableBody-'+ domID : 'snippet-'+ domID;
 					editor.init_ckeditor({
-						container: (ckeditorBindToElem == 'content' ? 'contentEditableBody-'+ domID : 'snippet-'+ domID),
+						container: containerID,
 						value: ContentBlocks.elems[targetComponentPointer].template(),
 						config: ContentBlocks.elems[targetComponentPointer].ckeditorConfig
 					});
@@ -155,7 +163,7 @@ let editor = {
 		blockquote.classList.add('blockquote-' + selectedStyle);
 	},
 	_bindEvtHeaderInput: function() {
-		if (this.textContent == '') this.textContent = 'Click here to edit header';
+		if (this.textContent == '') this.textContent = 'Click here to edit heading';
 	},
 	init_sortable: function(config) {
 		const sortableConfig = {
@@ -260,14 +268,14 @@ let editor = {
 		}
 	},
 	save_html: function() {
-		const config = {
-			method: 'save',
+		const request = {
+			method: 'insertToCKEDITOR',
 			origin: window.location.origin,
-			data: { html: editor.sourceSection.value }
+			crxid: editor.crxID,
+			data: { html: '<span>This is the html</span>' }
 		};
 
-		window.postMessage(config, window.location.origin);
-		console.log(config);
+		window.chrome.runtime.sendMessage(editor.crxID, request);
 	},
 	run: function() {
 		this.init();
