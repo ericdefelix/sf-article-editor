@@ -18,24 +18,28 @@ let editor = {
 	existing_data: [],
 	toolbox: undefined,
 	init: function() {
-		window.chrome.storage.sync.get(['ckeditorInstanceId'],function(objLocalStorage){
-			editor.ckeditorInstanceId = objLocalStorage.ckeditorInstanceId;
-			editor.instanceHTML = objLocalStorage.instanceHTML;
-			editor.btnSave.setAttribute('data-target',editor.ckeditorInstanceId);
-		});
+		try {
+			window.chrome.storage.sync.get(['ckeditorInstanceId'],function(objLocalStorage){
+				editor.ckeditorInstanceId = objLocalStorage.ckeditorInstanceId;
+				editor.instanceHTML = objLocalStorage.instanceHTML;
+				editor.btnSave.setAttribute('data-target',editor.ckeditorInstanceId);
+			});
 
-		this.build_ui();
-		this.init_sortable({
-			container: document.getElementById('canvasContainer'),
-			contentDraggableClass: '.canvasDraggableMain'
-		});
+			editor.crxID = window.chrome.runtime.id;
+		} catch(e) {
+			console.log('You are in build mode');
+		} finally {
+			this.build_ui();
+			this.init_sortable({
+				container: document.getElementById('canvasContainer'),
+				contentDraggableClass: '.canvasDraggableMain'
+			});
 
-		editor.btnPreview.onclick = editor.generate_html;
-		editor.btnSave.onclick = editor.save_html;
-		editor.toggleView.onchange = editor.html_view;
-		editor.btnClose.onclick = editor.close_preview;
-
-		editor.crxID = window.chrome.runtime.id;
+			editor.btnPreview.onclick = editor.generate_html;
+			editor.btnSave.onclick = editor.save_html;
+			editor.toggleView.onchange = editor.html_view;
+			editor.btnClose.onclick = editor.close_preview;
+		}
 	},
 	build_ui: function() {
 		UserInterfaceBuilder.render('canvas', { 
@@ -218,8 +222,8 @@ let editor = {
 				const newContentObj = function(metadata) {
 					return {
 						type: 'type', id: 'id', metadata: metadata
-					}
-				}
+					};
+				};
 
 				if (elemChild.classList.contains('tabs')) {
 					const tabsContent = elemChild.querySelectorAll('.tab-content');
