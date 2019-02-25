@@ -6,6 +6,8 @@ import Sortable from '../node_modules/sortablejs/Sortable.min';
 
 let editor = {
 	crxID: '',
+	ckeditorInstanceId: '',
+	instanceHTML: '',
 	outputPane: 		document.getElementById('outputContainer'),
 	htmlSection: 		document.getElementById('htmlOutputContainer'),
 	sourceSection: 	document.getElementById('viewSourcePreview'),
@@ -16,22 +18,24 @@ let editor = {
 	existing_data: [],
 	toolbox: undefined,
 	init: function() {
+		window.chrome.storage.sync.get(['ckeditorInstanceId'],function(objLocalStorage){
+			editor.ckeditorInstanceId = objLocalStorage.ckeditorInstanceId;
+			editor.instanceHTML = objLocalStorage.instanceHTML;
+			editor.btnSave.setAttribute('data-target',editor.ckeditorInstanceId);
+		});
+
 		this.build_ui();
 		this.init_sortable({
 			container: document.getElementById('canvasContainer'),
 			contentDraggableClass: '.canvasDraggableMain'
 		});
 
-		editor.btnPreview.onclick = editor.preview;
+		editor.btnPreview.onclick = editor.generate_html;
+		editor.btnSave.onclick = editor.save_html;
 		editor.toggleView.onchange = editor.html_view;
 		editor.btnClose.onclick = editor.close_preview;
-		editor.btnSave.onclick = editor.save_html;
 
 		editor.crxID = window.chrome.runtime.id;
-
-    window.chrome.runtime.onMessage.addListener(function(request, sender, sendResponse){
-      console.log(request);
-    });
 	},
 	build_ui: function() {
 		UserInterfaceBuilder.render('canvas', { 
@@ -85,8 +89,12 @@ let editor = {
 		const isAddingFromTab = this.closest('.canvas-add-subcontent');
 		const ckeditorBindToElem = ContentBlocks.elems[targetComponentPointer].ckeditorBindToElem;
 
+    let contentData = {};
+    let metadata = { heading: '', body: '' };
+
 		UserInterfaceBuilder.render('content', {
 			id: domID,
+			type: targetComponentPointer,
 			data: ContentBlocks.elems[targetComponentPointer],
 			trigger: this,
 			callback: function(displayToolboxButtons) {
@@ -136,14 +144,14 @@ let editor = {
 					});
 				}
 
-				editor.existing_data.push({ 
-					id: domID, 
-					type: targetComponentPointer
-				});
-
         displayToolboxButtons.forEach(function(btn,index){
           btn.onclick = editor._bindEvtDisplayToolbox;
         });
+
+        contentData['id'] = domID;
+        contentData['type'] = targetComponentPointer;
+
+				editor.existing_data.push(contentData);
 
 				console.log(editor.existing_data);
 			}
@@ -193,16 +201,25 @@ let editor = {
 	close_preview: function() {
 		editor.outputPane.style.display = 'none';
 	},
-	preview: function() {
+	generate_html: function() {
 		editor.outputPane.style.display = 'block';
 
 		const contentBlocksDom = document.querySelectorAll('#canvasContainer > .canvas-content-block');
 		let htmlOutputString = '';
+		let htmlData = [];
 
 		if (editor.existing_data.length > 0) {
 			contentBlocksDom.forEach((block,b_index) => {
 				const snippet = block.querySelector('.canvas-content-snippet');
+				const type = snippet.getAttribute('data-component-type');
+				const id = snippet.getAttribute('id');
 				const elemChild = snippet.firstElementChild;
+
+				const newContentObj = function(metadata) {
+					return {
+						type: 'type', id: 'id', metadata: metadata
+					}
+				}
 
 				if (elemChild.classList.contains('tabs')) {
 					const tabsContent = elemChild.querySelectorAll('.tab-content');
@@ -210,14 +227,20 @@ let editor = {
 
 					tabsHTML += snippet.firstElementChild.firstElementChild.innerHTML;
 
+					// Get data from tabs
+					htmlData.push(newContentObj([]));
+					htmlData[b_index].metadata = [];
 					tabsContent.forEach((tabcontent,tc_index) => {
 						let tabContentBlocksHTML = ``;
 						const tabSnippets = tabcontent.querySelectorAll('.canvas-content-block .canvas-content-snippet');
 
 						tabSnippets.forEach((tabSnippet,ts_index) => {
 							const elemSubChild = tabSnippet.firstElementChild;
-							tabContentBlocksHTML += (elemSubChild.classList.contains('blockquote') || elemSubChild.classList.contains('well')) ?
+							const _tabContentBlocksHTML = (elemSubChild.classList.contains('blockquote') || elemSubChild.classList.contains('well')) ?
 								extractHTMLFromInnerCKEDITABLE(elemSubChild) : extractHTML(tabSnippet);
+
+							htmlData[b_index].metadata.push(newContentObj(_tabContentBlocksHTML));
+							tabContentBlocksHTML += _tabContentBlocksHTML;
 						});
 
 						tabsHTML += `<section class="${tabcontent.className}" id="${tabcontent.id}">${tabContentBlocksHTML}</section>`;
@@ -226,16 +249,24 @@ let editor = {
 					htmlOutputString += tabsHTML + `</div>`;
 				}
 				else if (elemChild.classList.contains('blockquote') || elemChild.classList.contains('well')) {
-					htmlOutputString += extractHTMLFromInnerCKEDITABLE(elemChild);
+					// Get data if an element has a heading and a body
+					const _htmlOutputString = extractHTMLFromInnerCKEDITABLE(elemChild);
+					htmlOutputString += _htmlOutputString;
+					htmlData.push(newContentObj(_htmlOutputString));
 				}
 				else {
+					// Get data if an element has no heading
+					const _htmlOutputString = extractHTML(snippet);
 					htmlOutputString += extractHTML(snippet);
+					htmlData.push(newContentObj(_htmlOutputString));
 				}
 			});
 		}
 
+		const hiddenInput = `<textarea style="display: none;">${ JSON.stringify(htmlData) }</textarea>`;
+
 		editor.htmlSection.innerHTML = editor.existing_data.length > 0 ? htmlOutputString : '<strong>Nothing to display here.</strong>';
-		editor.sourceSection.value = editor.htmlSection.innerHTML;
+		editor.sourceSection.value = editor.htmlSection.innerHTML + hiddenInput;
 
 		const contentEditableBlockquoteHeadings = document.querySelectorAll('#outputContainer .blockquote-content-header');
 		contentEditableBlockquoteHeadings.forEach((heading,h_index) => {
@@ -268,11 +299,17 @@ let editor = {
 		}
 	},
 	save_html: function() {
+		editor.generate_html();
+		editor.outputPane.style.display = 'none';
+
 		const request = {
 			method: 'insertToCKEDITOR',
 			origin: window.location.origin,
 			crxid: editor.crxID,
-			data: { html: '<span>This is the html</span>' }
+			data: { 
+				html: editor.sourceSection.value,
+				ckeditorIntanceId: this.getAttribute('data-target')
+			}
 		};
 
 		window.chrome.runtime.sendMessage(editor.crxID, request);

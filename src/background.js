@@ -4,14 +4,18 @@
 // =================================================================================
 import { UrlContainsArticleEdit, RequestIsValid, SetPosition } from '/modules/utils/chromeExtensionUtils.js';
 
-const background = {
+function test() {
+  console.log('test');
+}
+
+let background = {
   crxID: '',
   currentTabID: '',
+  currentCkeditorInstance: '',
+  activeWindows: [],
+  activeCkeditorInstances: [],
   requests: [],
   init: function() {
-    chrome.windows.getCurrent({ populate: true },function(currentWindow){
-      
-    });
   },
   listeners: function() {
     chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
@@ -33,13 +37,11 @@ const background = {
       const method = request.method;
       if (RequestIsValid(request)) background.methods[method](request);
     });
-
   },
   methods: {
     popup: (request) => {
       const ph = 800, pw = 1100;
       const data = request.data;
-      const closePopup = () => {};
 
       const px = SetPosition(data.dimensions.win_left, data.dimensions.win_width, pw);
       const py = SetPosition(data.dimensions.win_top, data.dimensions.win_height, ph);
@@ -49,25 +51,51 @@ const background = {
         type: 'popup',
         height: ph,
         width: pw,
-        left: Math.round(px), 
+        left: Math.round(px),
         top: Math.round(py)
       }
 
       const editorDataFromWebpage = {
         method: 'initEditor',
         data: { 
-          instanceHTML: data.instanceHTML, 
+          instanceHTML: data.instanceHTML,
           ckeditorInstanceId: data.ckeditorInstanceId
         }
       };
 
-      console.log(editorDataFromWebpage);
-
       chrome.runtime.sendMessage(editorDataFromWebpage);
-      data.display ? chrome.windows.create(popupWindowConfig) : closePopup();
+
+      if (data.display) {
+        chrome.windows.create(popupWindowConfig, function(win){
+          chrome.windows.getCurrent({ populate: true },function(currentWindow){
+            const activeWindow = {
+              windowID: currentWindow.id,
+              instanceID: request.data.ckeditorInstanceId
+            };
+
+            background.activeWindows.push(activeWindow);
+            background.activeCkeditorInstances.push(request.data.ckeditorInstanceId);
+          });
+
+          console.log(chrome.storage);
+          chrome.storage.sync.set({ ckeditorInstanceId: request.data.ckeditorInstanceId });
+          chrome.storage.sync.set({ instanceHTML: request.data.instanceHTML });
+        });
+      }
+      else {
+
+      }
     },
     insertToCKEDITOR: (request) => {
       chrome.tabs.sendMessage(background.currentTabID, request);
+    },
+    initEditor: (request) => {
+    },
+    closePopups: (request) => {
+      console.log(request);
+      for (var i = 0; i <= background.activeWindows - 1; i++) {
+        chrome.windows.remove(background.activeWindows[i].windowID);
+      }
     }
   },
   run: function(){

@@ -69,7 +69,7 @@ module.exports = {
 					<i class="icon-delete"></i> Remove
 				</button>
 			</div>
-			<div class="canvas-content-snippet" id="snippet-${obj.id}">
+			<div class="canvas-content-snippet" id="snippet-${obj.id}" data-component-type="${obj.type}">
         ${elementTemplate}
       </div>
 			${ obj.data.hasChildContent ? renderAddSubContent() : `` }

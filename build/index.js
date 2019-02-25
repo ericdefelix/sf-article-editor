@@ -37,6 +37,11 @@ const index = {
 				  if (event.type == 'message' && method == 'popup') {
 				  	chrome.runtime.sendMessage(event.data);
 				  }
+
+				  if (event.type == 'message' && method == 'closePopups') {
+				  	chrome.runtime.sendMessage(event.data);
+				  }
+
 				}, false);
 			});
 
@@ -44,10 +49,12 @@ const index = {
 		}
 
 		chrome.runtime.onMessage.addListener(function(request, sender, sendResponse){
-			if (request.method == 'insertToCKEDITOR') {
-				window.postMessage(request, window.location.origin);	
+			const method = request.method;
+			if (method == 'insertToCKEDITOR') {
+				window.postMessage(request, window.location.origin);
+				console.log('im from index');
 			}
-			if (request.method == 'initEditor') {
+			if (method == 'initEditor') {
 				console.log('im from index');
 			}
 		});

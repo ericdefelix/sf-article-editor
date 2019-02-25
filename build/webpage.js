@@ -38,6 +38,8 @@ const webpage = {
 				webpage.methods.insertToCKEDITOR(event.data);
 			}
 		}, false);
+
+		window.addEventListener('beforeunload', webpage.methods.closePopups);
 	},
 	methods: {
 		popup: (ckeditorInstanceId) => {
@@ -64,10 +66,19 @@ const webpage = {
 			}
 		},
 		insertToCKEDITOR: (request) => {
-			console.log(request);
-			// CKEDITOR.instances[instanceID].setData(dataHTMLString,function(){
-				// will remove callback param if nothing gets in here				
-			// });
+			const ckeditorInstanceId = request.data.ckeditorIntanceId;
+			const dataHTMLString = request.data.html;
+			CKEDITOR.instances[ckeditorInstanceId].setData(dataHTMLString);
+		},
+		closePopups: (e) => {
+			console.log('close popups');			
+			const config = {
+				method: 'closePopups',
+				origin: window.location.origin,
+				data: {}
+			}
+
+			window.postMessage(config, window.location.origin);
 		}
 	},
 	run: function() {
