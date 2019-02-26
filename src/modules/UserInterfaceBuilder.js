@@ -48,6 +48,7 @@ module.exports = {
   	}
 
   	function renderExistingData() {
+      console.log('render');
   		let tmpl = '';
   		return tmpl;
   	}

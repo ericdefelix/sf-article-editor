@@ -61,6 +61,10 @@ export function GetClosestParent(elem, selector) {
 	return null;
 };
 
+export function NormaliseHTMLString(str) {
+	return str.replace(/\s{2,10}/g, ' ');
+}
+
 export function GenerateID() {
 	return Math.random().toString(36).replace(/[^a-z]+/g, '').substr(2, 10);
 }

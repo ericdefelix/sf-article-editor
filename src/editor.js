@@ -1,5 +1,5 @@
 import './editor.scss';
-import { GetClosestParent, GenerateID } from './modules/utils/chromeExtensionUtils';
+import { GetClosestParent, GenerateID, NormaliseHTMLString } from './modules/utils/chromeExtensionUtils';
 import ContentBlocks from './modules/ContentBlocks';
 import UserInterfaceBuilder from './modules/UserInterfaceBuilder';
 import Sortable from '../node_modules/sortablejs/Sortable.min';
@@ -27,8 +27,13 @@ let editor = {
 
 			editor.crxID = window.chrome.runtime.id;
 		} catch(e) {
-			console.log('You are in build mode');
+			console.log('Attempting to do a chrome api method. You are in build mode');
 		} finally {
+			console.log(editor.sourceSection.value);
+			if (editor.sourceSection.value !== '') {
+				editor.existing_data = JSON.parse(editor.sourceSection.value);
+			}
+
 			this.build_ui();
 			this.init_sortable({
 				container: document.getElementById('canvasContainer'),
@@ -94,7 +99,6 @@ let editor = {
 		const ckeditorBindToElem = ContentBlocks.elems[targetComponentPointer].ckeditorBindToElem;
 
     let contentData = {};
-    let metadata = { heading: '', body: '' };
 
 		UserInterfaceBuilder.render('content', {
 			id: domID,
@@ -156,8 +160,6 @@ let editor = {
         contentData['type'] = targetComponentPointer;
 
 				editor.existing_data.push(contentData);
-
-				console.log(editor.existing_data);
 			}
 		});
 
@@ -216,13 +218,17 @@ let editor = {
 			contentBlocksDom.forEach((block,b_index) => {
 				const snippet = block.querySelector('.canvas-content-snippet');
 				const type = snippet.getAttribute('data-component-type');
-				const id = snippet.getAttribute('id');
+				const id = block.getAttribute('id');
 				const elemChild = snippet.firstElementChild;
 
-				const newContentObj = function(metadata) {
-					return {
-						type: '', id: '', metadata: metadata
-					};
+				let metadata = {};
+
+				const newContentObj = function(type, id, data) {
+					return { type: type, id: id, metadata: data };
+				};
+
+				const newTabObj = function(label,id) {
+					return { label: label, id: id, content: [] };
 				};
 
 				if (elemChild.classList.contains('tabs')) {
@@ -232,18 +238,31 @@ let editor = {
 					tabsHTML += snippet.firstElementChild.firstElementChild.innerHTML;
 
 					// Get data from tabs
-					htmlData.push(newContentObj([]));
-					htmlData[b_index].metadata = [];
+					metadata = createMetadata(type,elemChild);
+					htmlData.push(newContentObj(type, id, metadata));
+
 					tabsContent.forEach((tabcontent,tc_index) => {
 						let tabContentBlocksHTML = ``;
+						const tabContentBlocks = tabcontent.querySelectorAll('.canvas-content-block');
 						const tabSnippets = tabcontent.querySelectorAll('.canvas-content-block .canvas-content-snippet');
+						const tabId = tabcontent.getAttribute('id').split('tab-')[1];
+						const tabLabel = document.querySelector('.tab-item-link[data-target="tab-'+ tabId +'"]').textContent;
+
+
+						htmlData[b_index].metadata.subnodes.push(newTabObj(tabLabel,tabId));
 
 						tabSnippets.forEach((tabSnippet,ts_index) => {
 							const elemSubChild = tabSnippet.firstElementChild;
+							const subchildType = tabSnippet.getAttribute('data-component-type');
+							const subchildID = tabContentBlocks[ts_index].getAttribute('id');
+
 							const _tabContentBlocksHTML = (elemSubChild.classList.contains('blockquote') || elemSubChild.classList.contains('well')) ?
 								extractHTMLFromInnerCKEDITABLE(elemSubChild) : extractHTML(tabSnippet);
 
-							htmlData[b_index].metadata.push(newContentObj(_tabContentBlocksHTML));
+							const submetadata = createMetadata(subchildType,_tabContentBlocksHTML,elemSubChild);
+
+							htmlData[b_index].metadata.subnodes[tc_index].content.push(newContentObj(subchildType, subchildID, submetadata));
+
 							tabContentBlocksHTML += _tabContentBlocksHTML;
 						});
 
@@ -251,18 +270,28 @@ let editor = {
 					});
 
 					htmlOutputString += tabsHTML + `</div>`;
-				}
-				else if (elemChild.classList.contains('blockquote') || elemChild.classList.contains('well')) {
-					// Get data if an element has a heading and a body
-					const _htmlOutputString = extractHTMLFromInnerCKEDITABLE(elemChild);
-					htmlOutputString += _htmlOutputString;
-					htmlData.push(newContentObj(_htmlOutputString));
+
 				}
 				else {
+					let _htmlOutputString;
+
+					// Get data if an element has a heading and a body
+					if (elemChild.classList.contains('blockquote') || elemChild.classList.contains('well')) {
+						_htmlOutputString = NormaliseHTMLString(extractHTMLFromInnerCKEDITABLE(elemChild));
+						const _heading = NormaliseHTMLString(elemChild.querySelector('h5').textContent);
+						const _body =  NormaliseHTMLString(elemChild.querySelector('.cke_editable').innerHTML);
+
+						metadata = createMetadata(type,_htmlOutputString,elemChild);
+						htmlOutputString += _htmlOutputString;
+					}
 					// Get data if an element has no heading
-					const _htmlOutputString = extractHTML(snippet);
-					htmlOutputString += extractHTML(snippet);
-					htmlData.push(newContentObj(_htmlOutputString));
+					else {
+						_htmlOutputString = NormaliseHTMLString(extractHTML(snippet));
+						metadata = createMetadata(type,_htmlOutputString);
+						htmlOutputString += _htmlOutputString;
+					}
+
+					htmlData.push(newContentObj(type, id, metadata));
 				}
 			});
 		}
@@ -276,6 +305,22 @@ let editor = {
 		contentEditableBlockquoteHeadings.forEach((heading,h_index) => {
 			heading.removeAttribute('contenteditable');
 		});
+
+		function createMetadata(componentType, htmlOutputString, elemChild) {
+			if (componentType == 'genericTabs') {
+				return { subnodes: [] };
+			}
+			else {
+				if (componentType == 'wellContainer' || componentType == 'blockQuotes') {
+					const heading = NormaliseHTMLString(elemChild.querySelector('h5').textContent);
+					const body =  NormaliseHTMLString(elemChild.querySelector('.cke_editable').innerHTML);
+					return { html: htmlOutputString, variables: [heading,body] };
+				}
+				else {
+					return { html: htmlOutputString };
+				}
+			}
+		}
 
 		function extractHTMLFromInnerCKEDITABLE(elemChild) {
 			const clone = elemChild.cloneNode(true);
@@ -301,6 +346,8 @@ let editor = {
 				return snippet.innerHTML;
 			}
 		}
+
+		console.log(htmlData);
 	},
 	save_html: function() {
 		editor.generate_html();
@@ -316,13 +363,11 @@ let editor = {
 			}
 		};
 
-		console.log(request);
-
 		try {
 			window.chrome.runtime.sendMessage(editor.crxID, request);
 		} catch(e) {
 			// statements
-			console.log('Page origin is not via chrome extension');
+			console.log('Attempting to do a chrome api method. Page origin is not via chrome extension');
 		}
 	},
 	run: function() {
