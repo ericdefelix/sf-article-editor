@@ -221,7 +221,7 @@ let editor = {
 
 				const newContentObj = function(metadata) {
 					return {
-						type: 'type', id: 'id', metadata: metadata
+						type: '', id: '', metadata: metadata
 					};
 				};
 
@@ -316,7 +316,14 @@ let editor = {
 			}
 		};
 
-		window.chrome.runtime.sendMessage(editor.crxID, request);
+		console.log(request);
+
+		try {
+			window.chrome.runtime.sendMessage(editor.crxID, request);
+		} catch(e) {
+			// statements
+			console.log('Page origin is not via chrome extension');
+		}
 	},
 	run: function() {
 		this.init();
