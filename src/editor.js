@@ -29,11 +29,8 @@ let editor = {
 		} catch(e) {
 			console.log('Attempting to do a chrome api method. You are in build mode');
 		} finally {
-			console.log(editor.sourceSection.value);
-			if (editor.sourceSection.value !== '') {
-				editor.existing_data = JSON.parse(editor.sourceSection.value);
-			}
-
+			editor.existing_data = JSON.parse(editor.sourceSection.value);
+			
 			this.build_ui();
 			this.init_sortable({
 				container: document.getElementById('canvasContainer'),
@@ -44,6 +41,16 @@ let editor = {
 			editor.btnSave.onclick = editor.save_html;
 			editor.toggleView.onchange = editor.html_view;
 			editor.btnClose.onclick = editor.close_preview;
+
+			if (editor.sourceSection.value !== '') {
+				editor.existing_data = JSON.parse(editor.sourceSection.value);
+
+				for (let i = 0; i <= editor.existing_data.length-1; i++) {
+					const com = editor.existing_data[i];
+
+					console.log(com);
+				}
+			}
 		}
 	},
 	build_ui: function() {
