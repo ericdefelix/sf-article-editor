@@ -29,8 +29,9 @@ let editor = {
 		} catch(e) {
 			console.log('Attempting to do a chrome api method. You are in build mode');
 		} finally {
-			editor.existing_data = JSON.parse(editor.sourceSection.value);
-			
+			editor.existing_data = [];
+			// editor.existing_data = editor.sourceSection.value == '' ? [] : JSON.parse(editor.sourceSection.value);
+
 			this.build_ui();
 			this.init_sortable({
 				container: document.getElementById('canvasContainer'),
@@ -41,22 +42,17 @@ let editor = {
 			editor.btnSave.onclick = editor.save_html;
 			editor.toggleView.onchange = editor.html_view;
 			editor.btnClose.onclick = editor.close_preview;
-
-			if (editor.sourceSection.value !== '') {
-				editor.existing_data = JSON.parse(editor.sourceSection.value);
-
-				for (let i = 0; i <= editor.existing_data.length-1; i++) {
-					const com = editor.existing_data[i];
-
-					console.log(com);
-				}
-			}
 		}
 	},
 	build_ui: function() {
+		function replaceString(baseStr, strLookup, strReplacement) {
+			return baseStr.replace(strLookup, strReplacement);
+		}
+
 		UserInterfaceBuilder.render('canvas', { 
 			data: editor.existing_data, 
 			trigger: 'auto',
+			dependencies: [ContentBlocks,replaceString],
 			callback: function() {
 				UserInterfaceBuilder.render('toolbox', ContentBlocks.elems);
 
@@ -171,7 +167,8 @@ let editor = {
 		});
 
 		UserInterfaceBuilder.render('canvas', {
-			data: editor.existing_data, 
+			data: editor.existing_data,
+			dependencies: [],
 			trigger: 'user'
 		});
 	},
@@ -272,10 +269,10 @@ let editor = {
 
 							tabContentBlocksHTML += _tabContentBlocksHTML;
 						});
-
 						tabsHTML += `<section class="${tabcontent.className}" id="${tabcontent.id}">${tabContentBlocksHTML}</section>`;
 					});
 
+					htmlData[b_index].metadata.html = tabsHTML;
 					htmlOutputString += tabsHTML + `</div>`;
 
 				}
@@ -303,7 +300,7 @@ let editor = {
 			});
 		}
 
-		const hiddenInput = `<textarea style="display: none;">${ JSON.stringify(htmlData) }</textarea>`;
+		const hiddenInput = htmlData.length > 0 ? `<textarea style="display: none;">${ JSON.stringify(htmlData)}</textarea>` : ``;
 
 		editor.htmlSection.innerHTML = editor.existing_data.length > 0 ? htmlOutputString : '<strong>Nothing to display here.</strong>';
 		editor.sourceSection.value = editor.htmlSection.innerHTML + hiddenInput;
@@ -315,7 +312,7 @@ let editor = {
 
 		function createMetadata(componentType, htmlOutputString, elemChild) {
 			if (componentType == 'genericTabs') {
-				return { subnodes: [] };
+				return { subnodes: [], html: '' };
 			}
 			else {
 				if (componentType == 'wellContainer' || componentType == 'blockQuotes') {

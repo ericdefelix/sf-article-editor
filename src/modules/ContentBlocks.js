@@ -81,17 +81,30 @@ module.exports = {
 				{ ui_label: 'Attention', ui_value: 'alert' }
 			],
 			template: function(config) {
-				const dflt = typeof config === 'undefined' ? 'info' : config;
+				let setConfig = {
+					cssClass: () => {
+						const cssClass = typeof config === 'undefined' ? 'info' : 'info';
+						return cssClass;
+					},
+					header: () => {
+						const header = typeof config === 'undefined' ? 'Click here to edit heading' : config.variables[0];
+						return header;
+					},
+					body: () => {
+						const body = typeof config === 'undefined' ? 'Click here to edit/paste content' : config.variables[1];
+						return body;
+					}
+				};
 
 				const tmpl = `
-				<div class="blockquote blockquote-${dflt}" role="blockquote">
+				<div class="blockquote blockquote-${setConfig.cssClass()}" role="blockquote">
 					<span class="blockquote-addon">
 						<i class="blockquote-icon"></i>
 					</span>
 					<div class="blockquote-content">
-						<h5 class="blockquote-content-header">Click here to edit heading</h5>
+						<h5 class="blockquote-content-header">${setConfig.header()}</h5>
 						<div class="blockquote-content-body">
-							<p>Click here to edit/paste content.</p>
+							${setConfig.body()}
 						</div>
 					</div>
 				</div>`;
@@ -112,8 +125,6 @@ module.exports = {
 		'wellContainer' : {
 			ui_label: 'Generic Box',
 			template: function(config) {
-				const dflt = typeof config === 'undefined' ? 'info' : config;
-
 				const tmpl = `
 					<div class="well">
 						<h5 class="well-heading">Click here to edit heading</h5>
@@ -139,19 +150,18 @@ module.exports = {
 				let navTabItems = '', navTabSections = '';
 				let subnodes = [];
 
-				const generateID = function() {
-					return Math.floor(Math.random()*90000) + 10000;
-				};
-
+				const generateID = function() { return Math.floor(Math.random()*90000) + 10000; };
 				const emptyStateSubnodes = [
 					{ label: 'Desktop', id: 'tab-' + generateID(), content: [] },
 					{ label: 'Web', id: 'tab-' + generateID(), content: [] },
 					{ label: 'Mobile', id: 'tab-' + generateID(), content: [] }
 				];
- 
-				subnodes = typeof config === 'undefined' ? emptyStateSubnodes : config.data.subnodes;
 
-				for (let i = 0; i <= emptyStateSubnodes.length-1; i++) {
+				const hasConfig = typeof config !== 'undefined';
+ 
+				subnodes = !hasConfig ? emptyStateSubnodes : config.subnodes;
+
+				for (let i = 0; i <= subnodes.length-1; i++) {
 					const id = subnodes[i].id, label = subnodes[i].label;
 
 					navTabItems += `
@@ -159,7 +169,8 @@ module.exports = {
 							<a href="#" class="tab-item-link" data-target="${id}">${label}</a>
 						</li>
 					`;
-					navTabSections += `<section class="tab-content${ i == 0 ? ' in' : ''}" id="${id}"></section>`;
+
+					navTabSections += `<section class="tab-content${ i == 0 ? ' in' : ''}" id="${id}">${ hasConfig ? '{{ tab-'+ id +' }}' : '' }</section>`;
 				}
 
 				const tmpl = `
