@@ -10,8 +10,7 @@ module.exports = {
 			},
 			hasChildContent: false,
 			ckeditorBindToElem: 'container',
-			ckeditorConfig: {
-			}
+			ckeditorConfig: {}
 		},
 		'styledLists' : {
 			ui_label: 'Styled Lists',
@@ -152,9 +151,9 @@ module.exports = {
 
 				const generateID = function() { return Math.floor(Math.random()*90000) + 10000; };
 				const emptyStateSubnodes = [
-					{ label: 'Desktop', id: 'tab-' + generateID(), content: [] },
-					{ label: 'Web', id: 'tab-' + generateID(), content: [] },
-					{ label: 'Mobile', id: 'tab-' + generateID(), content: [] }
+					{ label: 'Desktop', id: generateID(), content: [] },
+					{ label: 'Web', id: generateID(), content: [] },
+					{ label: 'Mobile', id: generateID(), content: [] }
 				];
 
 				const hasConfig = typeof config !== 'undefined';
@@ -166,11 +165,11 @@ module.exports = {
 
 					navTabItems += `
 						<li class="tab-item${ i == 0 ? ' active' : ''}">
-							<a href="#" class="tab-item-link" data-target="${id}">${label}</a>
+							<a href="#" class="tab-item-link" data-target="tab-${id}">${label}</a>
 						</li>
 					`;
 
-					navTabSections += `<section class="tab-content${ i == 0 ? ' in' : ''}" id="${id}">${ hasConfig ? '{{ tab-'+ id +' }}' : '' }</section>`;
+					navTabSections += `<section class="tab-content${ i == 0 ? ' in' : ''}" id="tab-${id}">${ hasConfig ? '{{ tab-'+ id +' }}' : '' }</section>`;
 				}
 
 				const tmpl = `

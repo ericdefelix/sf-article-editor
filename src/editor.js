@@ -27,10 +27,10 @@ let editor = {
 
 			editor.crxID = window.chrome.runtime.id;
 		} catch(e) {
-			console.log('Attempting to do a chrome api method. You are in build mode');
+			console.log('Attempting to do a chrome api method. You are in stand-alone mode');
 		} finally {
-			editor.existing_data = [];
-			// editor.existing_data = editor.sourceSection.value == '' ? [] : JSON.parse(editor.sourceSection.value);
+			// editor.existing_data = [];
+			editor.existing_data = editor.sourceSection.value == '' ? [] : JSON.parse(editor.sourceSection.value);
 
 			this.build_ui();
 			this.init_sortable({
@@ -56,21 +56,48 @@ let editor = {
 			callback: function() {
 				UserInterfaceBuilder.render('toolbox', ContentBlocks.elems);
 
-				const btnsAddComponent = document.querySelectorAll('[data-action="add-component"]');
-				const btnsSelectComponent = document.querySelectorAll('[data-action="select-component"]');
+				let canvasContainer,
+						canvasContentBlocks,
+						btnsAddComponent,
+						btnsRemoveComponent,
+						btnsSelectComponent;
 
 				// This is where we bind each element event listeners to display the toolbox
-				for (let i = 0; i <= btnsSelectComponent.length - 1; i++) {
-					const btnObj = btnsSelectComponent[i];
-					btnObj.onclick = editor._bindEvtDisplayToolbox;
+				btnsSelectComponent = document.querySelectorAll('[data-action="select-component"]');
+				btnsSelectComponent.forEach((elem, index) => {
+					elem.onclick = editor._bindEvtDisplayToolbox;
+				});
+
+				// This is where we bind each element event listeners to add components
+				btnsAddComponent = document.querySelectorAll('[data-action="add-component"]');
+				btnsAddComponent.forEach((elem, index) => {
+					elem.onclick = editor._bindEvtAddComponent;
+				});
+
+				// This is where we bind each element event listeners to delete components
+				btnsRemoveComponent = document.querySelectorAll('[data-action="remove-component"]');
+				btnsRemoveComponent.forEach((elem, index) => {
+					elem.onclick = editor._bindEvtRemoveComponent;
+				});
+
+				// Initialise edit events to our elements
+				canvasContainer = document.getElementById('canvasContainer');
+				canvasContentBlocks = canvasContainer.querySelectorAll('.canvas-content-block');
+
+				if (canvasContentBlocks.length > 0 ) {
+					canvasContentBlocks.forEach((elem, index) => {
+						if (elem.getAttribute('data-content') !== 'empty') {
+							const domID = elem.getAttribute('id');
+							const targetComponentPointer = elem
+									.querySelector('.canvas-content-snippet')
+									.getAttribute('data-component-type');
+
+							editor.handleEditEventsToDOM(domID,targetComponentPointer);
+						}
+					});
 				}
 
-				// This is where we bind each element event listeners to actually add components
-				for (let i = 0; i <= btnsAddComponent.length - 1; i++) {
-					const btnObj = btnsAddComponent[i];
-					btnObj.onclick = editor._bindEvtAddComponent;
-				}
-
+				// Init toolbox menu actions
 				document.addEventListener('click', function (event) {
 					const parent = GetClosestParent(event.target, '.canvas-add-component');
 					if (parent === null) {
@@ -78,12 +105,13 @@ let editor = {
 					}
 				}, false);
 
-				// editor.btnPreview.disabled = editor.existing_data.length == 0 ? true : false;
+				// Hide/show page controls
+				editor.togglePageButtons();
 			}
 		});
 	},
 	_bindEvtDisplayToolbox: function() {
-		editor.toolbox = document.getElementById('toolbox');
+		const toolbox = document.getElementById('toolbox');
 		toolbox.classList.remove('in');
 		toolbox.style.display = 'block';
 
@@ -98,10 +126,10 @@ let editor = {
 	_bindEvtAddComponent: function() {
 		const domID = GenerateID();
 		const targetComponentPointer = this.getAttribute('data-ui-label');
-		const isAddingFromTab = this.closest('.canvas-add-subcontent');
-		const ckeditorBindToElem = ContentBlocks.elems[targetComponentPointer].ckeditorBindToElem;
+		// const ckeditorBindToElem = ContentBlocks.elems[targetComponentPointer].ckeditorBindToElem;
 
-    let contentData = {};
+    let contentData = {}; // Internal data placeholder
+    let removeBtn;
 
 		UserInterfaceBuilder.render('content', {
 			id: domID,
@@ -109,60 +137,20 @@ let editor = {
 			data: ContentBlocks.elems[targetComponentPointer],
 			trigger: this,
 			callback: function(displayToolboxButtons) {
-				let containerID;
-        const targetSnippetContainer = document.getElementById('snippet-' + domID);
-				const attachAttributesForCKEDITOR = (id,headerClass,bodyClass) => {
-					const targetContentHeading = document.querySelector('#snippet-' + id + ' .' + headerClass),
-								targetContentBody = document.querySelector('#snippet-' + id + ' .' + bodyClass);
-
-					targetContentHeading.contentEditable = true;
-					targetContentBody.contentEditable = true;
-
-					targetContentHeading.onblur = editor._bindEvtHeaderInput;
-					targetContentBody.id = 'contentEditableBody-' + id;
-				};
-
-				if (targetComponentPointer == 'blockQuotes') {
-					attachAttributesForCKEDITOR(domID,'blockquote-content-header','blockquote-content-body');
-					document.querySelector('[data-target="snippet-'+ domID +'"]').onchange = editor._bindEvtSelectionDropdown;
-				}
-
-				if (targetComponentPointer == 'wellContainer') {
-					attachAttributesForCKEDITOR(domID,'well-heading','well-body');				
-				}
-
-				if (targetComponentPointer == 'genericTabs') {
-					const targetTabContent = targetSnippetContainer.querySelectorAll('.tab-content');
-					targetTabContent.forEach(function(targtTab,y){
-						const targetTabID = targtTab.getAttribute('id');
-						editor.init_sortable({
-							container: document.getElementById(targetTabID),
-							contentDraggableClass: '.canvasDraggableSub_' + targetTabID
-						});
-					});
-				}
-
-				if (targetComponentPointer == 'styledLists' || targetComponentPointer == 'textEditor') {
-					targetSnippetContainer.contentEditable = true;
-				}
-
-				if (ckeditorBindToElem !== 'none') {
-					const containerID = ckeditorBindToElem == 'content' ? 'contentEditableBody-'+ domID : 'snippet-'+ domID;
-					editor.init_ckeditor({
-						container: containerID,
-						value: ContentBlocks.elems[targetComponentPointer].template(),
-						config: ContentBlocks.elems[targetComponentPointer].ckeditorConfig
-					});
-				}
+        editor.handleEditEventsToDOM(domID,targetComponentPointer);
 
         displayToolboxButtons.forEach(function(btn,index){
           btn.onclick = editor._bindEvtDisplayToolbox;
         });
 
+        removeBtn = document.querySelector('[data-action="remove-component"][data-target="'+ domID +'"]');
+        removeBtn.onclick = editor._bindEvtRemoveComponent;
+
+        // Internal data placeholder
         contentData['id'] = domID;
         contentData['type'] = targetComponentPointer;
 
-				editor.existing_data.push(contentData);
+				editor.existing_data.push(contentData); 
 			}
 		});
 
@@ -171,6 +159,8 @@ let editor = {
 			dependencies: [],
 			trigger: 'user'
 		});
+
+		editor.togglePageButtons();
 	},
 	_bindEvtSelectionDropdown: function() {
 		const selectedStyle = this.value;
@@ -182,6 +172,84 @@ let editor = {
 	},
 	_bindEvtHeaderInput: function() {
 		if (this.textContent == '') this.textContent = 'Click here to edit heading';
+	},
+	_bindEvtRemoveComponent: function() {
+		const id = this.getAttribute('data-target'),
+					type = this.getAttribute('data-target-type'),
+					container = document.getElementById('canvasContainer'),
+					targetElem = document.getElementById(id);
+
+		for (let i = 0; i <= editor.existing_data.length - 1; i++) {
+			if (editor.existing_data[i].id === id) {
+				editor.existing_data.splice(i,1);
+				break;
+			}
+		}
+
+		// TODO
+		const toolbox = document.getElementById('toolbox');
+		toolbox.classList.remove('in');
+		toolbox.style.display = 'block';
+
+		this.parentElement.appendChild(toolbox);
+		// TODO
+
+		container.removeChild(targetElem);
+
+		console.log(editor.existing_data);
+	},
+	togglePageButtons: function() {
+		editor.btnPreview.style.display = editor.existing_data.length == 0 ? 'none' : 'initial';
+		editor.btnSave.style.display = editor.existing_data.length == 0 ? 'none' : 'initial';
+	},
+	handleEditEventsToDOM: function(domID,targetComponentPointer) {
+		let contentEditorContainerID;
+    const targetSnippetContainer = document.getElementById('snippet-' + domID);
+		const ckeditorBindToElem = ContentBlocks.elems[targetComponentPointer].ckeditorBindToElem;
+
+		const attachAttributesForCKEDITOR = (id,headerClass,bodyClass) => {
+			const targetContentHeading = document.querySelector('#snippet-' + id + ' .' + headerClass),
+						targetContentBody = document.querySelector('#snippet-' + id + ' .' + bodyClass);
+
+			targetContentHeading.contentEditable = true;
+			targetContentBody.contentEditable = true;
+
+			targetContentHeading.onblur = editor._bindEvtHeaderInput;
+			targetContentBody.id = 'contentEditableBody-' + id;
+		};
+
+		if (targetComponentPointer == 'blockQuotes') {
+			attachAttributesForCKEDITOR(domID,'blockquote-content-header','blockquote-content-body', editor._bindEvtHeaderInput);
+			document.querySelector('[data-target="snippet-'+ domID +'"]').onchange = editor._bindEvtSelectionDropdown;
+		}
+
+		if (targetComponentPointer == 'wellContainer') {
+			attachAttributesForCKEDITOR(domID,'well-heading','well-body',editor._bindEvtHeaderInput);				
+		}
+
+		if (targetComponentPointer == 'genericTabs') {
+			const targetTabContent = targetSnippetContainer.querySelectorAll('.tab-content');
+			targetTabContent.forEach(function(targtTab,y){
+				const targetTabID = targtTab.getAttribute('id');
+				editor.init_sortable({
+					container: document.getElementById(targetTabID),
+					contentDraggableClass: '.canvasDraggableSub_' + targetTabID
+				});
+			});
+		}
+
+		if (targetComponentPointer == 'styledLists' || targetComponentPointer == 'textEditor') {
+			targetSnippetContainer.contentEditable = true;
+		}
+
+		if (ckeditorBindToElem !== 'none') {
+			const contentEditorContainerID = ckeditorBindToElem == 'content' ? 'contentEditableBody-'+ domID : 'snippet-'+ domID;
+			editor.init_ckeditor({
+				container: contentEditorContainerID,
+				value: ContentBlocks.elems[targetComponentPointer].template(),
+				config: ContentBlocks.elems[targetComponentPointer].ckeditorConfig
+			});
+		}
 	},
 	init_sortable: function(config) {
 		const sortableConfig = {
@@ -214,29 +282,71 @@ let editor = {
 	generate_html: function() {
 		editor.outputPane.style.display = 'block';
 
-		const contentBlocksDom = document.querySelectorAll('#canvasContainer > .canvas-content-block');
-		let htmlOutputString = '';
-		let htmlData = [];
+		let contentBlocksDom,
+				hiddenInput,
+				contentEditables,
+				htmlOutputString = '',
+				htmlData = [];
+
+		const createMetadata = (componentType, htmlOutputString, elemChild) => {
+			if (componentType == 'genericTabs') {
+				return { subnodes: [], html: '' };
+			}
+			else {
+				if (componentType == 'wellContainer' || componentType == 'blockQuotes') {
+					const heading = NormaliseHTMLString(elemChild.querySelector('h5').textContent);
+					const body =  NormaliseHTMLString(elemChild.querySelector('.cke_editable').innerHTML);
+					return { html: htmlOutputString, variables: [heading,body] };
+				}
+				else {
+					return { html: htmlOutputString };
+				}
+			}
+		};
+
+		const extractHTMLFromInnerCKEDITABLE = (elemChild) => {
+			let contentEditableBodySnippetHTML;
+			const clone = elemChild.cloneNode(true),
+						contentEditableBodySnippet = clone.querySelector('.cke_editable'),
+						contentEditableBodySnippetClassName = contentEditableBodySnippet.classList[0],
+						contentEditableBodySnippetData = extractHTML(contentEditableBodySnippet);
+
+			contentEditableBodySnippet.remove();
+			contentEditableBodySnippetHTML = `<div class="${contentEditableBodySnippetClassName}">${contentEditableBodySnippetData}</div>`;
+			clone.lastElementChild.insertAdjacentHTML('beforeend',contentEditableBodySnippetHTML);
+			return clone.outerHTML;
+		};
+
+		const extractHTML = (snippet) => {
+			if (snippet.classList.contains('cke_editable')) {
+				const ckeditorInstance = snippet.getAttribute('id');
+				return CKEDITOR.instances[ckeditorInstance].getData();
+			}
+			else {
+				return snippet.innerHTML;
+			}
+		};
 
 		if (editor.existing_data.length > 0) {
+			contentBlocksDom = document.querySelectorAll('#canvasContainer > .canvas-content-block');
 			contentBlocksDom.forEach((block,b_index) => {
-				const snippet = block.querySelector('.canvas-content-snippet');
-				const type = snippet.getAttribute('data-component-type');
-				const id = block.getAttribute('id');
-				const elemChild = snippet.firstElementChild;
+				const snippet = block.querySelector('.canvas-content-snippet'),
+							type = snippet.getAttribute('data-component-type'),
+							id = block.getAttribute('id'),
+							elemChild = snippet.firstElementChild;
 
 				let metadata = {};
 
-				const newContentObj = function(type, id, data) {
+				const newContentObj = (type, id, data) => {
 					return { type: type, id: id, metadata: data };
 				};
 
-				const newTabObj = function(label,id) {
+				const newTabObj = (label,id) => {
 					return { label: label, id: id, content: [] };
 				};
 
 				if (elemChild.classList.contains('tabs')) {
-					const tabsContent = elemChild.querySelectorAll('.tab-content');
+					let tabsContent;
 					let tabsHTML = `<div class="tabs">`;
 
 					tabsHTML += snippet.firstElementChild.firstElementChild.innerHTML;
@@ -245,20 +355,20 @@ let editor = {
 					metadata = createMetadata(type,elemChild);
 					htmlData.push(newContentObj(type, id, metadata));
 
+					tabsContent = elemChild.querySelectorAll('.tab-content');
 					tabsContent.forEach((tabcontent,tc_index) => {
 						let tabContentBlocksHTML = ``;
-						const tabContentBlocks = tabcontent.querySelectorAll('.canvas-content-block');
-						const tabSnippets = tabcontent.querySelectorAll('.canvas-content-block .canvas-content-snippet');
-						const tabId = tabcontent.getAttribute('id').split('tab-')[1];
-						const tabLabel = document.querySelector('.tab-item-link[data-target="tab-'+ tabId +'"]').textContent;
-
+						const tabContentBlocks = tabcontent.querySelectorAll('.canvas-content-block'),
+									tabSnippets = tabcontent.querySelectorAll('.canvas-content-block .canvas-content-snippet'),
+									tabId = tabcontent.getAttribute('id').split('tab-')[1],
+									tabLabel = document.querySelector('.tab-item-link[data-target="tab-'+ tabId +'"]').textContent;
 
 						htmlData[b_index].metadata.subnodes.push(newTabObj(tabLabel,tabId));
 
 						tabSnippets.forEach((tabSnippet,ts_index) => {
-							const elemSubChild = tabSnippet.firstElementChild;
-							const subchildType = tabSnippet.getAttribute('data-component-type');
-							const subchildID = tabContentBlocks[ts_index].getAttribute('id');
+							const elemSubChild = tabSnippet.firstElementChild,
+										subchildType = tabSnippet.getAttribute('data-component-type'),
+										subchildID = tabContentBlocks[ts_index].getAttribute('id');
 
 							const _tabContentBlocksHTML = (elemSubChild.classList.contains('blockquote') || elemSubChild.classList.contains('well')) ?
 								extractHTMLFromInnerCKEDITABLE(elemSubChild) : extractHTML(tabSnippet);
@@ -274,17 +384,17 @@ let editor = {
 
 					htmlData[b_index].metadata.html = tabsHTML;
 					htmlOutputString += tabsHTML + `</div>`;
-
 				}
 				else {
 					let _htmlOutputString;
 
 					// Get data if an element has a heading and a body
-					if (elemChild.classList.contains('blockquote') || elemChild.classList.contains('well')) {
-						_htmlOutputString = NormaliseHTMLString(extractHTMLFromInnerCKEDITABLE(elemChild));
-						const _heading = NormaliseHTMLString(elemChild.querySelector('h5').textContent);
-						const _body =  NormaliseHTMLString(elemChild.querySelector('.cke_editable').innerHTML);
+					if (elemChild.classList.contains('blockquote') || 
+							elemChild.classList.contains('well')) {
+						const _heading = NormaliseHTMLString(elemChild.querySelector('h5').textContent),
+									_body =  NormaliseHTMLString(elemChild.querySelector('.cke_editable').innerHTML);
 
+						_htmlOutputString = NormaliseHTMLString(extractHTMLFromInnerCKEDITABLE(elemChild));
 						metadata = createMetadata(type,_htmlOutputString,elemChild);
 						htmlOutputString += _htmlOutputString;
 					}
@@ -300,56 +410,15 @@ let editor = {
 			});
 		}
 
-		const hiddenInput = htmlData.length > 0 ? `<textarea style="display: none;">${ JSON.stringify(htmlData)}</textarea>` : ``;
+		hiddenInput = htmlData.length > 0 ? `<textarea style="display: none;">${ JSON.stringify(htmlData)}</textarea>` : ``;
 
 		editor.htmlSection.innerHTML = editor.existing_data.length > 0 ? htmlOutputString : '<strong>Nothing to display here.</strong>';
 		editor.sourceSection.value = editor.htmlSection.innerHTML + hiddenInput;
 
-		const contentEditableBlockquoteHeadings = document.querySelectorAll('#outputContainer .blockquote-content-header');
-		contentEditableBlockquoteHeadings.forEach((heading,h_index) => {
+		contentEditables = document.querySelectorAll('#outputContainer *[contenteditable="true"]');
+		contentEditables.forEach((heading,h_index) => {
 			heading.removeAttribute('contenteditable');
 		});
-
-		function createMetadata(componentType, htmlOutputString, elemChild) {
-			if (componentType == 'genericTabs') {
-				return { subnodes: [], html: '' };
-			}
-			else {
-				if (componentType == 'wellContainer' || componentType == 'blockQuotes') {
-					const heading = NormaliseHTMLString(elemChild.querySelector('h5').textContent);
-					const body =  NormaliseHTMLString(elemChild.querySelector('.cke_editable').innerHTML);
-					return { html: htmlOutputString, variables: [heading,body] };
-				}
-				else {
-					return { html: htmlOutputString };
-				}
-			}
-		}
-
-		function extractHTMLFromInnerCKEDITABLE(elemChild) {
-			const clone = elemChild.cloneNode(true);
-			const contentEditableBodySnippet = clone.querySelector('.cke_editable');
-			const contentEditableBodySnippetClassName = contentEditableBodySnippet.classList[0];
-			const contentEditableBodySnippetData = extractHTML(contentEditableBodySnippet);
-			contentEditableBodySnippet.remove();
-
-			const contentEditableBodySnippetHTML = `
-				<div class="${contentEditableBodySnippetClassName}">${contentEditableBodySnippetData}</div>`;
-
-			clone.lastElementChild.insertAdjacentHTML('beforeend',contentEditableBodySnippetHTML);
-
-			return clone.outerHTML;
-		}
-
-		function extractHTML(snippet) {
-			if (snippet.classList.contains('cke_editable')) {
-				const ckeditorInstance = snippet.getAttribute('id');
-				return CKEDITOR.instances[ckeditorInstance].getData();
-			}
-			else {
-				return snippet.innerHTML;
-			}
-		}
 
 		console.log(htmlData);
 	},

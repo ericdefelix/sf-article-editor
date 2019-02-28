@@ -20,8 +20,8 @@ const webpage = {
 	},
 	listeners: function() {
 		const btnAdvancedEditor = document.querySelectorAll('.cke_button__advancededitor');
+		
 		btnAdvancedEditor.forEach(function(elem,index) {
-
 			const ckeditorProxyInstanceId = GetClosestParent(elem,'.cke').getAttribute('id');
 			const ckeditorInstanceId = ckeditorProxyInstanceId.substring(4);
 

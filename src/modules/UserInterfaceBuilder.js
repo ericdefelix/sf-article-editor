@@ -82,9 +82,8 @@ module.exports = {
                     id: snode.content[y].id,
                     data: ContentBlocks.elems[snode.content[y].type]
                   };
-                  const tabContentElemHTML = ContentBlocks.elems[snode.content[y].type].template();
 
-                  console.log(snode.id);
+                  const tabContentElemHTML = ContentBlocks.elems[snode.content[y].type].template();
                   snodeChildrenHTML += module.exports.renderContentBlock(tabContentObj, tabContentElemHTML, snode.id);
                 }
               }
@@ -107,24 +106,35 @@ module.exports = {
   	}
   },
   content: function(obj) {
-  	const triggerParent = obj.trigger.closest('.canvas-content-block');
-  	const dataContent = triggerParent.getAttribute('data-content');
-  	const isTabContent = document.getElementById('toolbox').previousElementSibling.classList.contains('forTabs');
-    const elementTemplate = obj.data.template();
+  	const triggerParent = obj.trigger.closest('.canvas-content-block'),
+  	      dataContent = triggerParent.getAttribute('data-content'),
+  	      isTabContent = document.getElementById('toolbox')
+            .previousElementSibling
+            .classList
+            .contains('forTabs'),
+          elementTemplate = obj.data.template();
 
-    const tabContentIn = triggerParent.querySelector('.tab-content.in');
-    const tabContentId = tabContentIn === null ? undefined : tabContentIn.getAttribute('id');
+    const displayToolboxButtons = () => {
+      const btns = document.querySelectorAll('#' + obj.id + ' .canvas-add-component [data-action="select-component"]');
+      return btns;
+    };
 
-    const tmpl = module.exports.renderContentBlock(obj,elementTemplate,tabContentId);
+    let tmpl, tabContentId, toolboxBtns;
 
     if (dataContent === 'empty') {
+      tmpl = module.exports.renderContentBlock(obj,elementTemplate,undefined);
       this.canvasContainer.insertAdjacentHTML('beforeend', tmpl);
     }
     else {
       if (!isTabContent) {
+        tmpl = module.exports.renderContentBlock(obj,elementTemplate,undefined);
         triggerParent.insertAdjacentHTML('afterend',tmpl);
       }
       else {
+        const tabContentIn = triggerParent.querySelector('.tab-content.in'),
+              tabContentId = tabContentIn.getAttribute('id');
+
+        tmpl = module.exports.renderContentBlock(obj,elementTemplate,tabContentId);
         const subContent = triggerParent.querySelector('.tab-content.in');
         const tabParentId = subContent.getAttribute('id');
         subContent.childNodes.length == 0 ? 
@@ -132,14 +142,8 @@ module.exports = {
       }
     }
 
-    const btns = displayToolboxButtons();
-    obj.callback(btns);
-
-    // Fxns
-		function displayToolboxButtons() {
-			const btns = document.querySelectorAll('#' + obj.id + ' .canvas-add-component [data-action="select-component"]');
-			return btns;
-		}
+    toolboxBtns = displayToolboxButtons();
+    obj.callback(toolboxBtns);
   },
   renderContentBlock: function(obj,elementTemplate,tabContentId) {
     const tmpl = `
@@ -149,7 +153,9 @@ module.exports = {
           ${typeof tabContentId === 'undefined' ? `canvasDraggableMain` : `canvasDraggableSub_` + 
             tabContentId }"></span>
         ${obj.data.hasOwnProperty('types') ? module.exports.renderOptions(obj) : ''}
-        <button class="canvas-btn canvas-btn-xs" data-target="${obj.id}">
+        <button class="canvas-btn canvas-btn-xs" 
+          data-action="remove-component"
+          data-target="${obj.id}" data-target-type="${obj.type}">
           <i class="icon-delete"></i> Remove
         </button>
       </div>
@@ -157,8 +163,9 @@ module.exports = {
         ${elementTemplate}
       </div>
       ${ obj.data.hasChildContent ? module.exports.renderAddSubContent() : `` }
-      ${ typeof tabContentId === 'undefined' ?  module.exports.renderAddMainContent() : ''}
+      ${ (typeof tabContentId === 'undefined') ? module.exports.renderAddMainContent() : `` }
     </section>`;
+
     return tmpl;
   },
   renderOptions: function(obj) {
