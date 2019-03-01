@@ -186,17 +186,12 @@ let editor = {
 			}
 		}
 
-		// TODO
 		const toolbox = document.getElementById('toolbox');
 		toolbox.classList.remove('in');
 		toolbox.style.display = 'block';
 
-		this.parentElement.appendChild(toolbox);
-		// TODO
-
+		container.appendChild(toolbox);
 		container.removeChild(targetElem);
-
-		console.log(editor.existing_data);
 	},
 	togglePageButtons: function() {
 		editor.btnPreview.style.display = editor.existing_data.length == 0 ? 'none' : 'initial';
@@ -269,6 +264,7 @@ let editor = {
 		new Sortable(config.container, sortableConfig);
 	},
 	init_ckeditor: function(ckeditorAppConfig) {
+		// console.log(ckeditorAppConfig);
     CKEDITOR.inline(ckeditorAppConfig.container, ckeditorAppConfig.config);
 	},
 	html_view: function() {
@@ -410,7 +406,7 @@ let editor = {
 			});
 		}
 
-		hiddenInput = htmlData.length > 0 ? `<textarea style="display: none;">${ JSON.stringify(htmlData)}</textarea>` : ``;
+		hiddenInput = htmlData.length > 0 ? `<!––[data] ${ JSON.stringify(htmlData)} [/data]-->` : ``;
 
 		editor.htmlSection.innerHTML = editor.existing_data.length > 0 ? htmlOutputString : '<strong>Nothing to display here.</strong>';
 		editor.sourceSection.value = editor.htmlSection.innerHTML + hiddenInput;

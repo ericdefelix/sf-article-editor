@@ -3,6 +3,7 @@
   "name": "Salesforce Knowledge Article Content Block Manager",
   "author": "Eric De Felix",
   "version": "1.0",
+  "minimum_chrome_version": "46",
   "description": "Inject custom code for CKEDITOR in Salesforce Knowledge Article Edit",
   "page_action": {
     "default_icon": {
@@ -24,8 +25,9 @@
     "webNavigation",
     "*://*/*"
   ],
-  "content_security_policy": "script-src 'self' https://cdn.ckeditor.com; object-src 'self'",
+  "content_security_policy": "script-src 'self' 'https://cdn.ckeditor.com'; object-src 'self'",
   "web_accessible_resources": [
+    "https://cdn.ckeditor.com",
     "https://cdn.ckeditor.com/4.11.2/standard-all/ckeditor.js",
     "/modules/utils/chromeExtensionUtils.js",
     "webpage.js",

@@ -20,39 +20,21 @@ module.exports = {
     const ContentBlocks = obj.dependencies[0];
     const replaceStr = obj.dependencies[1];
 
-  	if (triggerBy == 'auto') {
-			let canvasInitHTML = '';
-			canvasInitHTML = elementCount > 0 ? renderExistingData() : renderEmptyState();
-			this.canvasContainer.innerHTML = canvasInitHTML;
-			obj.callback();
-  	}
+    const renderEmptyState = () => {
+      const tmpl = `
+      <section class="canvas-content-block" data-content="empty"> 
+        <img src="images/empty-icon.svg" alt="Empty">
+        <h4 class="empty-text">There's nothing in here.<br><small>Start building your content.</small></h4>
+        <div class="canvas-add-component">
+          <button type="button" class="canvas-btn canvas-btn-primary" data-action="select-component">
+            Add Content Block
+          </button>
+        </div>
+      </section>`;
+      return tmpl;
+    };
 
-  	if (triggerBy == 'user') {
-  		if (elementCount == 1) {
-  			const emptyStateContainer = document.querySelectorAll('[data-content="empty"]');
-  			const toolbox = document.getElementById('toolbox');
-
-  			toolbox.parentNode.removeChild(toolbox);
-  			this.canvasContainer.removeChild(emptyStateContainer[0]);
-  			this.canvasContainer.appendChild(toolbox);
-  		}
-  	}
-
-  	function renderEmptyState() {
-  		const tmpl = `
-  		<section class="canvas-content-block" data-content="empty"> 
-				<img src="images/empty-icon.svg" alt="Empty">
-				<h4 class="empty-text">There's nothing in here.<br><small>Start building your content.</small></h4>
-				<div class="canvas-add-component">
-					<button type="button" class="canvas-btn canvas-btn-primary" data-action="select-component">
-						Add Content Block
-					</button>
-				</div>
-			</section>`;
-			return tmpl;
-  	}
-
-  	function renderExistingData() {
+    const renderExistingData = () => {
       let tmpl = ``;
       try {
         for (let i = 0; i <= data.length - 1; i++) {
@@ -102,7 +84,25 @@ module.exports = {
         console.log('ContentBlocks module is missing');
       }
 
-  		return tmpl;
+      return tmpl;
+    };
+
+  	if (triggerBy == 'auto') {
+			let canvasInitHTML = '';
+			canvasInitHTML = elementCount > 0 ? renderExistingData() : renderEmptyState();
+			this.canvasContainer.innerHTML = canvasInitHTML;
+			obj.callback();
+  	}
+
+  	if (triggerBy == 'user') {
+  		if (elementCount == 1) {
+  			const emptyStateContainer = document.querySelectorAll('[data-content="empty"]');
+  			const toolbox = document.getElementById('toolbox');
+
+  			toolbox.parentNode.removeChild(toolbox);
+  			this.canvasContainer.removeChild(emptyStateContainer[0]);
+  			this.canvasContainer.appendChild(toolbox);
+  		}
   	}
   },
   content: function(obj) {
