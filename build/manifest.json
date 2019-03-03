@@ -25,10 +25,11 @@
     "webNavigation",
     "*://*/*"
   ],
-  "content_security_policy": "script-src 'self' 'https://cdn.ckeditor.com'; object-src 'self'",
+  "content_security_policy": "script-src 'self' https://cdnjs.cloudflare.com ;object-src 'self'",
   "web_accessible_resources": [
     "https://cdn.ckeditor.com",
-    "https://cdn.ckeditor.com/4.11.2/standard-all/ckeditor.js",
+    "https://cdnjs.cloudflare.com/ajax/libs/tinymce/4.9.2/tinymce.min.js",
+    "https://cdnjs.cloudflare.com/ajax/libs/tinymce/",
     "/modules/utils/chromeExtensionUtils.js",
     "webpage.js",
     "editor.js",
