@@ -269,10 +269,20 @@ let editor = {
     },
     init_ckeditor: function(ckeditorAppConfig) {
         // console.log(ckeditorAppConfig);
+        let config = {};
+
         tinymce.init({
           selector: '#' + ckeditorAppConfig.container,  // change this value according to your HTML
-          inline: true
+          inline: true,
+          menubar: false,
+          plugins: 'lists link image table',
+          toolbar: 'undo redo | formatselect | bold italic strikethrough | alignleft aligncenter alignright alignjustify | link image table | numlist bullist',
+          default_link_target: "_blank"
         });
+
+        //for lists
+        // plugins: 'lists link',
+        // toolbar: 'undo redo | numlist bullist | link | bold italic strikethrough',
         // CKEDITOR.inline(ckeditorAppConfig.container, ckeditorAppConfig.config);
     },
     html_view: function() {
