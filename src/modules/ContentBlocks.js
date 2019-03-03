@@ -9,8 +9,11 @@ module.exports = {
 				return tmpl;
 			},
 			hasChildContent: false,
-			ckeditorBindToElem: 'container',
-			ckeditorConfig: {}
+			contentEditorBindToElem: 'container',
+			contentEditorConfig: {
+        plugins: 'lists link image table',
+        toolbar: 'undo redo | formatselect | bold italic strikethrough | alignleft aligncenter alignright alignjustify | link image table | numlist bullist',
+			}
 		},
 		'styledLists' : {
 			ui_label: 'Styled Lists',
@@ -26,50 +29,10 @@ module.exports = {
 				return tmpl;
 			},
 			hasChildContent: false,
-			ckeditorBindToElem: 'container',
-			ckeditorConfig: {
-				toolbar: [
-					{ name: 'clipboard', items: [ 'Cut', 'Copy', 'Paste', 'PasteFromWord', '-', 'Undo', 'Redo' ] },
-					{ name: 'basicstyles', items: [ 'Bold', 'Italic', 'Underline', 'Strike', 'Subscript', 'Superscript' ] },
-					{ name: 'paragraph', items: [ 'NumberedList', 'BulletedList'] },
-					{ name: 'links', items: [ 'Link', 'Unlink' ] }
-				],
-				copyFormatting_allowRules: false,
-	    	extraAllowedContent: 'ol(list-bullet-circular);ul(list-bullet-circular)',
-	    	disaAllowedContent: 'h1 h2 h3 h4 p span blockquote img embed',
-	    	on: {
-		  		instanceReady: function(evt) {
-				    evt.editor.on('beforeCommandExec', function(event){
-				    	for (key in event.data) {
-				    		if (key === 'name') {
-				    			const name = event.data[key];
-									if(name == 'bulletedlist' || name == 'numberedlist') {
-										const editor = evt.editor;
-										editor.focus();
-										editor.document.$.execCommand('SelectAll', false, null);
-									}
-				    		}
-				    	}
-			      }, null, null, 100);
-
-			      evt.editor.on('afterCommandExec', function(event){
-				    	for (key in event.data) {
-				    		if (key === 'name') {
-				    			const name = event.data[key];
-									if(name == 'bulletedlist' || name == 'numberedlist') {
-										const listParent = evt.editor.getSelection().getStartElement().getParent().$;
-										const lpNodeName = listParent.nodeName;
-
-										if (lpNodeName === 'OL' || lpNodeName === 'UL') {
-											listParent.classList.add('list-bullet-circular');
-											// evt.editor.getSelection().removeAllRanges();
-										}
-									}
-				    		}
-				    	}
-			      }, null, null, 100);
-		  		}
-	    	}
+			contentEditorBindToElem: 'container',
+			contentEditorConfig: {
+				plugins: 'lists link',
+				toolbar: 'undo redo | numlist bullist | link | bold italic strikethrough',
 			}
 		},
 		'blockQuotes' : {
@@ -111,14 +74,10 @@ module.exports = {
 				return tmpl;
 			},
 			hasChildContent: false,
-			ckeditorBindToElem: 'content',
-			ckeditorConfig: {
-				toolbar: [
-					{ name: 'clipboard', items: [ 'Cut', 'Copy', 'Paste', 'PasteFromWord', '-', 'Undo', 'Redo' ] },
-					{ name: 'basicstyles', items: [ 'Bold', 'Italic', 'Underline', 'Strike', 'Subscript', 'Superscript', '-', 'CopyFormatting', 'RemoveFormat' ] },
-					{ name: 'links', items: [ 'Link', 'Unlink' ] }
-				],
-	    	disaAllowedContent: 'h1 h2 h3 h4 p span blockquote img embed'
+			contentEditorBindToElem: 'content',
+			contentEditorConfig: {
+        plugins: 'link image table',
+        toolbar: 'undo redo | formatselect | bold italic strikethrough | alignleft aligncenter alignright alignjustify | link image table',
 			}
 		},
 		'wellContainer' : {
@@ -133,14 +92,10 @@ module.exports = {
 				return tmpl;
 			},
 			hasChildContent: false,
-			ckeditorBindToElem: 'content',
-			ckeditorConfig: {
-				toolbar: [
-					{ name: 'clipboard', items: [ 'Cut', 'Copy', 'Paste', 'PasteFromWord', '-', 'Undo', 'Redo' ] },
-					{ name: 'basicstyles', items: [ 'Bold', 'Italic', 'Underline', 'Strike', 'Subscript', 'Superscript', '-', 'CopyFormatting', 'RemoveFormat' ] },
-					{ name: 'links', items: [ 'Link', 'Unlink' ] }
-				],
-	    	disaAllowedContent: 'h1 h2 h3 h4 p span blockquote img embed'
+			contentEditorBindToElem: 'content',
+			contentEditorConfig: {
+        plugins: 'link image table',
+        toolbar: 'undo redo | formatselect | bold italic strikethrough | alignleft aligncenter alignright alignjustify | link image table',
 			}
 		},
 		'genericTabs' : {
@@ -180,7 +135,7 @@ module.exports = {
 
 				return tmpl;
 			},
-			ckeditorBindToElem: 'none',
+			contentEditorBindToElem: 'none',
 			hasChildContent: true
 		}
 	},
