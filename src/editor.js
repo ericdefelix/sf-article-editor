@@ -212,7 +212,7 @@ let editor = {
     toolbox.style.display = 'block';
 
     container.appendChild(toolbox);
-    container.removeChild(targetElem);
+    targetElem.remove();
   },
   togglePageButtons: function() {
     editor.btnPreview.style.display = editor.existing_data.length == 0 ? 'none' : 'initial';
