@@ -39,10 +39,9 @@ let editor = {
             .querySelector('body')
             .insertAdjacentHTML('beforeend','<div id="placeholderHTML" style="display: none;">'+ objLocalStorage.instanceHTML +'</div>');
 
-          const str = document.getElementById('placeholderHTML').querySelector('pre').textContent;
-          const strToArray = JSON.parse(DecodeHTMLString(str));
+          const pre = document.getElementById('placeholderHTML').querySelector('pre');
 
-          editor.existing_data = strToArray.length === 0 ? [] : strToArray;
+          editor.existing_data = typeof pre === 'null' ? [] : JSON.parse(DecodeHTMLString(pre.textContent));
 
           editor.start_app();
           console.log(editor.existing_data);
