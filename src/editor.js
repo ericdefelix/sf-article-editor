@@ -2,7 +2,9 @@ import './editor.scss';
 import {
   GetClosestParent,
   GenerateID,
-  NormaliseHTMLString
+  NormaliseHTMLString,
+  DecodeHTMLString,
+  EncodeHTMLString
 } from './modules/utils/chromeExtensionUtils';
 import ContentBlocks from './modules/ContentBlocks';
 import UserInterfaceBuilder from './modules/UserInterfaceBuilder';
@@ -20,32 +22,45 @@ let editor = {
   btnClose: document.getElementById('btnCloseOutputContainer'),
   toggleView: document.getElementById('outputContainerToggleView'),
   existing_data: [],
+  html_data_json: '',
   toolbox: undefined,
   init: function() {
     try {
       window.chrome.storage.sync.get(['ckeditorInstanceId'], function(objLocalStorage) {
         editor.ckeditorInstanceId = objLocalStorage.ckeditorInstanceId;
-        editor.instanceHTML = objLocalStorage.instanceHTML;
         editor.btnSave.setAttribute('data-target', editor.ckeditorInstanceId);
       });
 
-      editor.crxID = window.chrome.runtime.id;
+      window.chrome.storage.sync.get(['instanceHTML'], function(objLocalStorage) {
+        const ih = objLocalStorage.instanceHTML;
+        if (ih !== '' || typeof ih !== 'undefined') {
+          document
+            .querySelector('body')
+            .insertAdjacentHTML('beforeend','<div id="placeholderHTML" style="display: none;">'+ objLocalStorage.instanceHTML +'</div>');
+
+          const str = document.getElementById('placeholderHTML').querySelector('pre').textContent;
+          const strToArray = JSON.parse(DecodeHTMLString(str));
+
+          editor.existing_data = strToArray.length === 0 ? [] : strToArray;
+
+          editor.build_ui();
+          editor.init_sortable({
+              container: document.getElementById('canvasContainer'),
+              contentDraggableClass: '.canvasDraggableMain'
+          });
+
+          editor.btnPreview.onclick = editor.generate_html;
+          editor.btnSave.onclick = editor.save_html;
+          editor.toggleView.onchange = editor.html_view;
+          editor.btnClose.onclick = editor.close_preview;
+
+          editor.crxID = window.chrome.runtime.id;
+        }
+      });
     } catch (e) {
       console.log('Attempting to do a chrome api method. You are in stand-alone mode');
     } finally {
-      // editor.existing_data = [];
-      editor.existing_data = editor.sourceSection.value == '' ? [] : JSON.parse(editor.sourceSection.value);
 
-      this.build_ui();
-      this.init_sortable({
-          container: document.getElementById('canvasContainer'),
-          contentDraggableClass: '.canvasDraggableMain'
-      });
-
-      editor.btnPreview.onclick = editor.generate_html;
-      editor.btnSave.onclick = editor.save_html;
-      editor.toggleView.onchange = editor.html_view;
-      editor.btnClose.onclick = editor.close_preview;
     }
   },
   build_ui: function() {
@@ -93,8 +108,8 @@ let editor = {
             if (elem.getAttribute('data-content') !== 'empty') {
               const domID = elem.getAttribute('id');
               const targetComponentPointer = elem
-                  .querySelector('.canvas-content-snippet')
-                  .getAttribute('data-component-type');
+                .querySelector('.canvas-content-snippet')
+                .getAttribute('data-component-type');
 
               editor.handleEditEventsToDOM(domID, targetComponentPointer);
             }
@@ -105,7 +120,7 @@ let editor = {
         document.addEventListener('click', function(event) {
           const parent = GetClosestParent(event.target, '.canvas-add-component');
           if (parent === null) {
-              toolbox.classList.remove('in');
+            toolbox.classList.remove('in');
           }
         }, false);
 
@@ -130,7 +145,6 @@ let editor = {
   _bindEvtAddComponent: function() {
     const domID = GenerateID();
     const targetComponentPointer = this.getAttribute('data-ui-label');
-    // const contentEditorBindToElem = ContentBlocks.elems[targetComponentPointer].contentEditorBindToElem;
 
     let contentData = {}; // Internal data placeholder
     let removeBtn;
@@ -293,7 +307,7 @@ let editor = {
     editor.outputPane.style.display = 'block';
 
     let contentBlocksDom,
-      hiddenInput,
+      hiddenData,
       contentEditables,
       htmlOutputString = '',
       htmlData = [];
@@ -314,7 +328,7 @@ let editor = {
       }
     };
 
-    const extractHTMLFromInnerCKEDITABLE = (elemChild) => {
+    const extractHTMLFromContentEditor = (elemChild) => {
       let contentEditableBodySnippetHTML;
       const clone = elemChild.cloneNode(true),
         contentEditableBodySnippet = clone.querySelector('.mce-content-body'),
@@ -381,7 +395,7 @@ let editor = {
                   subchildID = tabContentBlocks[ts_index].getAttribute('id');
 
               const _tabContentBlocksHTML = (elemSubChild.classList.contains('blockquote') || elemSubChild.classList.contains('well')) ?
-                  extractHTMLFromInnerCKEDITABLE(elemSubChild) : extractHTML(tabSnippet);
+                  extractHTMLFromContentEditor(elemSubChild) : extractHTML(tabSnippet);
 
               const submetadata = createMetadata(subchildType, _tabContentBlocksHTML, elemSubChild);
 
@@ -404,7 +418,7 @@ let editor = {
             const _heading = NormaliseHTMLString(elemChild.querySelector('h5').textContent),
               _body = NormaliseHTMLString(elemChild.querySelector('.mce-content-body').innerHTML);
 
-            _htmlOutputString = NormaliseHTMLString(extractHTMLFromInnerCKEDITABLE(elemChild));
+            _htmlOutputString = NormaliseHTMLString(extractHTMLFromContentEditor(elemChild));
             metadata = createMetadata(type, _htmlOutputString, elemChild);
             htmlOutputString += _htmlOutputString;
           }
@@ -420,16 +434,18 @@ let editor = {
       });
     }
 
-    hiddenInput = htmlData.length > 0 ? `<!––[data] ${ JSON.stringify(htmlData)} [/data]-->` : ``;
+    hiddenData = htmlData.length > 0 ? `<pre style="display: none; position: absolute;">${ EncodeHTMLString(JSON.stringify(htmlData))}</pre>` : ``;
 
     editor.htmlSection.innerHTML = editor.existing_data.length > 0 ? htmlOutputString : '<strong>Nothing to display here.</strong>';
-    editor.sourceSection.value = editor.htmlSection.innerHTML + hiddenInput;
+    editor.sourceSection.value = editor.htmlSection.innerHTML;
+    editor.html_data_json = hiddenData;
 
     contentEditables = document.querySelectorAll('#outputContainer *[contenteditable="true"]');
     contentEditables.forEach((heading, h_index) => {
       heading.removeAttribute('contenteditable');
     });
 
+    console.log(editor.html_data_json);
     console.log(htmlData);
   },
   save_html: function() {
@@ -441,7 +457,7 @@ let editor = {
       origin: window.location.origin,
       crxid: editor.crxID,
       data: {
-        html: editor.sourceSection.value,
+        html: editor.sourceSection.value + editor.html_data_json,
         ckeditorIntanceId: this.getAttribute('data-target')
       }
     };

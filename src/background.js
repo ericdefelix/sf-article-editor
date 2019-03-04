@@ -77,7 +77,6 @@ let background = {
             background.activeCkeditorInstances.push(request.data.ckeditorInstanceId);
           });
 
-          console.log(chrome.storage);
           chrome.storage.sync.set({ ckeditorInstanceId: request.data.ckeditorInstanceId });
           chrome.storage.sync.set({ instanceHTML: request.data.instanceHTML });
         });

@@ -62,6 +62,7 @@ const webpage = {
 			};
 
 			if (UrlContainsArticleEdit(window.location.href)) {
+				console.log(config);
 				window.postMessage(config, window.location.origin);
 			}
 		},

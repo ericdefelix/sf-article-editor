@@ -62,8 +62,20 @@ export function GetClosestParent(elem, selector) {
 };
 
 export function NormaliseHTMLString(str) {
-	return str.replace(/\r?\n|\r/g, ' ');
-	// return str.replace(/\s{2,10}/g, ' ');
+	// return str.replace(/\r?\n|\r/g, ' ');
+	return str.replace(/\s{2,10}/g, ' ');
+}
+
+export function DecodeHTMLString(str) {
+	return str
+					.replace(/&lt;/g,'<')
+					.replace(/&gt;/g,'>');
+}
+
+export function EncodeHTMLString(str) {
+	return str
+					.replace(/</g,'&lt;')
+					.replace(/>/g,'&gt;');
 }
 
 export function GenerateID() {
