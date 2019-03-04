@@ -29,6 +29,7 @@ let editor = {
       window.chrome.storage.sync.get(['ckeditorInstanceId'], function(objLocalStorage) {
         editor.ckeditorInstanceId = objLocalStorage.ckeditorInstanceId;
         editor.btnSave.setAttribute('data-target', editor.ckeditorInstanceId);
+        editor.crxID = window.chrome.runtime.id;
       });
 
       window.chrome.storage.sync.get(['instanceHTML'], function(objLocalStorage) {
@@ -43,25 +44,27 @@ let editor = {
 
           editor.existing_data = strToArray.length === 0 ? [] : strToArray;
 
-          editor.build_ui();
-          editor.init_sortable({
-              container: document.getElementById('canvasContainer'),
-              contentDraggableClass: '.canvasDraggableMain'
-          });
-
-          editor.btnPreview.onclick = editor.generate_html;
-          editor.btnSave.onclick = editor.save_html;
-          editor.toggleView.onchange = editor.html_view;
-          editor.btnClose.onclick = editor.close_preview;
-
-          editor.crxID = window.chrome.runtime.id;
+          editor.start_app();
+          console.log(editor.existing_data);
         }
       });
     } catch (e) {
+      editor.existing_data = [];
+      editor.start_app();
       console.log('Attempting to do a chrome api method. You are in stand-alone mode');
-    } finally {
-
     }
+  },
+  start_app: function() {
+    editor.build_ui();
+    editor.init_sortable({
+      container: document.getElementById('canvasContainer'),
+      contentDraggableClass: '.canvasDraggableMain'
+    });
+
+    editor.btnPreview.onclick = editor.generate_html;
+    editor.btnSave.onclick = editor.save_html;
+    editor.toggleView.onchange = editor.html_view;
+    editor.btnClose.onclick = editor.close_preview;
   },
   build_ui: function() {
     function replaceString(baseStr, strLookup, strReplacement) {
