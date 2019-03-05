@@ -50,7 +50,7 @@ const index = {
 
 		chrome.runtime.onMessage.addListener(function(request, sender, sendResponse){
 			const method = request.method;
-			if (method == 'insertToCKEDITOR') {
+			if (method == 'insertToContentEditor') {
 				window.postMessage(request, window.location.origin);
 				console.log('im from index');
 			}

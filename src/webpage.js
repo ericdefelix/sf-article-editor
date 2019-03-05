@@ -23,9 +23,9 @@ const webpage = {
 		
 		btnAdvancedEditor.forEach(function(elem,index) {
 			const ckeditorProxyInstanceId = GetClosestParent(elem,'.cke').getAttribute('id');
-			const ckeditorInstanceId = ckeditorProxyInstanceId.substring(4);
+			const contentEditorInstanceId = ckeditorProxyInstanceId.substring(4);
 
-			elem.setAttribute('data-instance-id', ckeditorInstanceId);
+			elem.setAttribute('data-instance-id', contentEditorInstanceId);
 			elem.addEventListener('click', function(event) {
 				const btnInstanceId = this.getAttribute('data-instance-id');
 				webpage.methods.popup(btnInstanceId);
@@ -34,15 +34,15 @@ const webpage = {
 
 		window.addEventListener('message', function(event) {
 			const method = event.data.method;
-			if (event.type == 'message' && method == 'insertToCKEDITOR') {
-				webpage.methods.insertToCKEDITOR(event.data);
+			if (event.type == 'message' && method == 'insertToContentEditor') {
+				webpage.methods.insertToContentEditor(event.data);
 			}
 		}, false);
 
 		window.addEventListener('beforeunload', webpage.methods.closePopups);
 	},
 	methods: {
-		popup: (ckeditorInstanceId) => {
+		popup: (contentEditorInstanceId) => {
 			const dimensions = {
         win_top: window.screenTop, 
         win_left: window.screenLeft,
@@ -56,8 +56,8 @@ const webpage = {
 				data: { 
 					display: true, 
 					dimensions: dimensions, 
-					ckeditorInstanceId: ckeditorInstanceId,
-					instanceHTML: CKEDITOR.instances[ckeditorInstanceId].getData()
+					contentEditorInstanceId: contentEditorInstanceId,
+					instanceHTML: CKEDITOR.instances[contentEditorInstanceId].getData()
 				}
 			};
 
@@ -66,10 +66,10 @@ const webpage = {
 				window.postMessage(config, window.location.origin);
 			}
 		},
-		insertToCKEDITOR: (request) => {
-			const ckeditorInstanceId = request.data.ckeditorIntanceId;
+		insertToContentEditor: (request) => {
+			const contentEditorInstanceId = request.data.ckeditorIntanceId;
 			const dataHTMLString = request.data.html;
-			CKEDITOR.instances[ckeditorInstanceId].setData(dataHTMLString);
+			CKEDITOR.instances[contentEditorInstanceId].setData(dataHTMLString);
 		},
 		closePopups: (e) => {
 			console.log('close popups');			

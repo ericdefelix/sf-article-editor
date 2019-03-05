@@ -12,23 +12,23 @@ import Sortable from '../node_modules/sortablejs/Sortable.min';
 
 let editor = {
   crxID: '',
-  ckeditorInstanceId: '',
+  contentEditorInstanceId: '',
   instanceHTML: '',
-  outputPane: document.getElementById('outputContainer'),
-  htmlSection: document.getElementById('htmlOutputContainer'),
-  sourceSection: document.getElementById('viewSourcePreview'),
-  btnPreview: document.getElementById('btnPreview'),
-  btnSave: document.getElementById('btnSave'),
-  btnClose: document.getElementById('btnCloseOutputContainer'),
-  toggleView: document.getElementById('outputContainerToggleView'),
-  existing_data: [],
-  html_data_json: '',
-  toolbox: undefined,
+  outputPane:       document.getElementById('outputContainer'),
+  htmlSection:      document.getElementById('htmlOutputContainer'),
+  sourceSection:    document.getElementById('viewSourcePreview'),
+  btnPreview:       document.getElementById('btnPreview'),
+  btnSave:          document.getElementById('btnSave'),
+  btnClose:         document.getElementById('btnCloseOutputContainer'),
+  toggleView:       document.getElementById('outputContainerToggleView'),
+  existing_data:    [],
+  html_data_json:   '',
+  toolbox:          undefined,
   init: function() {
     try {
-      window.chrome.storage.sync.get(['ckeditorInstanceId'], function(objLocalStorage) {
-        editor.ckeditorInstanceId = objLocalStorage.ckeditorInstanceId;
-        editor.btnSave.setAttribute('data-target', editor.ckeditorInstanceId);
+      window.chrome.storage.sync.get(['contentEditorInstanceId'], function(objLocalStorage) {
+        editor.contentEditorInstanceId = objLocalStorage.contentEditorInstanceId;
+        editor.btnSave.setAttribute('data-target', editor.contentEditorInstanceId);
         editor.crxID = window.chrome.runtime.id;
       });
 
@@ -41,7 +41,7 @@ let editor = {
 
           const pre = document.getElementById('placeholderHTML').querySelector('pre');
 
-          editor.existing_data = typeof pre === 'null' ? [] : JSON.parse(DecodeHTMLString(pre.textContent));
+          editor.existing_data = pre !== null ? JSON.parse(DecodeHTMLString(pre.textContent)) : [];
 
           editor.start_app();
           console.log(editor.existing_data);
@@ -455,7 +455,7 @@ let editor = {
     editor.outputPane.style.display = 'none';
 
     const request = {
-      method: 'insertToCKEDITOR',
+      method: 'insertToContentEditor',
       origin: window.location.origin,
       crxid: editor.crxID,
       data: {

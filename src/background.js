@@ -4,16 +4,12 @@
 // =================================================================================
 import { UrlContainsArticleEdit, RequestIsValid, SetPosition } from '/modules/utils/chromeExtensionUtils.js';
 
-function test() {
-  console.log('test');
-}
-
 let background = {
   crxID: '',
   currentTabID: '',
   currentCkeditorInstance: '',
   activeWindows: [],
-  activeCkeditorInstances: [],
+  activeContentEditorInstances: [],
   requests: [],
   init: function() {
   },
@@ -59,7 +55,7 @@ let background = {
         method: 'initEditor',
         data: { 
           instanceHTML: data.instanceHTML,
-          ckeditorInstanceId: data.ckeditorInstanceId
+          contentEditorInstanceId: data.contentEditorInstanceId
         }
       };
 
@@ -70,14 +66,14 @@ let background = {
           chrome.windows.getCurrent({ populate: true },function(currentWindow){
             const activeWindow = {
               windowID: currentWindow.id,
-              instanceID: request.data.ckeditorInstanceId
+              instanceID: request.data.contentEditorInstanceId
             };
 
             background.activeWindows.push(activeWindow);
-            background.activeCkeditorInstances.push(request.data.ckeditorInstanceId);
+            background.activeContentEditorInstances.push(request.data.contentEditorInstanceId);
           });
 
-          chrome.storage.sync.set({ ckeditorInstanceId: request.data.ckeditorInstanceId });
+          chrome.storage.sync.set({ contentEditorInstanceId: request.data.contentEditorInstanceId });
           chrome.storage.sync.set({ instanceHTML: request.data.instanceHTML });
         });
       }
@@ -85,7 +81,7 @@ let background = {
 
       }
     },
-    insertToCKEDITOR: (request) => {
+    insertToContentEditor: (request) => {
       chrome.tabs.sendMessage(background.currentTabID, request);
     },
     initEditor: (request) => {

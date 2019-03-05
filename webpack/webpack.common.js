@@ -25,6 +25,8 @@ module.exports = {
       { from: Path.resolve(__dirname, '../src/background.js'), to: 'background.js' },
       { from: Path.resolve(__dirname, '../src/index.js'), to: 'index.js' },
       { from: Path.resolve(__dirname, '../src/webpage.js'), to: 'webpage.js' },
+      { from: Path.resolve(__dirname, '../src/sf-leap-tabs.js'), to: 'sf-leap-tabs.js' },
+      { from: Path.resolve(__dirname, '../src/sf-leap-tabs.js'), to: '../sf-community-assets/sf-leap-tabs.js' },
       { from: Path.resolve(__dirname, '../src/manifest.json'), to: 'manifest.json' },
       { from: Path.resolve(__dirname, '../src/modules/utils'), to: 'modules/utils' }
     ]),
