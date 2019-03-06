@@ -1,0 +1,114 @@
+//============================================================
+// Blockquotes
+//============================================================
+$blockquotes: (
+  types: (
+    'info': (
+      'icon_value': '\0041',
+      'color': $blockquote-blue,
+      'bg-color': lighten($blockquote-blue,59%),
+      'border-color': lighten($blockquote-blue,41%)
+    ),
+    'alert': (
+      'icon_value': '\0042',
+      'color': $blockquote-red,
+      'bg-color': lighten($blockquote-red,50%),
+      'border-color': lighten($blockquote-red,41%)
+    ),
+    'tip': (
+      'icon_value': '\0043',
+      'color': $blockquote-green,
+      'bg-color': lighten($blockquote-green,50%),
+      'border-color': lighten($blockquote-green,30%)
+    )
+  )
+);
+
+.blockquote {
+	display: block;
+	position: relative;
+	padding-left: $blockquote-content-offset;
+	background-color: $blockquote-default-bg-color;
+	border-radius: $theme-border-radius;
+	min-height: 7rem;
+  margin-bottom: 1rem;
+  @include box-shadow(0,0,4px,0,rgba(0, 0, 0, 0.2));
+
+  &:last-of-type {
+    margin-bottom: 0;
+  }
+}
+
+.blockquote-addon {
+	position: absolute;
+	display: block;
+	text-align: center;
+	top: $blockquote-addon-offset + 0.4rem;
+	left: $blockquote-addon-offset + 0.3rem;
+	width: $blockquote-addon-dimensions;
+	height: $blockquote-addon-dimensions;
+	line-height: 1;
+}
+
+.blockquote-icon {
+	font-size: 4.1rem;
+	color: $theme-text-color;
+	height: 100%;
+	line-height: 1;
+  // display: inline-block;
+  display: none;
+}
+
+[class*='blockquote-icon']:before {
+	display: inline-block;
+	font-family: 'Block Quote Icons';
+	font-style: normal;
+	font-weight: normal;
+	line-height: 1;
+  @include font-smoothing();
+}
+
+.blockquote-content {
+	padding: $blockquote-padding;
+	padding-left: 0;
+	width: calc(100% - #{$blockquote-padding});
+	width: -webkit-calc(100% - #{$blockquote-padding});
+}
+
+.blockquote-content-header {
+	font-size: 1rem;
+	font-weight: 500;
+	margin-bottom: 0.2rem;
+	text-transform: uppercase;
+}
+
+.blockquote-content-body {
+	color: $theme-text-color;
+	font-size: 14px;
+	* {
+		color: inherit;
+	}
+}
+
+// Variations
+// .blockquote:not(.blockquote-bg) {
+//   border-top: 1px solid darken($blockquote-default-bg-color, 12%);
+//   border-bottom: 1px solid darken($blockquote-default-bg-color, 15%);
+//   border-right: 1px solid darken($blockquote-default-bg-color, 15%);
+// }
+
+@each $type in map-keys(map-get($blockquotes, types)) {
+  .blockquote-#{$type} {
+    $bq-bg-color: map-deep-get($blockquotes, 'types', $type, 'color');
+
+    border-left: none;
+    background-color: map-deep-get($blockquotes, 'types', $type, 'bg-color');;
+    border: 1px solid map-deep-get($blockquotes, 'types', $type, 'border-color');
+    border-bottom-color: darken(map-deep-get($blockquotes, 'types', $type, 'border-color'),5%);
+    fill: map-deep-get($blockquotes, 'types', $type, 'color');
+
+    .blockquote-content-header {
+      color: map-deep-get($blockquotes, 'types', $type, 'color');
+    }
+  }
+}

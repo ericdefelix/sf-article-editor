@@ -1,0 +1,23 @@
+@import '../../node_modules/sf-ui-components/sf-themes/components/mixins';
+
+body.sf-leap {
+  @import '../../node_modules/sf-ui-components/sf-themes/sites/sf-leap/variables';
+  @import '../../node_modules/sf-ui-components/sf-themes/components/blockquotes';
+  @import '../../node_modules/sf-ui-components/sf-themes/components/custom-tabs';
+  @import '../../node_modules/sf-ui-components/sf-themes/components/styled-lists';
+  @import '../../node_modules/sf-ui-components/sf-themes/components/well';
+}
+// body.sf-zaliet {
+//   @import '../../node_modules/sf-ui-components/sf-themes/components/sf-zaliet/variables';
+//   @import '../../node_modules/sf-ui-components/sf-themes/components/blockquotes';
+//   @import '../../node_modules/sf-ui-components/sf-themes/components/custom-tabs';
+//   @import '../../node_modules/sf-ui-components/sf-themes/components/styled-lists';
+//   @import '../../node_modules/sf-ui-components/sf-themes/components/well';
+// }
+// body.sf-rapidpay {
+//   @import '../../node_modules/sf-ui-components/sf-themes/components/sf-rapidpay/variables';
+//   @import '../../node_modules/sf-ui-components/sf-themes/components/blockquotes';
+//   @import '../../node_modules/sf-ui-components/sf-themes/components/custom-tabs';
+//   @import '../../node_modules/sf-ui-components/sf-themes/components/styled-lists';
+//   @import '../../node_modules/sf-ui-components/sf-themes/components/well';
+// }
