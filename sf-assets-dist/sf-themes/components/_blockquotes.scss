@@ -4,22 +4,19 @@
 $blockquotes: (
   types: (
     'info': (
-      'icon_value': '\0041',
-      'color': $blockquote-blue,
-      'bg-color': lighten($blockquote-blue,59%),
-      'border-color': lighten($blockquote-blue,41%)
+      'color': $blockquote-info-color,
+      'bg-color': $blockquote-info-bgcolor,
+      'border-color': $blockquote-info-border-color
     ),
     'alert': (
-      'icon_value': '\0042',
-      'color': $blockquote-red,
-      'bg-color': lighten($blockquote-red,50%),
-      'border-color': lighten($blockquote-red,41%)
+      'color': $blockquote-alert-color,
+      'bg-color': $blockquote-alert-bgcolor,
+      'border-color': $blockquote-alert-border-color
     ),
     'tip': (
-      'icon_value': '\0043',
-      'color': $blockquote-green,
-      'bg-color': lighten($blockquote-green,50%),
-      'border-color': lighten($blockquote-green,30%)
+      'color': $blockquote-tip-color,
+      'bg-color': $blockquote-tip-bgcolor,
+      'border-color': $blockquote-tip-border-color
     )
   )
 );
@@ -32,10 +29,22 @@ $blockquotes: (
 	border-radius: $theme-border-radius;
 	min-height: 7rem;
   margin-bottom: 1rem;
-  @include box-shadow(0,0,4px,0,rgba(0, 0, 0, 0.2));
+  @include box-shadow($bq-sh-x, $bq-sh-y, $bq-sh-blur, $bq-sh-spread, $bq-sh-color);
 
   &:last-of-type {
     margin-bottom: 0;
+  }
+
+  &:before {
+    display: block;
+    position: absolute;
+    z-index: 1;
+    top: -1px;
+    bottom: -1px;
+    left: -1px;
+    width: 0.25rem;
+    background-color: darken($blockquote-default-bg-color,10%);
+    content: '';
   }
 }
 
@@ -55,17 +64,7 @@ $blockquotes: (
 	color: $theme-text-color;
 	height: 100%;
 	line-height: 1;
-  // display: inline-block;
   display: none;
-}
-
-[class*='blockquote-icon']:before {
-	display: inline-block;
-	font-family: 'Block Quote Icons';
-	font-style: normal;
-	font-weight: normal;
-	line-height: 1;
-  @include font-smoothing();
 }
 
 .blockquote-content {
@@ -90,13 +89,6 @@ $blockquotes: (
 	}
 }
 
-// Variations
-// .blockquote:not(.blockquote-bg) {
-//   border-top: 1px solid darken($blockquote-default-bg-color, 12%);
-//   border-bottom: 1px solid darken($blockquote-default-bg-color, 15%);
-//   border-right: 1px solid darken($blockquote-default-bg-color, 15%);
-// }
-
 @each $type in map-keys(map-get($blockquotes, types)) {
   .blockquote-#{$type} {
     $bq-bg-color: map-deep-get($blockquotes, 'types', $type, 'color');
@@ -106,6 +98,10 @@ $blockquotes: (
     border: 1px solid map-deep-get($blockquotes, 'types', $type, 'border-color');
     border-bottom-color: darken(map-deep-get($blockquotes, 'types', $type, 'border-color'),5%);
     fill: map-deep-get($blockquotes, 'types', $type, 'color');
+
+    &:before {
+      background-color: map-deep-get($blockquotes, 'types', $type, 'color');
+    }
 
     .blockquote-content-header {
       color: map-deep-get($blockquotes, 'types', $type, 'color');

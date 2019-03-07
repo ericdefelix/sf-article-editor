@@ -32,6 +32,18 @@
 .tab-nav {
 	display: flex;
 	align-content: flex-start;
+	position: relative;
+
+	&:after {
+		display: block;
+		position: absolute;
+		height: $comp_tab-nav-border-thickness;
+		background-color: $comp_tab-nav-border-color;
+		top: 100%;
+		left: 0;
+		right: 0;
+		content: '';
+	}
 
 	> .tab-item {
 		display: block;
@@ -41,15 +53,20 @@
 			display: block;
 			text-align: center;
 			color: $comp_tab-link-color;
-			font-weight: bold;
+			font-weight: $comp_tab-font-weight;
 			font-size: 1rem;
 			padding: $comp_tab-link-padding;
 			text-decoration: none;
+			text-transform: $comp_tab-link-transform;
 			position: relative;
 			outline: none;
 
-			&:focus, &:active, &:hover {
+			&:focus, &:active {
 				color: $comp_tab-link-color-active;
+			}
+
+			&:hover {
+				color: $comp_tab-nav-border-color-active;
 			}
 
 			&:after {
@@ -67,6 +84,10 @@
 
 		&.active > .tab-item-link {
 			color: $comp_tab-link-color-active;
+
+			&:hover {
+				color: $comp_tab-nav-border-color-active;
+			}
 
 			&:after {
 				display: block;

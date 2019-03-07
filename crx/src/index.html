@@ -17,13 +17,18 @@
 				<h2>Advanced Article Editor</h2>
 			</div>
 			<div class="header-actions">
+				<select class="canvas-form-control" style="font-size: 1em; height: 2.4rem;" id="btnThemeSelector">
+					<option value="leap">LEAP/Internal</option>
+					<option value="zaliet">Zaliet</option>
+					<option value="titlex">Title X</option>
+					<option value="lawconnect">LawConnect</option>
+				</select>
 				<button type="button" class="canvas-btn" id="btnPreview" data-modal="true">View Generated HTML</button>
 				<button type="button" class="canvas-btn canvas-btn-primary" data-modal="false" id="btnSave">Save and Close</button>
 			</div>
 		</header>
 
-		<main class="canvas-container" id="canvasContainer">
-		</main>
+		<main class="canvas-container" id="canvasContainer"></main>
 
 		<div id="outputContainer" class="output-container" style="display: none;">
 			<select name="outputContainerToggleView" id="outputContainerToggleView" class="canvas-form-control" value="html">

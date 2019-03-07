@@ -33,11 +33,11 @@ $blockquote-alert-color: $blockquote-red;
 $blockquote-alert-bgcolor: lighten($blockquote-red,50%);
 $blockquote-alert-border-color: lighten($blockquote-red,38%);
 
-$bq-sh-x: 0px;
-$bq-sh-y: 2px;
+$bq-sh-x: 0;
+$bq-sh-y: 1px;
 $bq-sh-blur: 4px;
-$bq-sh-spread: 0px;
-$bq-sh-color: rgba(0, 0, 0, 0.3);
+$bq-sh-spread: 0;
+$bq-sh-color: rgba(0, 0, 0, 0.17);
 
 //============================================================
 // SF Tabs

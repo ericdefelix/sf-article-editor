@@ -13,13 +13,14 @@ import Sortable from '../node_modules/sortablejs/Sortable.min';
 let editor = {
   crxID: '',
   contentEditorInstanceId: '',
-  instanceHTML: '',
+  instanceHTML:     '',
   outputPane:       document.getElementById('outputContainer'),
   htmlSection:      document.getElementById('htmlOutputContainer'),
   sourceSection:    document.getElementById('viewSourcePreview'),
   btnPreview:       document.getElementById('btnPreview'),
   btnSave:          document.getElementById('btnSave'),
   btnClose:         document.getElementById('btnCloseOutputContainer'),
+  btnThemeSelector: document.getElementById('btnThemeSelector'),
   toggleView:       document.getElementById('outputContainerToggleView'),
   existing_data:    [],
   html_data_json:   '',
@@ -64,6 +65,7 @@ let editor = {
     editor.btnSave.onclick = editor.save_html;
     editor.toggleView.onchange = editor.html_view;
     editor.btnClose.onclick = editor.close_preview;
+    editor.btnThemeSelector.onchange = editor.select_theme;
   },
   build_ui: function() {
     function replaceString(baseStr, strLookup, strReplacement) {
@@ -205,9 +207,9 @@ let editor = {
   },
   _bindEvtRemoveComponent: function() {
     const id = this.getAttribute('data-target'),
-      type = this.getAttribute('data-target-type'),
-      container = document.getElementById('canvasContainer'),
-      targetElem = document.getElementById(id);
+          type = this.getAttribute('data-target-type'),
+          container = document.getElementById('canvasContainer'),
+          targetElem = document.getElementById(id);
 
     for (let i = 0; i <= editor.existing_data.length - 1; i++) {
       if (editor.existing_data[i].id === id) {
@@ -219,9 +221,18 @@ let editor = {
     const toolbox = document.getElementById('toolbox');
     toolbox.classList.remove('in');
     toolbox.style.display = 'block';
-
     container.appendChild(toolbox);
     targetElem.remove();
+
+    if (editor.existing_data.length === 0) {
+      UserInterfaceBuilder.render('canvas', {
+        data: editor.existing_data,
+        dependencies: [],
+        trigger: 'user'
+      });
+
+      container.querySelector('[data-action="select-component"]').onclick = editor._bindEvtDisplayToolbox;
+    }
   },
   togglePageButtons: function() {
     editor.btnPreview.style.display = editor.existing_data.length == 0 ? 'none' : 'initial';
@@ -294,7 +305,6 @@ let editor = {
     new Sortable(config.container, sortableConfig);
   },
   init_ckeditor: function(contentEditorAppConfig) {
-    // console.log(contentEditorAppConfig);
     let tinymceConfig = {
       selector: '#' + contentEditorAppConfig.container,  // change this value according to your HTML
       inline: true,
@@ -314,6 +324,12 @@ let editor = {
   },
   close_preview: function() {
     editor.outputPane.style.display = 'none';
+  },
+  select_theme: function () {
+    const themeValue = this.value;
+
+    document.querySelector('body').classList.value = '';
+    document.querySelector('body').classList.add('sf-' + themeValue);
   },
   generate_html: function() {
     editor.outputPane.style.display = 'block';

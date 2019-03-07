@@ -21,11 +21,31 @@ $blockquote-blue: #0060AC;
 $blockquote-green: #43AE33;
 $blockquote-red: #BE332A;
 
+$blockquote-info-color: $blockquote-blue;
+$blockquote-info-bgcolor: lighten($blockquote-blue,59%);
+$blockquote-info-border-color: lighten($blockquote-blue,38%);
+
+$blockquote-tip-color: $blockquote-green;
+$blockquote-tip-bgcolor: lighten($blockquote-green,50%);
+$blockquote-tip-border-color: lighten($blockquote-green,30%);
+
+$blockquote-alert-color: $blockquote-red;
+$blockquote-alert-bgcolor: lighten($blockquote-red,50%);
+$blockquote-alert-border-color: lighten($blockquote-red,38%);
+
+$bq-sh-x: 0;
+$bq-sh-y: 1px;
+$bq-sh-blur: 4px;
+$bq-sh-spread: 0;
+$bq-sh-color: rgba(0, 0, 0, 0.17);
+
 //============================================================
 // SF Tabs
 //============================================================
+$comp_tab-link-transform: none;
 $comp_tab-link-color-active: #333;
 $comp_tab-link-color: #696969;
+$comp_tab-font-weight: 700;
 $comp_tab-nav-border-color: #dbe7f1;
 $comp_tab-nav-border-color-active: #f69139;
 $comp_tab-nav-border-thickness: 4px;

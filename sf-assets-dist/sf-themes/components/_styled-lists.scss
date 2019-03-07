@@ -34,7 +34,8 @@ ol.list-bullet-circular {
       counter-increment: $listCounterName;
       content: counter($listCounterName);
       left: 0;
-      top: -8px;
+      top: calc(50% - 1.1rem);
+      top: -webkit-calc(50% - 1.1rem);
       text-align: center;
       font-size: 1.1rem;
       font-weight: 500;

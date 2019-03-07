@@ -86,7 +86,6 @@ module.exports = {
 				}
 			],
 			template: function(config) {
-				console.log(config);
 				let setConfig = {
 					cssClass: () => {
 						const cssClass = typeof config === 'undefined' ? 'info' : 'info';

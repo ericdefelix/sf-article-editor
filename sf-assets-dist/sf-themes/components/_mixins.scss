@@ -30,7 +30,7 @@
 	}
 }
 
-@mixin box-shadow($x,$y, $blur: 0, $spread: 0, $color: null, $inset: null) {
+@mixin box-shadow($x, $y, $blur: 0, $spread: 0, $color: null, $inset: null) {
 	@each $vendor in $vendors {
 		#{$vendor}box-shadow: $x $y $blur $spread $color $inset;
 	}

@@ -16,9 +16,9 @@ module.exports = {
   	const elementCount = obj.data.length,
           data = obj.data,
           triggerBy = obj.trigger;
-
+    
     const ContentBlocks = obj.dependencies[0];
-    const replaceStr = obj.dependencies[1];
+    const replaceStr = obj.dependencies[1]; 
 
     const renderEmptyState = () => {
       const tmpl = `
@@ -91,10 +91,12 @@ module.exports = {
 			let canvasInitHTML = '';
 			canvasInitHTML = elementCount > 0 ? renderExistingData() : renderEmptyState();
 			this.canvasContainer.innerHTML = canvasInitHTML;
-			obj.callback();
   	}
 
-  	if (triggerBy == 'user') {
+    if (triggerBy == 'user') {
+      if (elementCount == 0) {
+        this.canvasContainer.insertAdjacentHTML('afterbegin', renderEmptyState());
+      }
   		if (elementCount == 1) {
   			const emptyStateContainer = document.querySelectorAll('[data-content="empty"]');
   			const toolbox = document.getElementById('toolbox');
@@ -103,7 +105,11 @@ module.exports = {
   			this.canvasContainer.removeChild(emptyStateContainer[0]);
   			this.canvasContainer.appendChild(toolbox);
   		}
-  	}
+    }
+    
+    if (obj.hasOwnProperty('callback')) {
+      obj.callback();
+    }
   },
   content: function(obj) {
   	const triggerParent = obj.trigger.closest('.canvas-content-block'),
