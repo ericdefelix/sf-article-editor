@@ -22,6 +22,7 @@ let editor = {
   btnClose:         document.getElementById('btnCloseOutputContainer'),
   btnThemeSelector: document.getElementById('btnThemeSelector'),
   toggleView:       document.getElementById('outputContainerToggleView'),
+  forTab:           false,
   existing_data:    [],
   html_data_json:   '',
   toolbox:          undefined,
@@ -147,11 +148,16 @@ let editor = {
     toolbox.focus();
   },
   _bindEvtAddComponent: function() {
-    const domID = GenerateID();
-    const targetComponentPointer = this.getAttribute('data-ui-label');
+    const domID = GenerateID(),
+      targetComponentPointer = this.getAttribute('data-ui-label');
 
-    let contentData = {}; // Internal data placeholder
-    let removeBtn;
+    let contentData = {}, // Internal data placeholder
+      removeBtn,
+      editorData,
+      isSubNode,
+      contentSnippet,
+      contentSnippetIDForTab,
+      generatedElement;
 
     UserInterfaceBuilder.render('content', {
       id: domID,
@@ -167,12 +173,18 @@ let editor = {
 
         removeBtn = document.querySelector('[data-action="remove-component"][data-target="' + domID + '"]');
         removeBtn.onclick = editor._bindEvtRemoveComponent;
-
+        generatedElement = document.getElementById(domID);
+        isSubNode = generatedElement.parentElement.classList.contains('tab-content');
+        contentSnippet = GetClosestParent(generatedElement, '.canvas-content-snippet');
+        contentSnippetIDForTab = contentSnippet !== null ? contentSnippet.getAttribute('id').split('snippet-')[1] : null;
+        
         // Internal data placeholder
         contentData['id'] = domID;
         contentData['type'] = targetComponentPointer;
+        contentData['parentID'] = contentSnippetIDForTab;
 
         editor.existing_data.push(contentData);
+        console.log(editor.existing_data);
       }
     });
 
@@ -207,18 +219,20 @@ let editor = {
   },
   _bindEvtRemoveComponent: function() {
     const id = this.getAttribute('data-target'),
-          type = this.getAttribute('data-target-type'),
-          container = document.getElementById('canvasContainer'),
-          targetElem = document.getElementById(id);
+      type = this.getAttribute('data-target-type'),
+      container = document.getElementById('canvasContainer'),
+      targetElem = document.getElementById(id),
+      toolbox = document.getElementById('toolbox');
+    
+    let filtered = [];
 
     for (let i = 0; i <= editor.existing_data.length - 1; i++) {
-      if (editor.existing_data[i].id === id) {
-        editor.existing_data.splice(i, 1);
-        break;
-      }
+      const elem = editor.existing_data[i];
+      if (elem.id === id && elem.parentID !== null ||
+        elem.id !== id && elem.parentID !== id) filtered.push(elem);
     }
 
-    const toolbox = document.getElementById('toolbox');
+    editor.existing_data = filtered;
     toolbox.classList.remove('in');
     toolbox.style.display = 'block';
     container.appendChild(toolbox);
@@ -233,6 +247,8 @@ let editor = {
 
       container.querySelector('[data-action="select-component"]').onclick = editor._bindEvtDisplayToolbox;
     }
+
+    console.log(editor.existing_data);
   },
   togglePageButtons: function() {
     editor.btnPreview.style.display = editor.existing_data.length == 0 ? 'none' : 'initial';

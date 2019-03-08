@@ -2,29 +2,24 @@
 @import 'styles/mixins';
 @import 'styles/reset';
 @import 'styles/helpers';
-@import 'styles/editor-components';
-@import 'styles/editor-themes';
+
+.heading-text > *, .toolbox-toolbar, .empty-text,
+.blockquote-content-header, .well-heading, .blockquote-content-body p,
+.well-body p  {
+	@include reset-spacing();
+}
+
+i[class^="icon-"] {
+	font-style: normal;
+}
 
 body {
 	background-color: $body-bg;
 	font-family: $font-family;
 	font-size: 14px;
 	line-height: 1.4;
-	// -webkit-text-stroke: 0.45px rgba(0, 0, 0, 0.1);
-	// -webkit-font-smoothing: antialiased;
-	// -moz-osx-font-smoothing: grayscale;
 	padding: 2rem;
 	padding-top: 6rem;
-}
-
-.canvas-content-snippet, #htmlOutputContainer {
-	ol {
-		list-style-type: decimal;
-	} 
-
-	ul {
-		list-style-type: disc;
-	}
 }
 
 #htmlOutputContainer {
@@ -33,3 +28,6 @@ body {
 		margin-top: inherit;
 	}
 }
+
+@import 'styles/editor-components';
+@import 'styles/editor-themes';

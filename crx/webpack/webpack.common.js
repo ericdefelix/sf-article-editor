@@ -2,6 +2,7 @@ const Path = require('path');
 const CleanWebpackPlugin = require('clean-webpack-plugin');
 const CopyWebpackPlugin = require('copy-webpack-plugin');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
+const SASS = require('node-sass');
 
 module.exports = {
   entry: {
@@ -27,7 +28,18 @@ module.exports = {
       { from: Path.resolve(__dirname, '../src/webpage.js'), to: 'webpage.js' },
       { from: Path.resolve(__dirname, '../src/sf-leap-tabs.js'), to: 'sf-leap-tabs.js' },
       { from: Path.resolve(__dirname, '../src/manifest.json'), to: 'manifest.json' },
-      { from: Path.resolve(__dirname, '../src/modules/utils'), to: 'modules/utils' }
+      { from: Path.resolve(__dirname, '../src/modules/utils'), to: 'modules/utils' },
+      {
+        from: Path.resolve(__dirname, '../src/editor-themes-insert.scss'),
+        to: 'editor-themes-insert.css',
+        transform(content, path) {
+          const result = SASS.renderSync({
+            file: path
+          });
+
+          return result.css.toString();
+        }
+      }
     ]),
     new HtmlWebpackPlugin({
       template: Path.resolve(__dirname, '../src/index.html')

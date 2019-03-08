@@ -9,53 +9,55 @@
 import { NewBtnTemplateCKEDITOR, UrlContainsArticleEdit, GetClosestParent } from '/modules/utils/chromeExtensionUtils.js';
 
 const webpage = {
-	init: function() {
+	init: function () {
 		const ckToolbox = document.getElementsByClassName('cke_toolbox');
 
-    for (let i = 0; i <= ckToolbox.length - 1; i++) {
-    	const btnTmpl = NewBtnTemplateCKEDITOR(i);
-		  ckToolbox[i].insertAdjacentHTML('afterbegin', btnTmpl);
-    }
-    this.listeners();
+		for (let i = 0; i <= ckToolbox.length - 1; i++) {
+			const btnTmpl = NewBtnTemplateCKEDITOR(i);
+			ckToolbox[i].insertAdjacentHTML('afterbegin', btnTmpl);
+		}
+		this.listeners();
+		
+		console.log(document.querySelector('iframe').contentDocument.head);
 	},
-	listeners: function() {
+	listeners: function () {
 		const btnAdvancedEditor = document.querySelectorAll('.cke_button__advancededitor');
 		
-		btnAdvancedEditor.forEach(function(elem,index) {
-			const ckeditorProxyInstanceId = GetClosestParent(elem,'.cke').getAttribute('id');
+		btnAdvancedEditor.forEach(function (elem, index) {
+			const ckeditorProxyInstanceId = GetClosestParent(elem, '.cke').getAttribute('id');
 			const contentEditorInstanceId = ckeditorProxyInstanceId.substring(4);
 
 			elem.setAttribute('data-instance-id', contentEditorInstanceId);
-			elem.addEventListener('click', function(event) {
+			elem.addEventListener('click', function (event) {
 				const btnInstanceId = this.getAttribute('data-instance-id');
 				webpage.methods.popup(btnInstanceId);
 			});
 		});
 
-		window.addEventListener('message', function(event) {
+		window.addEventListener('message', function (event) {
 			const method = event.data.method;
 			if (event.type == 'message' && method == 'insertToContentEditor') {
 				webpage.methods.insertToContentEditor(event.data);
 			}
 		}, false);
 
-		window.addEventListener('beforeunload', webpage.methods.closePopups);
+		// window.addEventListener('beforeunload', webpage.methods.closePopups);
 	},
 	methods: {
 		popup: (contentEditorInstanceId) => {
 			const dimensions = {
-        win_top: window.screenTop, 
-        win_left: window.screenLeft,
-        win_width: window.outerWidth, 
-        win_height: window.outerHeight
-			}
+				win_top: window.screenTop,
+				win_left: window.screenLeft,
+				win_width: window.outerWidth,
+				win_height: window.outerHeight
+			};
 
 			const config = {
 				method: 'popup',
 				origin: window.location.origin,
-				data: { 
-					display: true, 
-					dimensions: dimensions, 
+				data: {
+					display: true,
+					dimensions: dimensions,
 					contentEditorInstanceId: contentEditorInstanceId,
 					instanceHTML: CKEDITOR.instances[contentEditorInstanceId].getData()
 				}
@@ -72,20 +74,20 @@ const webpage = {
 			CKEDITOR.instances[contentEditorInstanceId].setData(dataHTMLString);
 		},
 		closePopups: (e) => {
-			console.log('close popups');			
+			console.log('close popups');
 			const config = {
 				method: 'closePopups',
 				origin: window.location.origin,
 				data: {}
-			}
+			};
 
 			window.postMessage(config, window.location.origin);
 		}
 	},
-	run: function() {
+	run: function () {
 		this.init();
 		
 	}
-}
+};
 
 webpage.run();

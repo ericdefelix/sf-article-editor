@@ -3,7 +3,13 @@ $vendors: '-moz-', '-webkit-', '-ms-', '';
 $btn-sizes: 'lg', 'xs';
 
 $theme-font-family: '';
+
+// Theme colors
+$theme-cyan: #32abe2;
+$theme-darkblue: #0c3e55;
+$theme-lightgray: #f6f6f6;
 $theme-text-color: #333;
+
 $theme-border-radius: 2px;
 $theme-padding: 1rem;
 
@@ -43,11 +49,11 @@ $bq-sh-color: rgba(0, 0, 0, 0.17);
 // SF Tabs
 //============================================================
 $comp_tab-link-transform: none;
-$comp_tab-link-color-active: #333;
+$comp_tab-link-color-active: $theme-darkblue;
 $comp_tab-link-color: #696969;
 $comp_tab-font-weight: 700;
-$comp_tab-nav-border-color: #dbe7f1;
-$comp_tab-nav-border-color-active: #f69139;
+$comp_tab-nav-border-color: $theme-cyan;
+$comp_tab-nav-border-color-active: $theme-darkblue;
 $comp_tab-nav-border-thickness: 4px;
 $comp_tab-content-padding: 1rem;
 $comp_tab-link-padding: 1.5rem 1.5rem .5rem;

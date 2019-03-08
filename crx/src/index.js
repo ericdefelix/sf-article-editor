@@ -9,7 +9,7 @@
 // =================================================================================
 const index = {
 	crxID: '',
-	init: function() {
+	init: function () {
 		// Get the first FieldCol node (pristine state) rendered by Salesforce and observe if
 		// CKEDITOR starts manipulating the DOM
 		// -- server rendered
@@ -29,18 +29,18 @@ const index = {
 
 				observer.disconnect(); // Stop observing if CKEDITOR is initialised
 
-				window.addEventListener('message', function(event) {
+				window.addEventListener('message', function (event) {
 					const method = event.data.method;
 
-				  // We only accept messages from ourselves
-				  if (event.source != window) return;
-				  if (event.type == 'message' && method == 'popup') {
-				  	chrome.runtime.sendMessage(event.data);
-				  }
+					// We only accept messages from ourselves
+					if (event.source != window) return;
+					if (event.type == 'message' && method == 'popup') {
+						chrome.runtime.sendMessage(event.data);
+					}
 
-				  if (event.type == 'message' && method == 'closePopups') {
-				  	chrome.runtime.sendMessage(event.data);
-				  }
+					if (event.type == 'message' && method == 'closePopups') {
+						chrome.runtime.sendMessage(event.data);
+					}
 
 				}, false);
 			});
@@ -48,7 +48,7 @@ const index = {
 			observer.observe(testElement[testElement.length - 1], { subtree: true, childList: true, attributes: true });
 		}
 
-		chrome.runtime.onMessage.addListener(function(request, sender, sendResponse){
+		chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
 			const method = request.method;
 			if (method == 'insertToContentEditor') {
 				window.postMessage(request, window.location.origin);
@@ -59,9 +59,9 @@ const index = {
 			}
 		});
 	},
-	run: function() {
+	run: function () {
 		index.init();
 	}
-}
+};
 
 index.run();

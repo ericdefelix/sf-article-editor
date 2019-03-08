@@ -11,25 +11,25 @@ let background = {
   activeWindows: [],
   activeContentEditorInstances: [],
   requests: [],
-  init: function() {
+  init: function () {
   },
-  listeners: function() {
+  listeners: function () {
     chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
       if (changeInfo.status == 'loading' && UrlContainsArticleEdit(tab.url)) {
-        chrome.tabs.executeScript({ 
+        chrome.tabs.executeScript({
           file: 'index.js',
           runAt: 'document_end'
         });
       }
 
       if (changeInfo.status == 'complete' && UrlContainsArticleEdit(tab.url)) {
-        chrome.tabs.query({active: true, currentWindow: true}, function(tabs){
+        chrome.tabs.query({ active: true, currentWindow: true }, function (tabs) {
           background.currentTabID = tabs[0].id;
         });
       }
     });
 
-    chrome.runtime.onMessage.addListener(function(request, sender, sendResponse){
+    chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
       const method = request.method;
       if (RequestIsValid(request)) background.methods[method](request);
     });
@@ -49,11 +49,11 @@ let background = {
         width: pw,
         left: Math.round(px),
         top: Math.round(py)
-      }
+      };
 
       const editorDataFromWebpage = {
         method: 'initEditor',
-        data: { 
+        data: {
           instanceHTML: data.instanceHTML,
           contentEditorInstanceId: data.contentEditorInstanceId
         }
@@ -62,8 +62,8 @@ let background = {
       chrome.runtime.sendMessage(editorDataFromWebpage);
 
       if (data.display) {
-        chrome.windows.create(popupWindowConfig, function(win){
-          chrome.windows.getCurrent({ populate: true },function(currentWindow){
+        chrome.windows.create(popupWindowConfig, function (win) {
+          chrome.windows.getCurrent({ populate: true }, function (currentWindow) {
             const activeWindow = {
               windowID: currentWindow.id,
               instanceID: request.data.contentEditorInstanceId
@@ -93,11 +93,11 @@ let background = {
       }
     }
   },
-  run: function(){
+  run: function () {
     background.init();
     background.listeners();
   }
-}
+};
 
 background.run();
 
