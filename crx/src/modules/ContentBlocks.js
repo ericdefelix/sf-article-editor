@@ -31,8 +31,8 @@ module.exports = {
 			hasChildContent: false,
 			contentEditorBindToElem: 'container',
 			contentEditorConfig: {
-				plugins: 'lists link',
-				toolbar: 'undo redo | numlist bullist | link | bold italic strikethrough',
+				plugins: 'lists link image table',
+				toolbar: 'undo redo | numlist bullist | link image table | bold italic strikethrough',
 			}
 		},
 		'blockQuotes' : {
@@ -116,9 +116,9 @@ module.exports = {
 				// <i class="blockquote-icon"></i> taken out and replaced by SVG instead of font
 				const tmpl = `
 				<div class="blockquote blockquote-${setConfig.cssClass()}" role="blockquote">
-					<span class="blockquote-addon">
+					<div class="blockquote-addon">
 						${setConfig.icon()}
-					</span>
+					</div>
 					<div class="blockquote-content">
 						<h5 class="blockquote-content-header">${setConfig.header()}</h5>
 						<div class="blockquote-content-body">
@@ -126,7 +126,6 @@ module.exports = {
 						</div>
 					</div>
 				</div>`;
-
 				return tmpl;
 			},
 			hasChildContent: false,

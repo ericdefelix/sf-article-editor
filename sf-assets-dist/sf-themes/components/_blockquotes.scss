@@ -31,9 +31,9 @@ $blockquotes: (
   margin-bottom: 1rem;
   @include box-shadow($bq-sh-x, $bq-sh-y, $bq-sh-blur, $bq-sh-spread, $bq-sh-color);
 
-  &:last-of-type {
-    margin-bottom: 0;
-  }
+  // &:last-of-type {
+  //   margin-bottom: 0;
+  // }
 
   &:before {
     display: block;
@@ -46,47 +46,47 @@ $blockquotes: (
     background-color: darken($blockquote-default-bg-color,10%);
     content: '';
   }
-}
 
-.blockquote-addon {
-	position: absolute;
-	display: block;
-	text-align: center;
-	top: $blockquote-addon-offset + 0.4rem;
-	left: $blockquote-addon-offset + 0.3rem;
-	width: $blockquote-addon-dimensions;
-	height: $blockquote-addon-dimensions;
-	line-height: 1;
-}
+  > .blockquote-addon {
+    position: absolute;
+    display: block;
+    text-align: center;
+    top: $blockquote-addon-offset + 0.4rem;
+    left: $blockquote-addon-offset + 0.3rem;
+    width: $blockquote-addon-dimensions;
+    height: $blockquote-addon-dimensions;
+    line-height: 1;
 
-.blockquote-icon {
-	font-size: 4.1rem;
-	color: $theme-text-color;
-	height: 100%;
-	line-height: 1;
-  display: none;
-}
+    > .blockquote-icon {
+      font-size: 4.1rem;
+      color: $theme-text-color;
+      height: 100%;
+      line-height: 1;
+      display: none;
+    }
+  }
 
-.blockquote-content {
-	padding: $blockquote-padding;
-	padding-left: 0;
-	width: calc(100% - #{$blockquote-padding});
-	width: -webkit-calc(100% - #{$blockquote-padding});
-}
+  > .blockquote-content {
+    padding: $blockquote-padding;
+    padding-left: 0;
+    width: calc(100% - #{$blockquote-padding});
+    width: -webkit-calc(100% - #{$blockquote-padding});
 
-.blockquote-content-header {
-	font-size: 1rem;
-	font-weight: 500;
-	margin-bottom: 0.2rem;
-	text-transform: uppercase;
-}
+    > .blockquote-content-header {
+      font-size: 1rem;
+      font-weight: 500;
+      margin-bottom: 0.2rem;
+      text-transform: uppercase;
+    }
 
-.blockquote-content-body {
-	color: $theme-text-color;
-	font-size: 14px;
-	* {
-		color: inherit;
-	}
+    > .blockquote-content-body {
+      color: $theme-text-color;
+      font-size: 14px;
+      * {
+        color: inherit;
+      }
+    }
+  }
 }
 
 @each $type in map-keys(map-get($blockquotes, types)) {
