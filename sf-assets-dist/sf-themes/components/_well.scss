@@ -9,10 +9,6 @@
 	padding: $theme-padding;
 	margin-bottom: 1rem;
 	background-color: $well-bg;
-
-	&:last-of-type {
-		margin-bottom: 0;
-	}
 }
 
 .well-heading {
@@ -20,9 +16,19 @@
 	font-size: 1em;
 	font-weight: bold;
 	color: darken($well-bg,45%);
+	margin: 0;
 	margin-bottom: 0.5rem;
 }
 
 .well-body {
 	font-size: 1em;
+
+	> * {
+		color: inherit
+	}
+
+	p {
+		margin-top: 0;
+		margin-bottom: 1rem;
+	}
 }

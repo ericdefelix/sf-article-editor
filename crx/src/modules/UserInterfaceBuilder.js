@@ -42,9 +42,7 @@ module.exports = {
                 type = data[i].type, 
                 metadata = data[i].metadata;
 
-          let existingDataObj,
-              elementTemplate,
-              placeholder;
+          let existingDataObj, elementTemplate;
 
           existingDataObj = { id: id, type: type, data: ContentBlocks.elems[type] };
 

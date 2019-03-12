@@ -18,8 +18,6 @@ const webpage = {
 		}
 		this.listeners();
 
-		CKEDITOR.config.allowedContent = true;
-
 		const iframes = document.querySelectorAll('.cke_wysiwyg_frame');
 		iframes.forEach(element => {
 			const head = element.contentWindow.document.querySelector('head');
@@ -66,6 +64,7 @@ const webpage = {
 				const head = iframe.contentDocument.querySelector('head');
 				const body = iframe.contentDocument.querySelector('body');
 				webpage.methods.initIframeCSS(head, body, 'sf-leap');
+				console.log('change');
 			});
 		}
 
@@ -106,7 +105,6 @@ const webpage = {
 			body.classList.add(theme);
 		},
 		insertToContentEditor: (request) => {
-			let t;
 			const contentEditorInstanceId = request.data.ckeditorIntanceId;
 			const dataHTMLString = request.data.html;
 			CKEDITOR.instances[contentEditorInstanceId].setData(dataHTMLString);

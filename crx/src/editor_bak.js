@@ -23,8 +23,7 @@ let editor = {
   btnThemeSelector: document.getElementById('btnThemeSelector'),
   toggleView:       document.getElementById('outputContainerToggleView'),
   forTab:           false,
-  existing_data: [],
-  test_data: [],
+  existing_data:    [],
   html_data_json:   '',
   toolbox:          undefined,
   init: function() {
@@ -47,6 +46,7 @@ let editor = {
           editor.existing_data = pre !== null ? JSON.parse(DecodeHTMLString(pre.textContent)) : [];
 
           editor.start_app();
+          console.log(editor.instanceHTML);
           console.log(editor.existing_data);
         }
       });
@@ -185,16 +185,14 @@ let editor = {
         contentData['parentID'] = contentSnippetIDForTab;
 
         editor.existing_data.push(contentData);
+        console.log(editor.existing_data);
       }
     });
 
     UserInterfaceBuilder.render('canvas', {
       data: editor.existing_data,
       dependencies: [],
-      trigger: 'user',
-      callback: function () {
-        editor.update_data();
-      }
+      trigger: 'user'
     });
 
     editor.togglePageButtons();
@@ -277,8 +275,8 @@ let editor = {
         targetTabContent.forEach(function(targtTab, y) {
             const targetTabID = targtTab.getAttribute('id');
             editor.init_sortable({
-              container: document.getElementById(targetTabID),
-              contentDraggableClass: '.canvasDraggableSub_' + targetTabID
+                container: document.getElementById(targetTabID),
+                contentDraggableClass: '.canvasDraggableSub_' + targetTabID
             });
         });
     }
@@ -289,7 +287,7 @@ let editor = {
 
     if (contentEditorBindToElem !== 'none') {
       const contentEditorContainerID = contentEditorBindToElem == 'content' ? 'contentEditableBody-' + domID : 'snippet-' + domID;
-      editor.init_contentEditor({
+      editor.init_ckeditor({
         container: contentEditorContainerID,
         value: ContentBlocks.elems[targetComponentPointer].template(),
         config: ContentBlocks.elems[targetComponentPointer].contentEditorConfig
@@ -308,15 +306,12 @@ let editor = {
       easing: 'cubic-bezier(1, 0, 0, 1)',
       handle: config.contentDraggableClass,
       direction: 'vertical',
-      onUpdate: function () {
-        editor.update_data();
-        console.log('list updated');
-      }
+      onEnd: editor.update_list
     };
 
     new Sortable(config.container, sortableConfig);
   },
-  init_contentEditor: function(contentEditorAppConfig) {
+  init_ckeditor: function(contentEditorAppConfig) {
     let tinymceConfig = {
       selector: '#' + contentEditorAppConfig.container,  // change this value according to your HTML
       inline: true,
@@ -328,72 +323,6 @@ let editor = {
     tinymceConfig['plugins'] = contentEditorAppConfig.config.plugins;
 
     tinymce.init(tinymceConfig);
-  },
-  update_data: function () {
-    console.log('updated');
-    let arr = [];
-
-    const sanitizeContentBlock = contentBlock => {
-      const clone = contentBlock.querySelector('.canvas-content-snippet').firstElementChild.cloneNode(true);
-      clone.querySelectorAll('[contenteditable="true"]').forEach(function (element) {
-        element.removeAttribute('id');
-        element.removeAttribute('contentEditable');
-        element.removeAttribute('style');
-        element.removeAttribute('spellcheck');
-        if (element.classList.contains('mce-content-body')) { element.classList.remove('mce-content-body'); }
-      });
-
-      return NormaliseHTMLString(clone.prop('outerHTML'));
-    };
-
-    const createMetadata = (componentType, contentBlock, contentHTML) => {
-      if (ContentBlocks.elems[componentType].hasChildContent) {
-        return { subnodes: [], html: NormaliseHTMLString(contentHTML) };
-      }
-      // else if (ContentBlocks.elems[componentType].contentEditorBindToElem === 'content') {
-      else {
-        console.log(tinyMCE.editors);
-        const _html = sanitizeContentBlock(contentBlock);
-        return { html: _html, variables: [] };        
-      }
-    };
-    
-    document.querySelectorAll('#canvasContainer > .canvas-content-block').forEach(function (element) {
-      const type = element.querySelector('.canvas-content-snippet').getAttribute('data-component-type');
-      const id = element.getAttribute('id');
-      let data = { id: id, type: type, metadata: {} };
-
-      data.metadata = createMetadata(type, element, element.querySelector('.canvas-content-snippet').innerHTML);
-
-      if (ContentBlocks.elems[type].hasChildContent) {
-        const tabLinks = element.querySelectorAll('.tab-item-link');
-        tabLinks.forEach(function (tabElement, tabIndex) {
-          const tabSection = document.getElementById(tabElement.getAttribute('data-target'));
-          const tabId = tabSection.getAttribute('id');
-          const tabText = tabElement.textContent;
-          data.metadata['subnodes'].push({ label: tabText, id: tabId, content: [] });
-
-          if (tabSection.children.length > 0) {
-            const subnodes = tabSection.querySelectorAll('.canvas-content-block');
-            subnodes.forEach(function (subElement) {
-              const subnodeID = subElement.getAttribute('id');
-              const subnodeType = document.getElementById('snippet-' + subnodeID).getAttribute('data-component-type');
-
-              data.metadata.subnodes[tabIndex].content.push({
-                id: subnodeID,
-                type: subnodeType,
-                metadata: createMetadata(subnodeType, subElement, '')
-              });
-            });
-          }
-        });
-      }
-
-      arr.push(data);
-    });
-
-    console.log(arr);
-    // snippetID = canvasContentBlock.getAttribute('id');
   },
   html_view: function() {
     const view = this.value;
