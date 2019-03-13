@@ -23,11 +23,11 @@
     "tabs",
     "storage",
     "webNavigation",
-    "*://*/*"
+    "*://*/*",
+    "file:///*"
   ],
   "content_security_policy": "script-src 'self' https://cdnjs.cloudflare.com ;object-src 'self'",
   "web_accessible_resources": [
-    "https://cdn.ckeditor.com",
     "https://cdnjs.cloudflare.com/ajax/libs/tinymce/4.9.2/tinymce.min.js",
     "https://cdnjs.cloudflare.com/ajax/libs/tinymce/",
     "/modules/utils/chromeExtensionUtils.js",

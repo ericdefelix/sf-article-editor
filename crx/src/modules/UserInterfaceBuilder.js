@@ -13,12 +13,13 @@ module.exports = {
   	this.canvasContainer.insertAdjacentHTML('beforeend', tmpl + `</ul></div>`);
   },
   canvas: function(obj) {
-  	const elementCount = obj.data.length,
-          data = obj.data,
-          triggerBy = obj.trigger;
-    
-    const ContentBlocks = obj.dependencies[0];
-    const replaceStr = obj.dependencies[1]; 
+    const
+      elementCount = obj.data.length,
+      data = obj.data,
+      triggerBy = obj.trigger,
+      ContentBlocks = obj.dependencies[0],
+      replaceStr = obj.dependencies[1],
+      emptyStateContainer = document.querySelector('[data-content="empty"]');
 
     const renderEmptyState = () => {
       const tmpl = `
@@ -81,7 +82,6 @@ module.exports = {
         console.log(e);
         console.log('ContentBlocks module is missing');
       }
-
       return tmpl;
     };
 
@@ -90,17 +90,16 @@ module.exports = {
 			canvasInitHTML = elementCount > 0 ? renderExistingData() : renderEmptyState();
 			this.canvasContainer.innerHTML = canvasInitHTML;
   	}
-
+    
     if (triggerBy == 'user') {
       if (elementCount == 0) {
         this.canvasContainer.insertAdjacentHTML('afterbegin', renderEmptyState());
       }
-  		if (elementCount == 1) {
-  			const emptyStateContainer = document.querySelectorAll('[data-content="empty"]');
+      if (elementCount == 1 && emptyStateContainer) {
   			const toolbox = document.getElementById('toolbox');
 
   			toolbox.parentNode.removeChild(toolbox);
-  			this.canvasContainer.removeChild(emptyStateContainer[0]);
+  			this.canvasContainer.removeChild(emptyStateContainer);
   			this.canvasContainer.appendChild(toolbox);
   		}
     }

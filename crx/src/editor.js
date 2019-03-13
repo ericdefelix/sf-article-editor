@@ -22,6 +22,7 @@ let editor = {
   btnClose:         document.getElementById('btnCloseOutputContainer'),
   btnThemeSelector: document.getElementById('btnThemeSelector'),
   toggleView:       document.getElementById('outputContainerToggleView'),
+  newlyInsertedImg: '',
   forTab:           false,
   existing_data: [],
   test_data: [],
@@ -149,23 +150,19 @@ let editor = {
     toolbox.focus();
   },
   _bindEvtAddComponent: function() {
-    const domID = GenerateID(),
+    const
+      domID = GenerateID(),
       targetComponentPointer = this.getAttribute('data-ui-label');
-
-    let contentData = {}, // Internal data placeholder
-      removeBtn,
-      editorData,
-      isSubNode,
-      contentSnippet,
-      contentSnippetIDForTab,
-      generatedElement;
+    
+    if (editor.existing_data.length === 0) editor.existing_data.push({});
 
     UserInterfaceBuilder.render('content', {
       id: domID,
       type: targetComponentPointer,
       data: ContentBlocks.elems[targetComponentPointer],
       trigger: this,
-      callback: function(displayToolboxButtons) {
+      callback: function (displayToolboxButtons) {
+        let removeBtn;
         editor.handleEditEventsToDOM(domID, targetComponentPointer);
 
         displayToolboxButtons.forEach(function(btn, index) {
@@ -174,30 +171,17 @@ let editor = {
 
         removeBtn = document.querySelector('[data-action="remove-component"][data-target="' + domID + '"]');
         removeBtn.onclick = editor._bindEvtRemoveComponent;
-        generatedElement = document.getElementById(domID);
-        isSubNode = generatedElement.parentElement.classList.contains('tab-content');
-        contentSnippet = GetClosestParent(generatedElement, '.canvas-content-snippet');
-        contentSnippetIDForTab = contentSnippet !== null ? contentSnippet.getAttribute('id').split('snippet-')[1] : null;
-        
-        // Internal data placeholder
-        contentData['id'] = domID;
-        contentData['type'] = targetComponentPointer;
-        contentData['parentID'] = contentSnippetIDForTab;
 
-        editor.existing_data.push(contentData);
+        UserInterfaceBuilder.render('canvas', {
+          data: editor.existing_data,
+          dependencies: [],
+          trigger: 'user'
+        });
+
+        editor.updateData();
+        editor.togglePageButtons();
       }
     });
-
-    UserInterfaceBuilder.render('canvas', {
-      data: editor.existing_data,
-      dependencies: [],
-      trigger: 'user',
-      callback: function () {
-        editor.update_data();
-      }
-    });
-
-    editor.togglePageButtons();
   },
   _bindEvtSelectionDropdown: function() {
     const selectedStyle = this.value;
@@ -211,25 +195,18 @@ let editor = {
     if (this.textContent == '') this.textContent = 'Click here to edit heading';
   },
   _bindEvtRemoveComponent: function() {
-    const id = this.getAttribute('data-target'),
-      type = this.getAttribute('data-target-type'),
+    const
+      id = this.getAttribute('data-target'),
       container = document.getElementById('canvasContainer'),
       targetElem = document.getElementById(id),
       toolbox = document.getElementById('toolbox');
     
-    let filtered = [];
-
-    for (let i = 0; i <= editor.existing_data.length - 1; i++) {
-      const elem = editor.existing_data[i];
-      if (elem.id === id && elem.parentID !== null ||
-        elem.id !== id && elem.parentID !== id) filtered.push(elem);
-    }
-
-    editor.existing_data = filtered;
     toolbox.classList.remove('in');
     toolbox.style.display = 'block';
     container.appendChild(toolbox);
     targetElem.remove();
+
+    editor.updateData();
 
     if (editor.existing_data.length === 0) {
       UserInterfaceBuilder.render('canvas', {
@@ -240,8 +217,6 @@ let editor = {
 
       container.querySelector('[data-action="select-component"]').onclick = editor._bindEvtDisplayToolbox;
     }
-
-    console.log(editor.existing_data);
   },
   togglePageButtons: function() {
     editor.btnPreview.style.display = editor.existing_data.length == 0 ? 'none' : 'initial';
@@ -309,7 +284,7 @@ let editor = {
       handle: config.contentDraggableClass,
       direction: 'vertical',
       onUpdate: function () {
-        editor.update_data();
+        // editor.updateData();
         console.log('list updated');
       }
     };
@@ -327,10 +302,55 @@ let editor = {
     tinymceConfig['toolbar'] = contentEditorAppConfig.config.toolbar;
     tinymceConfig['plugins'] = contentEditorAppConfig.config.plugins;
 
+    tinymceConfig['init_instance_callback'] = function (editor) {
+      editor.on('NodeChange', function (e) {
+        if (e.element.tagName == 'IMG' && e.element.getAttribute('src').indexOf('blob:') !== -1) {
+          console.log(e);
+          // e.element.setAttribute('src', editor.newlyInsertedImg);
+        }
+      });
+
+      console.log(editor.newlyInsertedImg + 'base64');
+    };
+
+    if (contentEditorAppConfig.config.toolbar.indexOf('image') !== -1) {
+      tinymceConfig['image_title'] = true;
+      tinymceConfig['automatic_uploads'] = true;
+      tinymceConfig['file_picker_types'] = 'image';
+      tinymceConfig['file_picker_callback'] = function (cb, value, meta) {
+        const input = document.createElement('input');
+
+        input.setAttribute('type', 'file');
+        input.setAttribute('accept', 'image/*');
+        input.onchange = function () {
+          const file = this.files[0], reader = new FileReader();
+
+          reader.onload = function () {
+            const
+              id = 'blobid' + (new Date()).getTime(),
+              blobCache = tinymce.activeEditor.editorUpload.blobCache,
+              base64 = reader.result.split(',')[1],
+              blobInfo = blobCache.create(id, file, base64),
+              base64src = 'data:image/png;base64,' + base64;
+            
+            blobCache.add(blobInfo);
+            cb(base64src, { title: file.name });
+
+            console.log(base64src);
+            editor.newlyInsertedImg = base64;
+          };
+
+          reader.readAsDataURL(file);
+          console.log(editor.newlyInsertedImg + 'base64');
+        };
+
+        input.click();
+      }; 
+    }
+
     tinymce.init(tinymceConfig);
   },
-  update_data: function () {
-    console.log('updated');
+  updateData: function () {
     let arr = [];
 
     const sanitizeContentBlock = contentBlock => {
@@ -343,21 +363,20 @@ let editor = {
         if (element.classList.contains('mce-content-body')) { element.classList.remove('mce-content-body'); }
       });
 
-      return NormaliseHTMLString(clone.prop('outerHTML'));
+      return NormaliseHTMLString(clone.outerHTML);
     };
 
     const createMetadata = (componentType, contentBlock, contentHTML) => {
       if (ContentBlocks.elems[componentType].hasChildContent) {
         return { subnodes: [], html: NormaliseHTMLString(contentHTML) };
       }
-      // else if (ContentBlocks.elems[componentType].contentEditorBindToElem === 'content') {
       else {
         console.log(tinyMCE.editors);
         const _html = sanitizeContentBlock(contentBlock);
         return { html: _html, variables: [] };        
       }
     };
-    
+
     document.querySelectorAll('#canvasContainer > .canvas-content-block').forEach(function (element) {
       const type = element.querySelector('.canvas-content-snippet').getAttribute('data-component-type');
       const id = element.getAttribute('id');
@@ -392,8 +411,8 @@ let editor = {
       arr.push(data);
     });
 
-    console.log(arr);
-    // snippetID = canvasContentBlock.getAttribute('id');
+    editor.existing_data = arr;
+    console.log(editor.existing_data);
   },
   html_view: function() {
     const view = this.value;

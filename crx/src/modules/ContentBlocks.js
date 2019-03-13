@@ -10,8 +10,8 @@ module.exports = {
 			hasChildContent: false,
 			contentEditorBindToElem: 'container',
 			contentEditorConfig: {
-        plugins: 'lists link image table',
-        toolbar: 'undo redo | formatselect | bold italic strikethrough | alignleft aligncenter alignright alignjustify | link image table | numlist bullist',
+        plugins: 'lists link image table imagetools',
+				toolbar: 'undo redo | formatselect | bold italic strikethrough | alignleft aligncenter alignright alignjustify | link image table | numlist bullist'
 			}
 		},
 		'styledLists' : {
@@ -30,8 +30,8 @@ module.exports = {
 			hasChildContent: false,
 			contentEditorBindToElem: 'container',
 			contentEditorConfig: {
-				plugins: 'lists link image table',
-				toolbar: 'undo redo | numlist bullist | link image table | bold italic strikethrough',
+				plugins: 'lists link image table imagetools',
+				toolbar: 'undo redo | numlist bullist | link image imageupload table | bold italic strikethrough'
 			}
 		},
 		'blockQuotes' : {
