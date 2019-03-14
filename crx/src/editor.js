@@ -369,8 +369,9 @@ let editor = {
       const div = document.createElement('DIV');
       div.innerHTML = tabs;
 
-      div.querySelectorAll('.tab-content').forEach(function(tab,index){
-        tab.innerHTML = content.length == 0 ? '' : content[index];
+      div.querySelectorAll('.tab-content').forEach(function (tab, index) {
+        console.log(content[index]);
+        tab.innerHTML = typeof content[index] !== 'undefined' ? content[index] : '';
       });
 
       return div.innerHTML;
@@ -412,7 +413,7 @@ let editor = {
                 metadata: sanitisedSNode
               });
 
-              sanitisedSNodeCollection += typeof sanitisedSNode.html !== 'undefined' ? sanitisedSNode.html : '';
+              sanitisedSNodeCollection += sanitisedSNode.html;
             });
 
             extractedElementsFromTabs.push(sanitisedSNodeCollection);
@@ -458,6 +459,15 @@ let editor = {
       if (base64map.hasOwnProperty(elem.src)) {
         elem.src = base64map[elem.src];
       }
+    });
+
+    // Modify IDS
+    editor.htmlSection.querySelectorAll('.tabs').forEach(function(elem, i){
+      elem.querySelectorAll('.tab-item-link').forEach(function(tabLink,_i){
+        const dataTarget = tabLink.getAttribute('data-target');
+        tabLink.setAttribute('data-target', 'preview_' + dataTarget);
+        elem.querySelector('#' + dataTarget).id = 'preview_' + dataTarget;
+      });
     });
   },
   save_html: function() {
