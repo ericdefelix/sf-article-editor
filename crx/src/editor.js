@@ -10,6 +10,8 @@ import ContentBlocks from './modules/ContentBlocks';
 import UserInterfaceBuilder from './modules/UserInterfaceBuilder';
 import Sortable from '../node_modules/sortablejs/Sortable.min';
 
+let base64map = {};
+
 let editor = {
   crxID: '',
   contentEditorInstanceId: '',
@@ -22,7 +24,6 @@ let editor = {
   btnClose:         document.getElementById('btnCloseOutputContainer'),
   btnThemeSelector: document.getElementById('btnThemeSelector'),
   toggleView:       document.getElementById('outputContainerToggleView'),
-  newlyInsertedImg: '',
   forTab:           false,
   existing_data: [],
   test_data: [],
@@ -250,11 +251,11 @@ let editor = {
     if (targetComponentPointer == 'genericTabs') {
         const targetTabContent = targetSnippetContainer.querySelectorAll('.tab-content');
         targetTabContent.forEach(function(targtTab, y) {
-            const targetTabID = targtTab.getAttribute('id');
-            editor.init_sortable({
-              container: document.getElementById(targetTabID),
-              contentDraggableClass: '.canvasDraggableSub_' + targetTabID
-            });
+          const targetTabID = targtTab.getAttribute('id');
+          editor.init_sortable({
+            container: document.getElementById(targetTabID),
+            contentDraggableClass: '.canvasDraggableSub_' + targetTabID
+          });
         });
     }
 
@@ -284,7 +285,7 @@ let editor = {
       handle: config.contentDraggableClass,
       direction: 'vertical',
       onUpdate: function () {
-        // editor.updateData();
+        editor.updateData();
         console.log('list updated');
       }
     };
@@ -302,20 +303,10 @@ let editor = {
     tinymceConfig['toolbar'] = contentEditorAppConfig.config.toolbar;
     tinymceConfig['plugins'] = contentEditorAppConfig.config.plugins;
 
-    tinymceConfig['init_instance_callback'] = function (editor) {
-      editor.on('NodeChange', function (e) {
-        if (e.element.tagName == 'IMG' && e.element.getAttribute('src').indexOf('blob:') !== -1) {
-          console.log(e);
-          // e.element.setAttribute('src', editor.newlyInsertedImg);
-        }
-      });
-
-      console.log(editor.newlyInsertedImg + 'base64');
-    };
-
     if (contentEditorAppConfig.config.toolbar.indexOf('image') !== -1) {
       tinymceConfig['image_title'] = true;
       tinymceConfig['automatic_uploads'] = true;
+      tinymceConfig['paste_data_images '] = true;
       tinymceConfig['file_picker_types'] = 'image';
       tinymceConfig['file_picker_callback'] = function (cb, value, meta) {
         const input = document.createElement('input');
@@ -332,16 +323,14 @@ let editor = {
               base64 = reader.result.split(',')[1],
               blobInfo = blobCache.create(id, file, base64),
               base64src = 'data:image/png;base64,' + base64;
+
+            if (!base64map.hasOwnProperty(blobInfo.blobUri())) base64map[blobInfo.blobUri()] = base64src;
             
             blobCache.add(blobInfo);
             cb(base64src, { title: file.name });
-
-            console.log(base64src);
-            editor.newlyInsertedImg = base64;
           };
 
           reader.readAsDataURL(file);
-          console.log(editor.newlyInsertedImg + 'base64');
         };
 
         input.click();
@@ -368,13 +357,23 @@ let editor = {
 
     const createMetadata = (componentType, contentBlock, contentHTML) => {
       if (ContentBlocks.elems[componentType].hasChildContent) {
+        console.log(contentBlock);
         return { subnodes: [], html: NormaliseHTMLString(contentHTML) };
       }
       else {
-        console.log(tinyMCE.editors);
-        const _html = sanitizeContentBlock(contentBlock);
-        return { html: _html, variables: [] };        
+        return { html: sanitizeContentBlock(contentBlock), variables: [] };        
       }
+    };
+
+    const sanitizeTabs = (tabs,content) => {
+      const div = document.createElement('DIV');
+      div.innerHTML = tabs;
+
+      div.querySelectorAll('.tab-content').forEach(function(tab,index){
+        tab.innerHTML = content.length == 0 ? '' : content[index];
+      });
+
+      return div.innerHTML;
     };
 
     document.querySelectorAll('#canvasContainer > .canvas-content-block').forEach(function (element) {
@@ -386,26 +385,41 @@ let editor = {
 
       if (ContentBlocks.elems[type].hasChildContent) {
         const tabLinks = element.querySelectorAll('.tab-item-link');
+
+        let extractedElementsFromTabs = [];
+
         tabLinks.forEach(function (tabElement, tabIndex) {
-          const tabSection = document.getElementById(tabElement.getAttribute('data-target'));
-          const tabId = tabSection.getAttribute('id');
-          const tabText = tabElement.textContent;
+          const 
+            tabSection = document.getElementById(tabElement.getAttribute('data-target')),
+            tabId = tabSection.getAttribute('id'),
+            tabText = tabElement.textContent;
+
           data.metadata['subnodes'].push({ label: tabText, id: tabId, content: [] });
 
           if (tabSection.children.length > 0) {
             const subnodes = tabSection.querySelectorAll('.canvas-content-block');
+            let sanitisedSNodeCollection = '';
+
             subnodes.forEach(function (subElement) {
-              const subnodeID = subElement.getAttribute('id');
-              const subnodeType = document.getElementById('snippet-' + subnodeID).getAttribute('data-component-type');
+              const 
+                subnodeID = subElement.getAttribute('id'),
+                subnodeType = document.getElementById('snippet-' + subnodeID).getAttribute('data-component-type'),
+                sanitisedSNode = createMetadata(subnodeType, subElement, '');
 
               data.metadata.subnodes[tabIndex].content.push({
                 id: subnodeID,
                 type: subnodeType,
-                metadata: createMetadata(subnodeType, subElement, '')
+                metadata: sanitisedSNode
               });
+
+              sanitisedSNodeCollection += typeof sanitisedSNode.html !== 'undefined' ? sanitisedSNode.html : '';
             });
+
+            extractedElementsFromTabs.push(sanitisedSNodeCollection);
           }
         });
+
+        data.metadata.html = sanitizeTabs(data.metadata.html, extractedElementsFromTabs);
       }
 
       arr.push(data);
@@ -429,151 +443,22 @@ let editor = {
     document.querySelector('body').classList.add('sf-' + themeValue);
   },
   generate_html: function() {
+    editor.updateData();
     editor.outputPane.style.display = 'block';
+    let html = '';
 
-    let contentBlocksDom,
-      hiddenData,
-      contentEditables,
-      htmlOutputString = '',
-      htmlData = [];
-
-    const createMetadata = (componentType, htmlOutputString, elemChild) => {
-      if (componentType == 'genericTabs') {
-        return { subnodes: [], html: '' };
-      } 
-      else {
-        if (componentType == 'wellContainer' || componentType == 'blockQuotes') {
-          const heading = NormaliseHTMLString(elemChild.querySelector('h5').textContent);
-          const body = NormaliseHTMLString(elemChild.querySelector('.mce-content-body').innerHTML);
-          return { html: htmlOutputString, variables: [heading, body] };
-        } 
-        else {
-          return { html: htmlOutputString };
-        }
-      }
-    };
-
-    const extractHTMLFromContentEditor = (elemChild) => {
-      let contentEditableBodySnippetHTML;
-      const clone = elemChild.cloneNode(true),
-        contentEditableBodySnippet = clone.querySelector('.mce-content-body'),
-        contentEditableBodySnippetClassName = contentEditableBodySnippet.classList[0],
-        contentEditableBodySnippetData = extractHTML(contentEditableBodySnippet);
-
-      contentEditableBodySnippet.remove();
-      contentEditableBodySnippetHTML = `<div class="${contentEditableBodySnippetClassName}">${contentEditableBodySnippetData}</div>`;
-      clone.lastElementChild.insertAdjacentHTML('beforeend', contentEditableBodySnippetHTML);
-      return clone.outerHTML;
-    };
-
-    const extractHTML = (snippet) => {
-      if (snippet.classList.contains('mce-content-body')) {
-        const contentEditorInstance = snippet.getAttribute('id');
-        return document.getElementById(contentEditorInstance).innerHTML;
-      } 
-      else {
-        return snippet.innerHTML;
-      }
-    };
-
-    if (editor.existing_data.length > 0) {
-      contentBlocksDom = document.querySelectorAll('#canvasContainer > .canvas-content-block');
-      contentBlocksDom.forEach((block, b_index) => {
-        const snippet = block.querySelector('.canvas-content-snippet'),
-          type = snippet.getAttribute('data-component-type'),
-          id = block.getAttribute('id'),
-          elemChild = snippet.firstElementChild;
-
-        let metadata = {};
-
-        const newContentObj = (type, id, data) => {
-          return { type: type, id: id, metadata: data };
-        };
-
-        const newTabObj = (label, id) => {
-          return { label: label, id: id, content: [] };
-        };
-
-        if (elemChild.classList.contains('tabs')) {
-          let tabsContent;
-          let tabsHTML = `<div class="tabs">`;
-
-          tabsHTML += snippet.firstElementChild.firstElementChild.innerHTML;
-
-          // Get data from tabs
-          metadata = createMetadata(type, elemChild);
-          htmlData.push(newContentObj(type, id, metadata));
-
-          tabsContent = elemChild.querySelectorAll('.tab-content');
-          tabsContent.forEach((tabcontent, tc_index) => {
-            let tabContentBlocksHTML = ``;
-            const tabContentBlocks = tabcontent.querySelectorAll('.canvas-content-block'),
-                tabSnippets = tabcontent.querySelectorAll('.canvas-content-block .canvas-content-snippet'),
-                tabId = tabcontent.getAttribute('id').split('tab-')[1],
-                tabLabel = document.querySelector('.tab-item-link[data-target="tab-' + tabId + '"]').textContent;
-
-              htmlData[b_index].metadata.subnodes.push(newTabObj(tabLabel, tabId));
-
-              tabSnippets.forEach((tabSnippet, ts_index) => {
-              const elemSubChild = tabSnippet.firstElementChild,
-                  subchildType = tabSnippet.getAttribute('data-component-type'),
-                  subchildID = tabContentBlocks[ts_index].getAttribute('id');
-
-              const _tabContentBlocksHTML = (elemSubChild.classList.contains('blockquote') || elemSubChild.classList.contains('well')) ?
-                  extractHTMLFromContentEditor(elemSubChild) : extractHTML(tabSnippet);
-
-              const submetadata = createMetadata(subchildType, _tabContentBlocksHTML, elemSubChild);
-
-              htmlData[b_index].metadata.subnodes[tc_index].content.push(newContentObj(subchildType, subchildID, submetadata));
-
-              tabContentBlocksHTML += _tabContentBlocksHTML;
-            });
-            tabsHTML += `<section class="${tabcontent.className}" id="${tabcontent.id}">${tabContentBlocksHTML}</section>`;
-          });
-
-          htmlData[b_index].metadata.html = tabsHTML;
-          htmlOutputString += tabsHTML + `</div>`;
-        } 
-        else {
-          let _htmlOutputString;
-
-          // Get data if an element has a heading and a body
-          if (elemChild.classList.contains('blockquote') ||
-            elemChild.classList.contains('well')) {
-            const _heading = NormaliseHTMLString(elemChild.querySelector('h5').textContent),
-              _body = NormaliseHTMLString(elemChild.querySelector('.mce-content-body').innerHTML);
-
-            _htmlOutputString = NormaliseHTMLString(extractHTMLFromContentEditor(elemChild));
-            metadata = createMetadata(type, _htmlOutputString, elemChild);
-            htmlOutputString += _htmlOutputString;
-
-            console.log(_htmlOutputString);
-          }
-          // Get data if an element has no heading
-          else {
-            _htmlOutputString = NormaliseHTMLString(extractHTML(snippet));
-            metadata = createMetadata(type, _htmlOutputString);
-            htmlOutputString += _htmlOutputString;
-          }
-
-          htmlData.push(newContentObj(type, id, metadata));
-        }
-      });
-    }
-
-    hiddenData = htmlData.length > 0 ? `<pre style="display: none; position: absolute;">${ EncodeHTMLString(JSON.stringify(htmlData))}</pre>` : ``;
-
-    editor.htmlSection.innerHTML = editor.existing_data.length > 0 ? htmlOutputString : '<strong>Nothing to display here.</strong>';
-    editor.sourceSection.value = editor.htmlSection.innerHTML;
-    editor.html_data_json = hiddenData;
-
-    contentEditables = document.querySelectorAll('#outputContainer *[contenteditable="true"]');
-    contentEditables.forEach((heading, h_index) => {
-      heading.removeAttribute('contenteditable');
+    editor.existing_data.forEach(function(elem){
+      html += elem.metadata.html;
     });
 
-    console.log(editor.html_data_json);
-    console.log(htmlData);
+    editor.htmlSection.innerHTML = editor.existing_data.length > 0 ? html : '<strong>Nothing to display here.</strong>';
+    editor.sourceSection.value = editor.htmlSection.innerHTML;
+
+    editor.htmlSection.querySelectorAll('img').forEach(function(elem){
+      if (base64map.hasOwnProperty(elem.src)) {
+        elem.src = base64map[elem.src];
+      }
+    });
   },
   save_html: function() {
     editor.generate_html();
