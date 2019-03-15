@@ -3,9 +3,8 @@ import {
   GetClosestParent,
   GenerateID,
   NormaliseHTMLString,
-  DecodeHTMLString,
-  EncodeHTMLString
 } from './modules/utils/chromeExtensionUtils';
+import { dataParser } from './modules/utils/dataParser';
 import ContentBlocks from './modules/ContentBlocks';
 import UserInterfaceBuilder from './modules/UserInterfaceBuilder';
 import Sortable from '../node_modules/sortablejs/Sortable.min';
@@ -25,8 +24,8 @@ let editor = {
   btnThemeSelector: document.getElementById('btnThemeSelector'),
   toggleView:       document.getElementById('outputContainerToggleView'),
   forTab:           false,
-  existing_data: [],
-  test_data: [],
+  existing_data:    [],
+  test_data:        [],
   html_data_json:   '',
   toolbox:          undefined,
   init: function() {
@@ -40,20 +39,12 @@ let editor = {
       window.chrome.storage.sync.get(['instanceHTML'], function(objLocalStorage) {
         const ih = objLocalStorage.instanceHTML;
         if (ih !== '' || typeof ih !== 'undefined') {
-          document
-            .querySelector('body')
-            .insertAdjacentHTML('beforeend','<div id="placeholderHTML" style="display: none;">'+ objLocalStorage.instanceHTML +'</div>');
-
-          const pre = document.getElementById('placeholderHTML').querySelector('pre');
-
-          editor.existing_data = pre !== null ? JSON.parse(DecodeHTMLString(pre.textContent)) : [];
-
-          editor.start_app();
-          console.log(editor.existing_data);
+          editor.existing_data = editor.parse_existing_html(ih);
         }
       });
     } catch (e) {
       editor.existing_data = [];
+      editor.parse_existing_html(editor.htmlSection.innerHTML);
       editor.start_app();
       console.log('Attempting to do a chrome api method. You are in stand-alone mode');
     }
@@ -70,6 +61,12 @@ let editor = {
     editor.toggleView.onchange = editor.html_view;
     editor.btnClose.onclick = editor.close_preview;
     editor.btnThemeSelector.onchange = editor.select_theme;
+  },
+  parse_existing_html: function (ih) {
+    editor.outputPane.style.display = 'block';
+    editor.htmlSection.innerHTML = ih;
+
+    return dataParser(editor.htmlSection.childNodes, { GenerateID, ContentBlocks });
   },
   build_ui: function() {
     function replaceString(baseStr, strLookup, strReplacement) {
@@ -185,9 +182,10 @@ let editor = {
     });
   },
   _bindEvtSelectionDropdown: function() {
-    const selectedStyle = this.value;
-    const targetSnippetContainer = this.getAttribute('data-target');
-    const blockquote = document.getElementById(targetSnippetContainer).firstElementChild;
+    const
+      selectedStyle = this.value,
+      targetSnippetContainer = this.getAttribute('data-target'),
+      blockquote = document.getElementById(targetSnippetContainer).firstElementChild;
 
     blockquote.className = 'blockquote';
     blockquote.classList.add('blockquote-' + selectedStyle);
@@ -322,7 +320,7 @@ let editor = {
               blobCache = tinymce.activeEditor.editorUpload.blobCache,
               base64 = reader.result.split(',')[1],
               blobInfo = blobCache.create(id, file, base64),
-              base64src = 'data:image/png;base64,' + base64;
+              base64src = 'data:image/' + file.name.split('.')[1].toLowerCase() +';base64,' + base64;
 
             if (!base64map.hasOwnProperty(blobInfo.blobUri())) base64map[blobInfo.blobUri()] = base64src;
             
@@ -357,7 +355,6 @@ let editor = {
 
     const createMetadata = (componentType, contentBlock, contentHTML) => {
       if (ContentBlocks.elems[componentType].hasChildContent) {
-        console.log(contentBlock);
         return { subnodes: [], html: NormaliseHTMLString(contentHTML) };
       }
       else {
@@ -453,7 +450,6 @@ let editor = {
     });
 
     editor.htmlSection.innerHTML = editor.existing_data.length > 0 ? html : '<strong>Nothing to display here.</strong>';
-    editor.sourceSection.value = editor.htmlSection.innerHTML;
 
     editor.htmlSection.querySelectorAll('img').forEach(function(elem){
       if (base64map.hasOwnProperty(elem.src)) {
@@ -461,7 +457,9 @@ let editor = {
       }
     });
 
-    // Modify IDS
+    editor.sourceSection.value = editor.htmlSection.innerHTML;
+
+    // Modify IDS just for preview
     editor.htmlSection.querySelectorAll('.tabs').forEach(function(elem, i){
       elem.querySelectorAll('.tab-item-link').forEach(function(tabLink,_i){
         const dataTarget = tabLink.getAttribute('data-target');

@@ -4,7 +4,7 @@ module.exports = {
 			ui_label: 'Text Editor',
 			template: function (config) {
 				const html = typeof config !== 'undefined' ? config.value : '<span>Click here to start editing</span>';
-				const tmpl = html;
+				const tmpl = `<div class="editor-content">${html}</div>`;
 				return tmpl;
 			},
 			hasChildContent: false,
@@ -174,6 +174,14 @@ module.exports = {
 			contentEditorBindToElem: 'none',
 			hasChildContent: true
 		}
+	},
+	keywords: ['blockquote', 'list-bullet-circular', 'well', 'tabs', 'editor-content'],
+	keyword_map: {
+		'blockquote' : 'blockQuotes',
+		'list-bullet-circular' : 'styledLists',
+		'well' : 'wellContainer',
+		'tabs' : 'genericTabs',
+		'editor-content' : 'editorContent'
 	},
   getTemplate: function(elemType,config) {
   	const template = this.elems[elemType].template(config);

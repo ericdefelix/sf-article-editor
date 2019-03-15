@@ -24,7 +24,7 @@
     "storage",
     "webNavigation",
     "*://*/*",
-    "file:///*",
+    "file:///*"
   ],
   "content_security_policy": "script-src 'self' https://cdnjs.cloudflare.com ;object-src 'self'",
   "web_accessible_resources": [
