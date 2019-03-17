@@ -45,19 +45,22 @@ const webpage = {
 			if (event.type == 'message' && method == 'insertToContentEditor') {
 				webpage.methods.insertToContentEditor(event.data);
 			}
+			if (event.type == 'message' && method == 'openImageUpload') {
+				webpage.methods.openImageUpload(event.data);
+			}
 		}, false);
 
 
 		for (const contentEditorInstanceId in CKEDITOR.instances) {
-			const ckeditorTxtAreaValue = document.getElementById(contentEditorInstanceId).textContent;
-			if (ckeditorTxtAreaValue !== '' && ckeditorTxtAreaValue.indexOf('blockquote-addon') !== -1) {
-				webpage.methods.insertToContentEditor({
-					data: {
-						ckeditorIntanceId: contentEditorInstanceId,
-						html: ckeditorTxtAreaValue
-					}
-				});
-			}
+			// const ckeditorTxtAreaValue = document.getElementById(contentEditorInstanceId).textContent;
+			// if (ckeditorTxtAreaValue !== '' && ckeditorTxtAreaValue.indexOf('blockquote-addon') !== -1) {
+			// 	webpage.methods.insertToContentEditor({
+			// 		data: {
+			// 			ckeditorIntanceId: contentEditorInstanceId,
+			// 			html: ckeditorTxtAreaValue
+			// 		}
+			// 	});
+			// }
 
 			CKEDITOR.instances[contentEditorInstanceId].on('change', function () {
 				const iframe = document.getElementById('cke_' + contentEditorInstanceId).querySelector('iframe');
@@ -108,6 +111,12 @@ const webpage = {
 			const contentEditorInstanceId = request.data.ckeditorIntanceId;
 			const dataHTMLString = request.data.html;
 			CKEDITOR.instances[contentEditorInstanceId].setData(dataHTMLString);
+		},
+		openImageUpload: (request) => {
+			const contentEditorInstanceId = request.data.ckeditorIntanceId;
+
+			// WIP
+			document.getElementById('cke_' + contentEditorInstanceId).querySelector('.cke_button__sfdcimage');
 		},
 		closePopups: (e) => {
 			console.log('close popups');

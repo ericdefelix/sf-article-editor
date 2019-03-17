@@ -59,6 +59,10 @@ const index = {
 				window.postMessage(request, window.location.origin);
 				console.log('im from index');
 			}
+			if (method == 'openImageUpload') {
+				window.postMessage(request, window.location.origin);
+				console.log('im from index');
+			}
 			if (method == 'initEditor') {
 				console.log('im from index');
 			}

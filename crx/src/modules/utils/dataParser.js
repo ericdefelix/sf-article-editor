@@ -44,6 +44,34 @@ export function dataParser(childNodes, dependencies) {
 
     let _data = data();
     
+    if (nodeType == 1 && dependencies.ContentBlocks.elems[uiType(node.classList.value)].hasChildContent) {
+      _data['subnodes'] = [];
+
+      const tabLinks = node.querySelectorAll('.tab-item-link');
+
+      tabLinks.forEach(function(el, index) {
+        const 
+          label = el.textContent, id = el.getAttribute('id').split('target_')[1],
+          tabSection = node.querySelector('#' + id);
+
+        _data.subnodes.push({ label: label, id: id, content: [] });
+
+        if (tabSection.firstChild != null) {
+          const subHtmlNodes = tabSection.children;
+
+          for (let subnode of subHtmlNodes) {
+            let _subData = data();
+
+            _subData.type = uiType(subnode.classList.value);
+            _subData.metadata.html = subnode.outerHTML;
+            _data.subnodes[index].content.push(_subData);
+          }
+        }
+
+      });
+
+    }
+
     if (nodeType == 1 && node.hasAttribute('class') && isFromEditor(node.classList.value)) {
       _data.type = uiType(node.classList.value);
       _data.metadata.html = nodeHTML.replace(/^\s+|\s+$/g, '').trim();
@@ -52,35 +80,29 @@ export function dataParser(childNodes, dependencies) {
     }
 
     if (!previousNodeIsFromEditor) {
-      _data.type = 'editorContent';
-
-      if (nodeType == 1) {
-        _data.metadata.html = nodeHTML;
-        tempArray.push(_data);
-      };
-
       if (nodeType == 3) {
         const str = nodeValue.replace(/^\s+|\s+$/g, '').trim();
-        if (str !== '') {
-          // WIP
-          if (tempArray.length > 0 && tempArray[tempArray.length - 1].type !== 'editorContent') {
-            console.log('add');
-            _data.metadata.html = nodeValue;
-            tempArray.push(_data);
-          }
-          else {
-            console.log(tempArray);
-            // tempArray[tempArray.length - 1].metadata.html += nodeValue;
-          }
-          // WIP
-        }
       }
-      
+
+      _data.type = 'editorContent';
+
+      if ((nodeType == 1 || (nodeType == 3 && typeof str !== 'undefined' && str !== '')) && tempArray.length == 0 || 
+          (nodeType == 1 || (nodeType == 3 && typeof str !== 'undefined' && str !== '')) && tempArray.length > 0 && 
+           tempArray[tempArray.length - 1].type !== 'editorContent') {
+        _data.metadata.html = nodeType == 3 ? nodeValue : nodeHTML;
+        tempArray.push(_data);
+      }
+
+      if ((nodeType == 1 || (nodeType == 3 && typeof str !== 'undefined' && str !== '')) && tempArray.length > 0 && 
+           tempArray[tempArray.length - 1].type === 'editorContent') {
+        tempArray[tempArray.length - 1].metadata.html += nodeType == 3 ? nodeValue : nodeHTML;
+      }
+
       previousNodeIsFromEditor = false;
     }
   }
 
-  console.log(tempArray);
+  return tempArray;
 };
 
 // !previousNodeIsFromEditor ? tempArray.push(_data) : tempArray[tempArray.length - 1].metadata.html += nodeValue;

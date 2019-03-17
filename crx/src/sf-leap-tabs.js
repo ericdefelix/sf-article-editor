@@ -18,7 +18,7 @@
   				targetTabSiblings,
   				activeBtnTabSiblings;
 
-  		targetID = event.target.getAttribute('data-target');
+  		targetID = event.target.getAttribute('id').split('target_')[1];
   		activeTabBtn = event.target.parentNode;
 
   		targetTab = document.getElementById(targetID);

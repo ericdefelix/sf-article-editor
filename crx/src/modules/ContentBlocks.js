@@ -156,11 +156,11 @@ module.exports = {
 
 					navTabItems += `
 						<li class="tab-item${ i == 0 ? ' active' : ''}">
-							<a href="#" class="tab-item-link" data-target="tab-${id}">${label}</a>
+							<a href="#" class="tab-item-link" id="target_tab-${id}">${label}</a>
 						</li>
 					`;
 
-					navTabSections += `<section class="tab-content${ i == 0 ? ' in' : ''}" id="tab-${id}">${ hasConfig ? '{{ tab-'+ id +' }}' : '' }</section>`;
+					navTabSections += `<div class="tab-content${ i == 0 ? ' in' : ''}" id="tab-${id}">${ hasConfig ? '{{ tab-'+ id +' }}' : '' }</div>`;
 				}
 
 				const tmpl = `
@@ -181,7 +181,7 @@ module.exports = {
 		'list-bullet-circular' : 'styledLists',
 		'well' : 'wellContainer',
 		'tabs' : 'genericTabs',
-		'editor-content' : 'editorContent'
+		'editor-content' : 'textEditor'
 	},
   getTemplate: function(elemType,config) {
   	const template = this.elems[elemType].template(config);

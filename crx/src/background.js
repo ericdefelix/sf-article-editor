@@ -84,6 +84,9 @@ let background = {
     insertToContentEditor: (request) => {
       chrome.tabs.sendMessage(background.currentTabID, request);
     },
+    openImageUpload: (request) => {
+      chrome.tabs.sendMessage(background.currentTabID, request);
+    },
     initEditor: (request) => {
     },
     closePopups: (request) => {

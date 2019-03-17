@@ -38,13 +38,16 @@ let editor = {
 
       window.chrome.storage.sync.get(['instanceHTML'], function(objLocalStorage) {
         const ih = objLocalStorage.instanceHTML;
+        console.log(ih);
         if (ih !== '' || typeof ih !== 'undefined') {
-          editor.existing_data = editor.parse_existing_html(ih);
+          editor.htmlSection.insertAdjacentHTML('afterbegin',ih);
+          editor.existing_data = dataParser(editor.htmlSection.childNodes, { GenerateID, ContentBlocks });
+          editor.start_app();
         }
       });
     } catch (e) {
       editor.existing_data = [];
-      editor.parse_existing_html(editor.htmlSection.innerHTML);
+      editor.existing_data = dataParser(editor.htmlSection.childNodes, { GenerateID, ContentBlocks });
       editor.start_app();
       console.log('Attempting to do a chrome api method. You are in stand-alone mode');
     }
@@ -307,31 +310,48 @@ let editor = {
       tinymceConfig['paste_data_images '] = true;
       tinymceConfig['file_picker_types'] = 'image';
       tinymceConfig['file_picker_callback'] = function (cb, value, meta) {
-        const input = document.createElement('input');
-
-        input.setAttribute('type', 'file');
-        input.setAttribute('accept', 'image/*');
-        input.onchange = function () {
-          const file = this.files[0], reader = new FileReader();
-
-          reader.onload = function () {
-            const
-              id = 'blobid' + (new Date()).getTime(),
-              blobCache = tinymce.activeEditor.editorUpload.blobCache,
-              base64 = reader.result.split(',')[1],
-              blobInfo = blobCache.create(id, file, base64),
-              base64src = 'data:image/' + file.name.split('.')[1].toLowerCase() +';base64,' + base64;
-
-            if (!base64map.hasOwnProperty(blobInfo.blobUri())) base64map[blobInfo.blobUri()] = base64src;
-            
-            blobCache.add(blobInfo);
-            cb(base64src, { title: file.name });
-          };
-
-          reader.readAsDataURL(file);
+        const request = {
+          method: 'openImageUpload',
+          origin: window.location.origin,
+          crxid: editor.crxID,
+          data: {
+            html: editor.sourceSection.value + editor.html_data_json,
+            ckeditorIntanceId: editor.contentEditorInstanceId
+          }
         };
 
-        input.click();
+        try {
+          window.chrome.runtime.sendMessage(editor.crxID, request);
+        } catch (e) {
+          // statements
+          console.log('Attempting to do a chrome api method. Page origin is not via chrome extension');
+        }
+        // const input = document.createElement('input');
+
+        // input.setAttribute('type', 'file');
+        // input.setAttribute('accept', 'image/*');
+        // input.onchange = function () {
+        //   const file = this.files[0], reader = new FileReader();
+
+        //   reader.onload = function () {
+        //     const
+        //       id = 'blobid' + (new Date()).getTime(),
+        //       blobCache = tinymce.activeEditor.editorUpload.blobCache,
+        //       base64 = reader.result.split(',')[1],
+        //       blobInfo = blobCache.create(id, file, base64),
+        //       base64src = 'data:image/' + file.name.split('.')[1].toLowerCase() +';base64,' + base64;
+
+        //     if (!base64map.hasOwnProperty(blobInfo.blobUri())) base64map[blobInfo.blobUri()] = base64src;
+            
+        //     blobCache.add(blobInfo);
+        //     cb(base64src, { title: file.name });
+        //   };
+
+        //   reader.readAsDataURL(file);
+        // };
+
+
+        // input.click();
       }; 
     }
 
@@ -367,7 +387,6 @@ let editor = {
       div.innerHTML = tabs;
 
       div.querySelectorAll('.tab-content').forEach(function (tab, index) {
-        console.log(content[index]);
         tab.innerHTML = typeof content[index] !== 'undefined' ? content[index] : '';
       });
 
@@ -388,7 +407,7 @@ let editor = {
 
         tabLinks.forEach(function (tabElement, tabIndex) {
           const 
-            tabSection = document.getElementById(tabElement.getAttribute('data-target')),
+            tabSection = document.getElementById(tabElement.getAttribute('id').split('target_')[1]),
             tabId = tabSection.getAttribute('id'),
             tabText = tabElement.textContent;
 
@@ -462,7 +481,7 @@ let editor = {
     // Modify IDS just for preview
     editor.htmlSection.querySelectorAll('.tabs').forEach(function(elem, i){
       elem.querySelectorAll('.tab-item-link').forEach(function(tabLink,_i){
-        const dataTarget = tabLink.getAttribute('data-target');
+        const dataTarget = tabLink.getAttribute('id').split('target_')[1];
         tabLink.setAttribute('data-target', 'preview_' + dataTarget);
         elem.querySelector('#' + dataTarget).id = 'preview_' + dataTarget;
       });
