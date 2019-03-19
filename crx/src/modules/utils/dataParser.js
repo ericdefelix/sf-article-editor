@@ -42,23 +42,19 @@ export function dataParser(childNodes, dependencies) {
     }
   };
 
-  const pushTo = (arrayLocation) => {
-
-  };
-
   const htmlNodes = [...childNodes];
   
   let tempArray = [];
   let pushAsNewObject = true;
 
   const checkIfNewObject = (currentPointer) => {
-    let flag = true;
-    if (tempArray.length > 0) {
-      if (tempArray[tempArray.length - 1].type !== 'textEditor' && currentPointer !== 'textEditor') {
-        flag = false;
-      }
+    if (tempArray.length == 0) return true;
+    if (tempArray[tempArray.length - 1].type == 'textEditor' && currentPointer == 'textEditor') {
+      return false;
     }
-    return flag;
+    else {
+      return true;
+    }
   };
 
   for (let i = 0; i < htmlNodes.length; i++) {
@@ -73,13 +69,13 @@ export function dataParser(childNodes, dependencies) {
         pushAsNewObject = checkIfNewObject(_data.type);
         
         if (dependencies.ContentBlocks.elems[uiType(node.classList.value)].hasChildContent) {
-          _data['subnodes'] = [];
+          _data.metadata['subnodes'] = [];
           nodeValue = node.outerHTML;
           node.querySelectorAll('.tab-item-link').forEach(function (el, index) {
             const
               label = el.textContent, id = el.getAttribute('id').split('target_')[1],
               tabSection = node.querySelector('#' + id);
-            _data.subnodes.push({ label: label, id: id, content: [] });
+            _data.metadata.subnodes.push({ label: label, id: id.split('tab-')[1], content: [] });
             if (tabSection.firstChild != null) {
               const subHtmlNodes = tabSection.children;
 
@@ -88,7 +84,7 @@ export function dataParser(childNodes, dependencies) {
                 pushAsNewObject = true;
                 _subData.type = uiType(subnode.classList.value);
                 _subData.metadata.html = subnode.outerHTML;
-                _data.subnodes[index].content.push(_subData);
+                _data.metadata.subnodes[index].content.push(_subData);
               }
             }
           });
@@ -110,18 +106,11 @@ export function dataParser(childNodes, dependencies) {
     // Determine whether we push new data or just append it from the previous data
     // if HTML elements can be grouped in one Content Editor
     _data.metadata.html = nodeValue;
-    console.log(pushAsNewObject);
-    if (pushAsNewObject) {
-      tempArray.push(_data);
-    }
-    else {
-      tempArray[tempArray.length - 1].metadata.html += nodeValue;
-    }
+    pushAsNewObject ? tempArray.push(_data) : tempArray[tempArray.length - 1].metadata.html += nodeValue;
     // ================
   }
 
-  console.log(tempArray);
-  return [];
+  return tempArray;
 };
 
 // !previousNodeIsFromEditor ? tempArray.push(_data) : tempArray[tempArray.length - 1].metadata.html += nodeValue;

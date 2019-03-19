@@ -51,7 +51,7 @@ let editor = {
         editor.image_gallery = JSON.parse(objLocalStorage.image_gallery);
       });
     } catch (e) {
-      editor.outputPane.style.display = 'block';
+      // editor.outputPane.style.display = 'block';
       editor.image_gallery = imageGalleryMockData;
       editor.htmlSection.insertAdjacentHTML('afterbegin', htmlMockData);
       editor.existing_data = dataParser(editor.htmlSection.childNodes, { GenerateID, ContentBlocks });
@@ -71,12 +71,6 @@ let editor = {
     editor.toggleView.onchange = editor.html_view;
     editor.btnClose.onclick = editor.close_preview;
     editor.btnThemeSelector.onchange = editor.select_theme;
-  },
-  parse_existing_html: function (ih) {
-    editor.outputPane.style.display = 'block';
-    editor.htmlSection.innerHTML = ih;
-
-    return dataParser(editor.htmlSection.childNodes, { GenerateID, ContentBlocks });
   },
   build_ui: function() {
     function replaceString(baseStr, strLookup, strReplacement) {

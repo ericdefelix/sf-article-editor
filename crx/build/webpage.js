@@ -152,6 +152,8 @@ const webpage = {
 			for (let index = 0; index < arr.length; index++) {
 				const el = arr[index];
 				if (el.nodeType == 1 && el.nodeName == 'IMG') {
+					el.style.width = 200;
+					el.style.height = 'auto';
 					tempArray.push({ alt: el.getAttribute('alt'), src: el.getAttribute('src') });
 				}
 			}
