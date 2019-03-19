@@ -8,6 +8,7 @@ import { dataParser } from './modules/utils/dataParser';
 import ContentBlocks from './modules/ContentBlocks';
 import UserInterfaceBuilder from './modules/UserInterfaceBuilder';
 import Sortable from '../node_modules/sortablejs/Sortable.min';
+import { imageGalleryMockData, htmlMockData } from './modules/utils/mockData';
 
 let base64map = {};
 
@@ -25,7 +26,7 @@ let editor = {
   toggleView:       document.getElementById('outputContainerToggleView'),
   forTab:           false,
   existing_data:    [],
-  test_data:        [],
+  image_gallery:    [],
   html_data_json:   '',
   toolbox:          undefined,
   init: function() {
@@ -45,8 +46,14 @@ let editor = {
           editor.start_app();
         }
       });
+
+      window.chrome.storage.sync.get(['image_gallery'], function (objLocalStorage) {
+        editor.image_gallery = JSON.parse(objLocalStorage.image_gallery);
+      });
     } catch (e) {
-      editor.existing_data = [];
+      editor.outputPane.style.display = 'block';
+      editor.image_gallery = imageGalleryMockData;
+      editor.htmlSection.insertAdjacentHTML('afterbegin', htmlMockData);
       editor.existing_data = dataParser(editor.htmlSection.childNodes, { GenerateID, ContentBlocks });
       editor.start_app();
       console.log('Attempting to do a chrome api method. You are in stand-alone mode');
@@ -310,7 +317,7 @@ let editor = {
       tinymceConfig['paste_data_images '] = true;
       tinymceConfig['file_picker_types'] = 'image';
       tinymceConfig['file_picker_callback'] = function (cb, value, meta) {
-
+        // Display all images
       }; 
     }
 

@@ -75,6 +75,7 @@ let background = {
 
           chrome.storage.sync.set({ contentEditorInstanceId: request.data.contentEditorInstanceId });
           chrome.storage.sync.set({ instanceHTML: request.data.instanceHTML });
+          chrome.storage.sync.set({ image_gallery: request.data.image_gallery });
         });
       }
       else {

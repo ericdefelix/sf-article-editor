@@ -9,6 +9,7 @@
 import { NewBtnTemplateCKEDITOR, UrlContainsArticleEdit, GetClosestParent } from '/modules/utils/chromeExtensionUtils.js';
 
 const webpage = {
+	image_gallery: '',
 	init: function () {
 		const ckToolbox = document.getElementsByClassName('cke_toolbox');
 
@@ -24,17 +25,13 @@ const webpage = {
 			const body = element.contentDocument.querySelector('body');
 
 			webpage.methods.initIframeCSS(head, body, 'sf-leap');
+
+			if (GetClosestParent(element, '#lineArticle_Image_Gallery') !== null) {
+				webpage.methods.collectImgGallery(body);
+			}
 		});
 
-		// Hide controls for Article Image Gallery
-		const uploadToolbox = document.getElementById('lineArticle_Image_Gallery').querySelector('.cke_toolbox');
-		const toolboxItems = [...uploadToolbox.children];
-		for (let i = 0; i < toolboxItems.length; i++) {
-			const btn = toolboxItems[i].querySelector('.cke_toolgroup .cke_button');
-			if (!btn.classList.contains('cke_button__sfdcimage')) {
-				toolboxItems[i].style.display = 'none';
-			}
-		}
+		webpage.methods.initImageGallery();
 	},
 	listeners: function () {
 		const btnAdvancedEditor = document.querySelectorAll('.cke_button__advancededitor');
@@ -60,23 +57,17 @@ const webpage = {
 			}
 		}, false);
 
-
 		for (const contentEditorInstanceId in CKEDITOR.instances) {
-			// const ckeditorTxtAreaValue = document.getElementById(contentEditorInstanceId).textContent;
-			// if (ckeditorTxtAreaValue !== '' && ckeditorTxtAreaValue.indexOf('blockquote-addon') !== -1) {
-			// 	webpage.methods.insertToContentEditor({
-			// 		data: {
-			// 			ckeditorIntanceId: contentEditorInstanceId,
-			// 			html: ckeditorTxtAreaValue
-			// 		}
-			// 	});
-			// }
-
+			const contentEditorDOM = document.getElementById(contentEditorInstanceId);
 			CKEDITOR.instances[contentEditorInstanceId].on('change', function () {
 				const iframe = document.getElementById('cke_' + contentEditorInstanceId).querySelector('iframe');
 				const head = iframe.contentDocument.querySelector('head');
 				const body = iframe.contentDocument.querySelector('body');
 				webpage.methods.initIframeCSS(head, body, 'sf-leap');
+
+				if (GetClosestParent(contentEditorDOM, '#lineArticle_Image_Gallery') !== null) {
+					webpage.methods.collectImgGallery(body);
+				}
 				console.log('change');
 			});
 		}
@@ -99,7 +90,8 @@ const webpage = {
 					display: true,
 					dimensions: dimensions,
 					contentEditorInstanceId: contentEditorInstanceId,
-					instanceHTML: CKEDITOR.instances[contentEditorInstanceId].getData()
+					instanceHTML: CKEDITOR.instances[contentEditorInstanceId].getData(),
+					image_gallery: webpage.image_gallery
 				}
 			};
 
@@ -138,6 +130,35 @@ const webpage = {
 				clearTimeout(t);
 			}, 50);
 		},
+		initImageGallery: () => {
+			const imgGallery = document.getElementById('lineArticle_Image_Gallery');
+			const uploadToolbox = imgGallery.querySelector('.cke_toolbox');
+			const toolboxItems = [...uploadToolbox.children];
+
+			// Hide controls for Article Image Gallery and extract URLs
+			for (let i = 0; i < toolboxItems.length; i++) {
+				const btn = toolboxItems[i].querySelector('.cke_toolgroup .cke_button');
+				if (btn.classList.contains('cke_button__sfdcimage') ||
+					btn.classList.contains('cke_button__source')) continue;
+				toolboxItems[i].style.display = 'none';
+			}
+		},
+		collectImgGallery: (body) => {
+			const
+				images = body.children,
+				arr = [...images],
+				tempArray = [];
+			
+			for (let index = 0; index < arr.length; index++) {
+				const el = arr[index];
+				if (el.nodeType == 1 && el.nodeName == 'IMG') {
+					tempArray.push({ alt: el.getAttribute('alt'), src: el.getAttribute('src') });
+				}
+			}
+
+			webpage.image_gallery = JSON.stringify(tempArray);
+			console.log(webpage.image_gallery);
+		},
 		sendImageURL: (request) => {
 			window.postMessage(config, window.location.origin);
 		},
@@ -154,7 +175,6 @@ const webpage = {
 	},
 	run: function () {
 		this.init();
-		
 	}
 };
 

@@ -72,7 +72,6 @@ export function dataParser(childNodes, dependencies) {
       previousNodeIsFromEditor = true;
     }
 
-
     if (nodeType == 1 && node.hasAttribute('class') && isFromEditor(node.classList.value)) {
       _data.type = uiType(node.classList.value);
       _data.metadata.html = nodeHTML.replace(/^\s+|\s+$/g, '').trim();

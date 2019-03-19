@@ -10,7 +10,8 @@
 	  return getChildren(n.parentNode.firstChild, n);
 	}
 
-  document.addEventListener('click', function(event) {
+	document.addEventListener('click', function (event) {
+		event.preventDefault();
   	if (event.target.classList.value.indexOf('tab-item-link') !== -1) {
   		var targetID,
   				activeTabBtn,
