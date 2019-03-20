@@ -23,22 +23,19 @@ let editor = {
   btnClose:         document.getElementById('btnCloseOutputContainer'),
   btnThemeSelector: document.getElementById('btnThemeSelector'),
   toggleView:       document.getElementById('outputContainerToggleView'),
-  forTab:           false,
   existing_data:    [],
   image_gallery:    [],
-  html_data_json:   '',
   toolbox:          undefined,
   init: function() {
     try {
-      window.chrome.storage.sync.get(['contentEditorInstanceId'], function(objLocalStorage) {
+      chrome.storage.sync.get(['contentEditorInstanceId'], function(objLocalStorage) {
         editor.contentEditorInstanceId = objLocalStorage.contentEditorInstanceId;
         editor.btnSave.setAttribute('data-target', editor.contentEditorInstanceId);
-        editor.crxID = window.chrome.runtime.id;
+        editor.crxID = chrome.runtime.id;
       });
 
-      window.chrome.storage.sync.get(['instanceHTML'], function(objLocalStorage) {
+      chrome.storage.sync.get(['instanceHTML'], function(objLocalStorage) {
         const ih = objLocalStorage.instanceHTML;
-        console.log(ih);
         if (ih !== '' || typeof ih !== 'undefined') {
           editor.htmlSection.insertAdjacentHTML('afterbegin',ih);
           editor.existing_data = dataParser(editor.htmlSection.childNodes, { GenerateID, ContentBlocks });
@@ -46,12 +43,12 @@ let editor = {
         }
       });
 
-      window.chrome.storage.sync.get(['image_gallery'], function (objLocalStorage) {
+      chrome.storage.sync.get(['image_gallery'], function (objLocalStorage) {
         editor.image_gallery = JSON.parse(objLocalStorage.image_gallery);
         ImageGallery.run(editor.image_gallery);
       });
+
     } catch (e) {
-      // editor.outputPane.style.display = 'block';
       editor.image_gallery = imageGalleryMockData;
       editor.htmlSection.insertAdjacentHTML('afterbegin', htmlMockData);
       editor.existing_data = dataParser(editor.htmlSection.childNodes, { GenerateID, ContentBlocks });
@@ -73,9 +70,9 @@ let editor = {
     editor.btnThemeSelector.onchange = editor.select_theme;
   },
   build_ui: function() {
-    function replaceString(baseStr, strLookup, strReplacement) {
+    const replaceString = (baseStr, strLookup, strReplacement) => {
       return baseStr.replace(strLookup, strReplacement);
-    }
+    };
 
     UserInterfaceBuilder.render('canvas', {
       data: editor.existing_data,
@@ -128,9 +125,7 @@ let editor = {
         // Init toolbox menu actions
         document.addEventListener('click', function(event) {
           const parent = GetClosestParent(event.target, '.canvas-add-component');
-          if (parent === null) {
-            toolbox.classList.remove('in');
-          }
+          if (parent === null) toolbox.classList.remove('in');
         }, false);
 
         // Hide/show page controls
@@ -221,6 +216,40 @@ let editor = {
       container.querySelector('[data-action="select-component"]').onclick = editor._bindEvtDisplayToolbox;
     }
   },
+  _bindEvtEditTabs: function () {
+    const snippetContainer = document.getElementById(this.getAttribute('data-target'));
+    if (!this.classList.contains('canvas-btn-primary')) {
+      this.textContent = 'Save';
+      this.classList.add('canvas-btn-primary');
+      editor.btnSave.disabled = true;
+      editor.btnPreview.disabled = true;
+      snippetContainer.querySelectorAll('.tab-item-link').forEach((element, index) => {
+        element.contentEditable = true;
+        element.parentElement.classList.add('edit-mode');
+
+        if (index == 0) {
+          let t;
+          element.focus();
+
+          t = setTimeout(() => {
+            document.execCommand('selectAll', false, null);
+            clearTimeout(t);
+          }, 50);
+        }
+      }); 
+    }
+    else {
+      this.textContent = 'Edit Tabs';
+      this.classList.remove('canvas-btn-primary');
+      editor.btnSave.disabled = false;
+      editor.btnPreview.disabled = false;
+      snippetContainer.querySelectorAll('.tab-item-link').forEach((element, index) => {
+        element.contentEditable = false;
+        element.removeAttribute('contentEditable');
+        element.parentElement.classList.remove('edit-mode');
+      });
+    }
+  },
   togglePageButtons: function() {
     editor.btnPreview.style.display = editor.existing_data.length == 0 ? 'none' : 'initial';
     editor.btnSave.style.display = editor.existing_data.length == 0 ? 'none' : 'initial';
@@ -251,14 +280,17 @@ let editor = {
     }
 
     if (targetComponentPointer == 'genericTabs') {
-        const targetTabContent = targetSnippetContainer.querySelectorAll('.tab-content');
-        targetTabContent.forEach(function(targtTab, y) {
-          const targetTabID = targtTab.getAttribute('id');
-          editor.init_sortable({
-            container: document.getElementById(targetTabID),
-            contentDraggableClass: '.canvasDraggableSub_' + targetTabID
-          });
+      const targetTabContent = targetSnippetContainer.querySelectorAll('.tab-content');
+
+      targetTabContent.forEach(function(targtTab, y) {
+        const targetTabID = targtTab.getAttribute('id');
+        editor.init_sortable({
+          container: document.getElementById(targetTabID),
+          contentDraggableClass: '.canvasDraggableSub_' + targetTabID
         });
+      });
+
+      document.querySelector('[data-target="snippet-' + domID + '"]').onclick = editor._bindEvtEditTabs;
     }
 
     if (targetComponentPointer == 'styledLists' || targetComponentPointer == 'textEditor') {
@@ -429,14 +461,13 @@ let editor = {
     });
 
     editor.htmlSection.innerHTML = editor.existing_data.length > 0 ? html : '<strong>Nothing to display here.</strong>';
-
     editor.sourceSection.value = editor.htmlSection.innerHTML;
 
     // Modify IDS just for preview
     editor.htmlSection.querySelectorAll('.tabs').forEach(function(elem, i){
       elem.querySelectorAll('.tab-item-link').forEach(function(tabLink,_i){
         const dataTarget = tabLink.getAttribute('id').split('target_')[1];
-        tabLink.setAttribute('data-target', 'preview_' + dataTarget);
+        tabLink.setAttribute('id', 'target_preview_' + dataTarget);
         elem.querySelector('#' + dataTarget).id = 'preview_' + dataTarget;
       });
     });
@@ -450,13 +481,20 @@ let editor = {
       origin: window.location.origin,
       crxid: editor.crxID,
       data: {
-        html: editor.sourceSection.value + editor.html_data_json,
+        html: editor.sourceSection.value,
         ckeditorIntanceId: this.getAttribute('data-target')
       }
     };
 
     try {
-      window.chrome.runtime.sendMessage(editor.crxID, request);
+      chrome.runtime.sendMessage(editor.crxID, request);
+      
+      // Close popup window
+      chrome.windows.getCurrent(function (w) {
+        chrome.tabs.getSelected(w.id, function (response) {
+          chrome.windows.remove(response.windowId);
+        });
+      });
     } catch (e) {
       // statements
       console.log('Attempting to do a chrome api method. Page origin is not via chrome extension');

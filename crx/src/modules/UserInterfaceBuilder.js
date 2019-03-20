@@ -156,6 +156,11 @@ module.exports = {
           ${typeof tabContentId === 'undefined' ? `canvasDraggableMain` : `canvasDraggableSub_tab-` + 
             tabContentId }"></span>
         ${obj.data.hasOwnProperty('types') ? module.exports.renderOptions(obj) : ''}
+        ${!obj.data.hasChildContent ? '' :
+          `<button class="canvas-btn canvas-btn-xs" 
+            data-action="edit-tab"
+            data-target="snippet-${obj.id}" data-target-type="${obj.type}">Edit Tabs</button>`
+        }
         <button class="canvas-btn canvas-btn-xs" 
           data-action="remove-component"
           data-target="${obj.id}" data-target-type="${obj.type}">

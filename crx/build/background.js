@@ -29,6 +29,14 @@ let background = {
       }
     });
 
+    chrome.tabs.onRemoved.addListener((tabId, changeInfo, tab) => {
+      console.log(tab);
+    });
+
+    chrome.windows.onRemoved.addListener((tabId, changeInfo, tab) => {
+      console.log(tab);
+    });
+
     chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
       const method = request.method;
       if (RequestIsValid(request)) background.methods[method](request);

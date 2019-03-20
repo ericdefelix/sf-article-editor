@@ -336,6 +336,36 @@ select.canvas-form-control {
   top: 5px;
   right: 5px; }
 
+.edit-mode {
+  position: relative; }
+  .edit-mode:before {
+    display: block;
+    content: '';
+    background-color: #f3f3f3;
+    z-index: 0;
+    position: absolute;
+    top: 15px;
+    bottom: 2px;
+    right: 5px;
+    left: 5px;
+    border: 1px solid #e3e3e3;
+    border-radius: 3px; }
+  .edit-mode:hover:before {
+    border: 1px solid #067fd0;
+    -moz-box-shadow: 0 0 0 1px #067fd0;
+    -webkit-box-shadow: 0 0 0 1px #067fd0;
+    -ms-box-shadow: 0 0 0 1px #067fd0;
+    box-shadow: 0 0 0 1px #067fd0; }
+
+[data-component-type="genericTabs"] .canvas-content-block:hover .canvas-content-snippet {
+  -moz-box-shadow: 0 0 0 2px #067fd0 inset;
+  -webkit-box-shadow: 0 0 0 2px #067fd0 inset;
+  -ms-box-shadow: 0 0 0 2px #067fd0 inset;
+  box-shadow: 0 0 0 2px #067fd0 inset; }
+
+[data-component-type="genericTabs"] .canvas-content-block .canvas-content-config {
+  border-radius: 0 !important; }
+
 .toolbox {
   position: absolute;
   background-color: #6f6f6f;

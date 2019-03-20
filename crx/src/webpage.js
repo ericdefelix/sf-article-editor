@@ -68,11 +68,8 @@ const webpage = {
 				if (GetClosestParent(contentEditorDOM, '#lineArticle_Image_Gallery') !== null) {
 					webpage.methods.collectImgGallery(body);
 				}
-				console.log('change');
 			});
 		}
-
-		// window.addEventListener('beforeunload', webpage.methods.closePopups);
 	},
 	methods: {
 		popup: (contentEditorInstanceId) => {
@@ -112,23 +109,17 @@ const webpage = {
 			const contentEditorInstanceId = request.data.ckeditorIntanceId;
 			const dataHTMLString = request.data.html;
 			CKEDITOR.instances[contentEditorInstanceId].setData(dataHTMLString);
-		},
-		openImageUpload: (request) => {
-			const contentEditorInstanceId = request.data.ckeditorIntanceId;
-			const imgBtn = document.getElementById('cke_' + contentEditorInstanceId).querySelector('.cke_button__sfdcimage');
-			imgBtn.click();
+
+			const contentEditorContainer = document.getElementById('cke_' + contentEditorInstanceId);
+			contentEditorContainer.style.boxShadow = '0 0 1px 1px rgb(15, 156, 247)';
+			contentEditorContainer.style.webkitBoxShadow = '0 0 1px 1px rgb(15, 156, 247)';
 
 			let t;
 			t = setTimeout(() => {
-				const fileUploadBtn = document.querySelector('input[type="file"]');
-				const okBtn = document.querySelector('.cke_dialog_ui_button_ok');
-
-				fileUploadBtn.onchange = function () {
-					okBtn.click();
-				};
-				fileUploadBtn.click();
+				contentEditorContainer.style.boxShadow = '';
+				contentEditorContainer.style.webkitBoxShadow = '';
 				clearTimeout(t);
-			}, 50);
+			}, 3000);
 		},
 		initImageGallery: () => {
 			const imgGallery = document.getElementById('lineArticle_Image_Gallery');
@@ -159,19 +150,8 @@ const webpage = {
 			}
 
 			webpage.image_gallery = JSON.stringify(tempArray);
-			console.log(webpage.image_gallery);
 		},
 		sendImageURL: (request) => {
-			window.postMessage(config, window.location.origin);
-		},
-		closePopups: (e) => {
-			console.log('close popups');
-			const config = {
-				method: 'closePopups',
-				origin: window.location.origin,
-				data: {}
-			};
-
 			window.postMessage(config, window.location.origin);
 		}
 	},

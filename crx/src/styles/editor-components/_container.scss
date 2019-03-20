@@ -62,8 +62,10 @@
     }
   }
 
-  &:hover > .canvas-content-config {
-    opacity: 1;
+  &:hover {
+    > .canvas-content-config {
+      opacity: 1;
+    }
   }
 
   &:first-of-type {
@@ -280,9 +282,6 @@ select.canvas-form-control {
   padding: 1px;
 }
 
-.canvas-btn-action {
-}
-
 .canvas-btn-primary {
 	@include button-config-color($blue);
 	color: white;
@@ -312,4 +311,50 @@ select.canvas-form-control {
   position: absolute;
   top: 5px;
   right: 5px;
+}
+
+.edit-mode {
+  position: relative;
+  &:before {
+    display: block;
+    content: '';
+    background-color: #f3f3f3;
+    z-index: 0;
+    position: absolute;
+    top: 15px;
+    bottom: 2px;
+    right: 5px;
+    left: 5px;
+    border: 1px solid #e3e3e3;
+    border-radius: 3px;
+  }
+
+  &:hover {
+    &:before {
+      border: 1px solid $blue;
+      @include box-shadow(0,0,0,1px, $blue);
+    }
+  }
+}
+
+// .canvas-container  > .canvas-content-block {
+//   &:hover {
+//     > .canvas-content-snippet {
+//       @include box-shadow(0,0,0,2px, $blue, inset);
+//     }
+//   }
+// }
+
+[data-component-type="genericTabs"] {
+  .canvas-content-block {
+    &:hover {
+      .canvas-content-snippet {
+        @include box-shadow(0,0,0,2px, $blue, inset);
+      }
+    }
+
+    .canvas-content-config {
+      border-radius: 0 !important;
+    }
+  }
 }
