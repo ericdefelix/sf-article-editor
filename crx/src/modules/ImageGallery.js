@@ -37,10 +37,7 @@ module.exports = {
   select_value: function () {
     const filepickerInput = document.querySelector('.mce-filepicker .mce-textbox');
     filepickerInput.value = this.getAttribute('data-value');
-
     module.exports.toggle_view('hide');
-
-    console.log(this.getAttribute('data-value'));
   },
   toggle_view: (state) => {
     module.exports.container.style.display = state == 'show' ? 'block' : 'none';

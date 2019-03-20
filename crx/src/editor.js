@@ -11,8 +11,6 @@ import Sortable from '../node_modules/sortablejs/Sortable.min';
 import ImageGallery from './modules/ImageGallery';
 import { imageGalleryMockData, htmlMockData } from './modules/utils/mockData';
 
-let base64map = {};
-
 let editor = {
   crxID: '',
   contentEditorInstanceId: '',
@@ -50,6 +48,7 @@ let editor = {
 
       window.chrome.storage.sync.get(['image_gallery'], function (objLocalStorage) {
         editor.image_gallery = JSON.parse(objLocalStorage.image_gallery);
+        ImageGallery.run(editor.image_gallery);
       });
     } catch (e) {
       // editor.outputPane.style.display = 'block';
@@ -60,14 +59,12 @@ let editor = {
       console.log('Attempting to do a chrome api method. You are in stand-alone mode');
     }
   },
-  start_app: function() {
+  start_app: function () {
     editor.build_ui();
     editor.init_sortable({
       container: document.getElementById('canvasContainer'),
       contentDraggableClass: '.canvasDraggableMain'
     });
-
-    ImageGallery.run(editor.image_gallery);
 
     editor.btnPreview.onclick = editor.generate_html;
     editor.btnSave.onclick = editor.save_html;
@@ -432,12 +429,6 @@ let editor = {
     });
 
     editor.htmlSection.innerHTML = editor.existing_data.length > 0 ? html : '<strong>Nothing to display here.</strong>';
-
-    editor.htmlSection.querySelectorAll('img').forEach(function(elem){
-      if (base64map.hasOwnProperty(elem.src)) {
-        elem.src = base64map[elem.src];
-      }
-    });
 
     editor.sourceSection.value = editor.htmlSection.innerHTML;
 
