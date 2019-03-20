@@ -8,6 +8,7 @@ import { dataParser } from './modules/utils/dataParser';
 import ContentBlocks from './modules/ContentBlocks';
 import UserInterfaceBuilder from './modules/UserInterfaceBuilder';
 import Sortable from '../node_modules/sortablejs/Sortable.min';
+import ImageGallery from './modules/ImageGallery';
 import { imageGalleryMockData, htmlMockData } from './modules/utils/mockData';
 
 let base64map = {};
@@ -65,6 +66,8 @@ let editor = {
       container: document.getElementById('canvasContainer'),
       contentDraggableClass: '.canvasDraggableMain'
     });
+
+    ImageGallery.run(editor.image_gallery);
 
     editor.btnPreview.onclick = editor.generate_html;
     editor.btnSave.onclick = editor.save_html;
@@ -311,7 +314,7 @@ let editor = {
       tinymceConfig['paste_data_images '] = true;
       tinymceConfig['file_picker_types'] = 'image';
       tinymceConfig['file_picker_callback'] = function (cb, value, meta) {
-        // Display all images
+        ImageGallery.run(editor.image_gallery);
       }; 
     }
 

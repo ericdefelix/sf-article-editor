@@ -37,7 +37,6 @@ module.exports = {
 
     const renderExistingData = () => {
       let tmpl = ``;
-      console.log(data);
       try {
         for (let i = 0; i <= data.length - 1; i++) {
           const id = data[i].id, 
@@ -50,8 +49,6 @@ module.exports = {
 
           if (metadata.hasOwnProperty('subnodes') && metadata.subnodes.length > 0) {  
             elementTemplate = ContentBlocks.elems[type].template({ subnodes: metadata.subnodes });
-
-            console.log(elementTemplate);
 
             let tabsHTML = module.exports.renderContentBlock(existingDataObj, elementTemplate, undefined);
 
@@ -156,7 +153,7 @@ module.exports = {
     <section class="canvas-content-block" id="${obj.id}">
       <div class="canvas-content-config"> 
         <span class="canvas-content-draggable 
-          ${typeof tabContentId === 'undefined' ? `canvasDraggableMain` : `canvasDraggableSub_` + 
+          ${typeof tabContentId === 'undefined' ? `canvasDraggableMain` : `canvasDraggableSub_tab-` + 
             tabContentId }"></span>
         ${obj.data.hasOwnProperty('types') ? module.exports.renderOptions(obj) : ''}
         <button class="canvas-btn canvas-btn-xs" 
