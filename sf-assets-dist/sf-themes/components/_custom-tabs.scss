@@ -54,7 +54,6 @@ ul.#{$prefix}tab-nav {
 		
 		&:first-child {
 			margin-top: 0;
-			margin-left: -20px;
 		}
 
 		> .#{$prefix}tab-item-link {
@@ -102,5 +101,9 @@ ul.#{$prefix}tab-nav {
 				background-color: $comp_tab-nav-border-color-active;
 			}
 		}
-	}	
+	}
+
+	&.uiOutputRichText > li.#{$prefix}tab-item:first-child {
+		margin-left: -20px;
+	}
 }
