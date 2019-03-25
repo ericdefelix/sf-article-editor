@@ -33,7 +33,7 @@
     "/modules/utils/chromeExtensionUtils.js",
     "webpage.js",
     "editor.js",
-    "sf-leap-tabs.js",
+    "sf-leap.js",
     "editor-themes-insert.css",
     "editor.css"
   ]
