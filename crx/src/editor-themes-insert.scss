@@ -1,31 +1,31 @@
 @import 'styles/variables';
-@import './node_modules/sf-ui-components/sf-themes/components/mixins';
+@import './node_modules/@leapdev/gui/src/scss/xsf-crx/components/mixins';
 
 body.sf-leap {
-  @import './node_modules/sf-ui-components/sf-themes/sites/sf-leap/variables';
-  @import './node_modules/sf-ui-components/sf-themes/components/blockquotes';
-  @import './node_modules/sf-ui-components/sf-themes/components/custom-tabs';
-  @import './node_modules/sf-ui-components/sf-themes/components/styled-lists';
-  @import './node_modules/sf-ui-components/sf-themes/components/well';
+  @import './node_modules/@leapdev/gui/src/scss/xsf-crx/sites/sf-leap/variables';
+  @import './node_modules/@leapdev/gui/src/scss/xsf-crx/components/blockquotes';
+  @import './node_modules/@leapdev/gui/src/scss/xsf-crx/components/custom-tabs';
+  @import './node_modules/@leapdev/gui/src/scss/xsf-crx/components/styled-lists';
+  @import './node_modules/@leapdev/gui/src/scss/xsf-crx/components/well';
 }
 body.sf-zaliet {
-  @import './node_modules/sf-ui-components/sf-themes/sites/sf-zaliet/variables';
-  @import './node_modules/sf-ui-components/sf-themes/components/blockquotes';
-  @import './node_modules/sf-ui-components/sf-themes/components/custom-tabs';
-  @import './node_modules/sf-ui-components/sf-themes/components/styled-lists';
-  @import './node_modules/sf-ui-components/sf-themes/components/well';
+  @import './node_modules/@leapdev/gui/src/scss/xsf-crx/sites/sf-zaliet/variables';
+  @import './node_modules/@leapdev/gui/src/scss/xsf-crx/components/blockquotes';
+  @import './node_modules/@leapdev/gui/src/scss/xsf-crx/components/custom-tabs';
+  @import './node_modules/@leapdev/gui/src/scss/xsf-crx/components/styled-lists';
+  @import './node_modules/@leapdev/gui/src/scss/xsf-crx/components/well';
 }
 body.sf-titlex {
-  @import './node_modules/sf-ui-components/sf-themes/sites/sf-titlex/variables';
-  @import './node_modules/sf-ui-components/sf-themes/components/blockquotes';
-  @import './node_modules/sf-ui-components/sf-themes/components/custom-tabs';
-  @import './node_modules/sf-ui-components/sf-themes/components/styled-lists';
-  @import './node_modules/sf-ui-components/sf-themes/components/well';
+  @import './node_modules/@leapdev/gui/src/scss/xsf-crx/sites/sf-titlex/variables';
+  @import './node_modules/@leapdev/gui/src/scss/xsf-crx/components/blockquotes';
+  @import './node_modules/@leapdev/gui/src/scss/xsf-crx/components/custom-tabs';
+  @import './node_modules/@leapdev/gui/src/scss/xsf-crx/components/styled-lists';
+  @import './node_modules/@leapdev/gui/src/scss/xsf-crx/components/well';
 }
 body.sf-lawconnect {
-  @import './node_modules/sf-ui-components/sf-themes/sites/sf-lawconnect/variables';
-  @import './node_modules/sf-ui-components/sf-themes/components/blockquotes';
-  @import './node_modules/sf-ui-components/sf-themes/components/custom-tabs';
-  @import './node_modules/sf-ui-components/sf-themes/components/styled-lists';
-  @import './node_modules/sf-ui-components/sf-themes/components/well';
+  @import './node_modules/@leapdev/gui/src/scss/xsf-crx/sites/sf-lawconnect/variables';
+  @import './node_modules/@leapdev/gui/src/scss/xsf-crx/components/blockquotes';
+  @import './node_modules/@leapdev/gui/src/scss/xsf-crx/components/custom-tabs';
+  @import './node_modules/@leapdev/gui/src/scss/xsf-crx/components/styled-lists';
+  @import './node_modules/@leapdev/gui/src/scss/xsf-crx/components/well';
 }

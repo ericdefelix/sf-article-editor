@@ -71,7 +71,7 @@ export function dataParser(childNodes, dependencies) {
         if (dependencies.ContentBlocks.elems[uiType(node.classList.value)].hasChildContent) {
           _data.metadata['subnodes'] = [];
           nodeValue = node.outerHTML;
-          node.querySelectorAll('.tab-item-link').forEach(function (el, index) {
+          node.querySelectorAll('.sf-tab-item-link').forEach(function (el, index) {
             const
               label = el.textContent, id = el.getAttribute('id').split('target_')[1],
               tabSection = node.querySelector('#' + id);

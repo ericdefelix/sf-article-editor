@@ -52,9 +52,6 @@ const webpage = {
 			if (event.type == 'message' && method == 'insertToContentEditor') {
 				webpage.methods.insertToContentEditor(event.data);
 			}
-			if (event.type == 'message' && method == 'openImageUpload') {
-				webpage.methods.openImageUpload(event.data);
-			}
 		}, false);
 
 		for (const contentEditorInstanceId in CKEDITOR.instances) {

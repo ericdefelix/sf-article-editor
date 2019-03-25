@@ -134,11 +134,11 @@ module.exports = {
         triggerParent.insertAdjacentHTML('afterend',tmpl);
       }
       else {
-        const tabContentIn = triggerParent.querySelector('.tab-content.in'),
+        const tabContentIn = triggerParent.querySelector('.sf-tab-content.in'),
               tabContentId = tabContentIn.getAttribute('id');
 
         tmpl = module.exports.renderContentBlock(obj,elementTemplate,tabContentId);
-        const subContent = triggerParent.querySelector('.tab-content.in');
+        const subContent = triggerParent.querySelector('.sf-tab-content.in');
         const tabParentId = subContent.getAttribute('id');
         subContent.childNodes.length == 0 ? 
           (subContent.innerHTML = tmpl) : subContent.insertAdjacentHTML('beforeend',tmpl);

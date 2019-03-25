@@ -9,7 +9,7 @@ $listCounterName: listCounter;
   list-style-type: none;
 }
 
-.list-bullet-circular {
+.#{$prefix}list-bullet-circular {
   @extend %list-unstyled;
 
   list-style-type: none !important;
@@ -26,9 +26,9 @@ $listCounterName: listCounter;
   }
 }
 
-ol.list-bullet-circular {
+ol.#{$prefix}list-bullet-circular {
   > li {
-    margin-bottom: 1.8rem;
+    margin-bottom: 1.8rem !important;
 
     &:before {
       counter-increment: $listCounterName;
@@ -48,10 +48,10 @@ ol.list-bullet-circular {
   }
 }
 
-ul.list-bullet-circular {
+ul.#{$prefix}list-bullet-circular {
   > li {
     $dim: 0.5rem;
-    margin-bottom: 0.5rem;
+    margin-bottom: 0.5rem !important;
     &:before {
       content: '';
       width: $dim;

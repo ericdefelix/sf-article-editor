@@ -1,3 +1,6 @@
+// Namespace
+$prefix: 'sf-';
+
 // Iteration
 $vendors: '-moz-', '-webkit-', '-ms-', '';
 $btn-sizes: 'lg', 'xs';
@@ -6,6 +9,13 @@ $theme-font-family: '';
 $theme-text-color: #333333;
 $theme-border-radius: 0;
 $theme-padding: 1rem;
+
+// Theme colors
+$theme-redorange: #ef4123;
+$theme-olivegreen: #314550;
+$theme-lightgray: #dbe7f1;
+$theme-text-color: #333;
+$theme-text-muted: #696969;
 
 //============================================================
 // Blockquotes
@@ -44,11 +54,11 @@ $bq-sh-color: rgba(0,0,0,0.1);
 // SF Tabs
 //============================================================
 $comp_tab-link-transform: uppercase;
-$comp_tab-link-color-active: #333;
-$comp_tab-link-color: #696969;
+$comp_tab-link-color-active: $theme-text-color;
+$comp_tab-link-color: $theme-text-muted;
 $comp_tab-font-weight: 700;
-$comp_tab-nav-border-color: #dbe7f1;
-$comp_tab-nav-border-color-active: #ef4123;
+$comp_tab-nav-border-color: $theme-lightgray;
+$comp_tab-nav-border-color-active: $theme-redorange;
 $comp_tab-nav-border-thickness: 4px;
 $comp_tab-content-padding: 1rem;
 $comp_tab-link-padding: 1.5rem 1.5rem .5rem;

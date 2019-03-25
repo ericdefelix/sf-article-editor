@@ -11,8 +11,8 @@
 	};
 
 	document.addEventListener('click', function (event) {
-		event.preventDefault();
-  	if (event.target.classList.value.indexOf('tab-item-link') !== -1) {
+		if (event.target.classList.value.indexOf('sf-tab-item-link') !== -1) {
+			event.preventDefault();
   		var targetID,
   				activeTabBtn,
   				targetTab,

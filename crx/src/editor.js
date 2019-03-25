@@ -186,8 +186,8 @@ let editor = {
       targetSnippetContainer = this.getAttribute('data-target'),
       blockquote = document.getElementById(targetSnippetContainer).firstElementChild;
 
-    blockquote.className = 'blockquote';
-    blockquote.classList.add('blockquote-' + selectedStyle);
+    blockquote.className = 'sf-blockquote';
+    blockquote.classList.add('sf-blockquote-' + selectedStyle);
   },
   _bindEvtHeaderInput: function() {
     if (this.textContent == '') this.textContent = 'Click here to edit heading';
@@ -223,7 +223,7 @@ let editor = {
       this.classList.add('canvas-btn-primary');
       editor.btnSave.disabled = true;
       editor.btnPreview.disabled = true;
-      snippetContainer.querySelectorAll('.tab-item-link').forEach((element, index) => {
+      snippetContainer.querySelectorAll('.sf-tab-item-link').forEach((element, index) => {
         element.contentEditable = true;
         element.parentElement.classList.add('edit-mode');
 
@@ -243,7 +243,7 @@ let editor = {
       this.classList.remove('canvas-btn-primary');
       editor.btnSave.disabled = false;
       editor.btnPreview.disabled = false;
-      snippetContainer.querySelectorAll('.tab-item-link').forEach((element, index) => {
+      snippetContainer.querySelectorAll('.sf-tab-item-link').forEach((element, index) => {
         element.contentEditable = false;
         element.removeAttribute('contentEditable');
         element.parentElement.classList.remove('edit-mode');
@@ -271,16 +271,16 @@ let editor = {
     };
 
     if (targetComponentPointer == 'blockQuotes') {
-      attachAttributesForCKEDITOR(domID, 'blockquote-content-header', 'blockquote-content-body', editor._bindEvtHeaderInput);
+      attachAttributesForCKEDITOR(domID, 'sf-blockquote-content-header', 'sf-blockquote-content-body', editor._bindEvtHeaderInput);
       document.querySelector('[data-target="snippet-' + domID + '"]').onchange = editor._bindEvtSelectionDropdown;
     }
 
     if (targetComponentPointer == 'wellContainer') {
-      attachAttributesForCKEDITOR(domID, 'well-heading', 'well-body', editor._bindEvtHeaderInput);
+      attachAttributesForCKEDITOR(domID, 'sf-well-heading', 'sf-well-body', editor._bindEvtHeaderInput);
     }
 
     if (targetComponentPointer == 'genericTabs') {
-      const targetTabContent = targetSnippetContainer.querySelectorAll('.tab-content');
+      const targetTabContent = targetSnippetContainer.querySelectorAll('.sf-tab-content');
 
       targetTabContent.forEach(function(targtTab, y) {
         const targetTabID = targtTab.getAttribute('id');
@@ -378,7 +378,7 @@ let editor = {
       const div = document.createElement('DIV');
       div.innerHTML = tabs;
 
-      div.querySelectorAll('.tab-content').forEach(function (tab, index) {
+      div.querySelectorAll('.sf-tab-content').forEach(function (tab, index) {
         tab.innerHTML = typeof content[index] !== 'undefined' ? content[index] : '';
       });
 
@@ -393,7 +393,7 @@ let editor = {
       data.metadata = createMetadata(type, element, element.querySelector('.canvas-content-snippet').innerHTML);
 
       if (ContentBlocks.elems[type].hasChildContent) {
-        const tabLinks = element.querySelectorAll('.tab-item-link');
+        const tabLinks = element.querySelectorAll('.sf-tab-item-link');
 
         let extractedElementsFromTabs = [];
 
@@ -465,7 +465,7 @@ let editor = {
 
     // Modify IDS just for preview
     editor.htmlSection.querySelectorAll('.tabs').forEach(function(elem, i){
-      elem.querySelectorAll('.tab-item-link').forEach(function(tabLink,_i){
+      elem.querySelectorAll('.sf-tab-item-link').forEach(function(tabLink,_i){
         const dataTarget = tabLink.getAttribute('id').split('target_')[1];
         tabLink.setAttribute('id', 'target_preview_' + dataTarget);
         elem.querySelector('#' + dataTarget).id = 'preview_' + dataTarget;

@@ -3,8 +3,8 @@ module.exports = {
 		'textEditor' : {
 			ui_label: 'Text Editor',
 			template: function (config) {
-				const html = typeof config !== 'undefined' ? config.value : '<span>Click here to start editing</span>';
-				const tmpl = `<div class="editor-content">${html}</div>`;
+				const html = typeof config !== 'undefined' ? config.value : '<p>Click here to start editing</p>';
+				const tmpl = `<div class="sf-editor-content">${html}</div>`;
 				return tmpl;
 			},
 			hasChildContent: false,
@@ -20,7 +20,7 @@ module.exports = {
 				const listType = typeof config === 'undefined' ? 'ol' : config;
 
 				const tmpl = `
-					<${listType} class="list-bullet-circular">
+					<${listType} class="sf-list-bullet-circular">
 						<li>Click here to start editing list</li>
 						<li>Or paste content here.</li>
 					</${listType}>`;
@@ -68,11 +68,11 @@ module.exports = {
 
 				// <i class="blockquote-icon"></i> taken out and replaced by SVG instead of font
 				const tmpl = `
-				<div class="blockquote blockquote-${setConfig.cssClass()}" role="blockquote">
-					<div class="blockquote-addon"></div>
-					<div class="blockquote-content">
-						<h5 class="blockquote-content-header">${setConfig.header()}</h5>
-						<div class="blockquote-content-body">
+				<div class="sf-blockquote sf-blockquote-${setConfig.cssClass()}" role="blockquote">
+					<div class="sf-blockquote-addon"></div>
+					<div class="sf-blockquote-content">
+						<h5 class="sf-blockquote-content-header">${setConfig.header()}</h5>
+						<div class="sf-blockquote-content-body">
 							${setConfig.body()}
 						</div>
 					</div>
@@ -90,9 +90,9 @@ module.exports = {
 			ui_label: 'Generic Box',
 			template: function(config) {
 				const tmpl = `
-					<div class="well">
-						<h5 class="well-heading">Click here to edit heading</h5>
-						<div class="well-body"><p>Click here to edit/paste content.</p></div>
+					<div class="sf-well">
+						<h5 class="sf-well-heading">Click here to edit heading</h5>
+						<div class="sf-well-body"><p>Click here to edit/paste content.</p></div>
 					</div>`;
 
 				return tmpl;
@@ -125,17 +125,17 @@ module.exports = {
 					const id = subnodes[i].id, label = subnodes[i].label;
 
 					navTabItems += `
-						<li class="tab-item${ i == 0 ? ' active' : ''}">
-							<a href="#" class="tab-item-link" id="target_tab-${id}">${label}</a>
+						<li class="sf-tab-item${ i == 0 ? ' active' : ''}">
+							<a href="#" class="sf-tab-item-link" id="target_tab-${id}">${label}</a>
 						</li>
 					`;
 
-					navTabSections += `<div class="tab-content${ i == 0 ? ' in' : ''}" id="tab-${id}">${ hasConfig ? '{{ tab-'+ id +' }}' : '' }</div>`;
+					navTabSections += `<div class="sf-tab-content${ i == 0 ? ' in' : ''}" id="tab-${id}">${ hasConfig ? '{{ tab-'+ id +' }}' : '' }</div>`;
 				}
 
 				const tmpl = `
-					<div class="tabs">
-						<div class="tabs-bar"><ul class="tab-nav">${navTabItems}</ul></div>${navTabSections}
+					<div class="sf-tabs">
+						<div class="sf-tabs-bar"><ul class="sf-tab-nav">${navTabItems}</ul></div>${navTabSections}
 					</div>
 				`;
 
@@ -145,13 +145,13 @@ module.exports = {
 			hasChildContent: true
 		}
 	},
-	keywords: ['blockquote', 'list-bullet-circular', 'well', 'tabs', 'editor-content'],
+	keywords: ['sf-blockquote', 'sf-list-bullet-circular', 'sf-well', 'sf-tabs', 'sf-editor-content'],
 	keyword_map: {
-		'blockquote' : 'blockQuotes',
-		'list-bullet-circular' : 'styledLists',
-		'well' : 'wellContainer',
-		'tabs' : 'genericTabs',
-		'editor-content' : 'textEditor'
+		'sf-blockquote' : 'blockQuotes',
+		'sf-list-bullet-circular' : 'styledLists',
+		'sf-well' : 'wellContainer',
+		'sf-tabs' : 'genericTabs',
+		'sf-editor-content' : 'textEditor'
 	},
   getTemplate: function(elemType,config) {
   	const template = this.elems[elemType].template(config);

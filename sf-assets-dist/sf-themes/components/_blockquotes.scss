@@ -24,13 +24,14 @@ $blockquotes: (
   )
 );
 
-.blockquote {
+.#{$prefix}blockquote {
 	display: block;
 	position: relative;
 	padding-left: $blockquote-content-offset;
 	background-color: $blockquote-default-bg-color;
 	border-radius: $theme-border-radius;
-	min-height: 7rem;
+  min-height: 7rem;
+  margin-top: 1rem;
   margin-bottom: 1rem;
   @include box-shadow($bq-sh-x, $bq-sh-y, $bq-sh-blur, $bq-sh-spread, $bq-sh-color);
 
@@ -46,7 +47,7 @@ $blockquotes: (
     content: '';
   }
 
-  > .blockquote-addon {
+  > .#{$prefix}blockquote-addon {
     position: absolute;
     display: block;
     text-align: center;
@@ -60,7 +61,7 @@ $blockquotes: (
     background-position: center center;
     background-repeat: no-repeat;
 
-    > .blockquote-icon {
+    > .#{$prefix}blockquote-icon {
       font-size: 4.1rem;
       color: $theme-text-color;
       height: 100%;
@@ -69,21 +70,21 @@ $blockquotes: (
     }
   }
 
-  > .blockquote-content {
+  > .#{$prefix}blockquote-content {
     padding: $blockquote-padding;
     padding-left: 0;
     width: calc(100% - #{$blockquote-padding});
     width: -webkit-calc(100% - #{$blockquote-padding});
 
-    > .blockquote-content-header {
+    > .#{$prefix}blockquote-content-header {
       font-size: 1rem;
-      font-weight: 500;
+      font-weight: 700;
       margin: 0;
       margin-bottom: 0.2rem;
       text-transform: uppercase;
     }
 
-    > .blockquote-content-body {
+    > .#{$prefix}blockquote-content-body {
       color: $theme-text-color;
       font-size: 14px;
       * {
@@ -99,7 +100,7 @@ $blockquotes: (
 }
 
 @each $type in map-keys(map-get($blockquotes, types)) {
-  .blockquote-#{$type} {
+  .#{$prefix}blockquote-#{$type} {
     $bq-bg-color: map-deep-get($blockquotes, 'types', $type, 'color');
 
     border-left: none;
@@ -112,12 +113,12 @@ $blockquotes: (
       background-color: map-deep-get($blockquotes, 'types', $type, 'color');
     }
 
-    > .blockquote-addon {
+    > .#{$prefix}blockquote-addon {
       background-image: url(map-deep-get($blockquotes, 'types', $type, 'base64'));
     }
 
-    > .blockquote-content {
-      > .blockquote-content-header {
+    > .#{$prefix}blockquote-content {
+      > .#{$prefix}blockquote-content-header {
         color: map-deep-get($blockquotes, 'types', $type, 'color');
       }
     }

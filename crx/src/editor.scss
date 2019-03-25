@@ -4,8 +4,8 @@
 @import 'styles/helpers';
 
 .heading-text > *, .toolbox-toolbar, .empty-text,
-.blockquote-content-header, .well-heading, .blockquote-content-body p,
-.well-body p  {
+.sf-blockquote-content-header, .sf-well-heading, .sf-blockquote-content-body p,
+.sf-well-body p  {
 	@include reset-spacing();
 }
 
