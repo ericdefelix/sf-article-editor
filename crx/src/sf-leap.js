@@ -35,6 +35,8 @@
   		targetTabSiblings.forEach( function(element, index) {
   			if (element.classList.value.indexOf('in') !== -1) element.classList.remove('in');
   		});
-  	}
+		}
+		
+		return false;
   }, false);
 })();

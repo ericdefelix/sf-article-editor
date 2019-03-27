@@ -487,13 +487,18 @@ let editor = {
     };
 
     try {
-      chrome.runtime.sendMessage(editor.crxID, request);
-      
-      // Close popup window
-      chrome.windows.getCurrent(function (w) {
-        chrome.tabs.getSelected(w.id, function (response) {
-          chrome.windows.remove(response.windowId);
-        });
+      chrome.runtime.sendMessage(editor.crxID, request, function () {
+        let t;
+
+        t = setTimeout(() => {
+          // Close popup window
+          clearTimeout(t);
+          chrome.windows.getCurrent(function (w) {
+            chrome.tabs.getSelected(w.id, function (response) {
+              chrome.windows.remove(response.windowId);
+            });
+          });
+        }, 20);
       });
     } catch (e) {
       // statements

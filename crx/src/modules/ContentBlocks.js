@@ -126,7 +126,7 @@ module.exports = {
 
 					navTabItems += `
 						<li class="sf-tab-item${ i == 0 ? ' active' : ''}">
-							<a href="#" class="sf-tab-item-link" id="target_tab-${id}">${label}</a>
+							<span class="sf-tab-item-link" id="target_tab-${id}">${label}</span>
 						</li>
 					`;
 
