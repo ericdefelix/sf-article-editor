@@ -24,18 +24,17 @@ module.exports = {
 						<li>Click here to start editing list</li>
 						<li>Or paste content here.</li>
 					</${listType}>`;
-
 				return tmpl;
 			},
 			hasChildContent: false,
 			contentEditorBindToElem: 'container',
 			contentEditorConfig: {
-				plugins: 'lists link image table imagetools advlist',
+				plugins: 'lists link image table imagetools',
 				toolbar: 'undo redo | numlist bullist | link image imageupload table | bold italic strikethrough'
 			}
 		},
 		'blockQuotes' : {
-			ui_label: 'Block Quotes',
+			ui_label: 'Info Box',
 			types: [
 				{ 
 					ui_label: 'Info', 
@@ -87,7 +86,7 @@ module.exports = {
 			}
 		},
 		'wellContainer' : {
-			ui_label: 'Generic Box',
+			ui_label: 'Gray Box',
 			template: function(config) {
 				const tmpl = `
 					<div class="sf-well">
@@ -105,18 +104,18 @@ module.exports = {
 			}
 		},
 		'genericTabs' : {
-			ui_label: 'Generic Tabs',
+			ui_label: 'Custom Tabs',
 			template: function(config) {
 				let navTabItems = '', navTabSections = '';
 				let subnodes = [];
 
 				const generateID = function() { return Math.floor(Math.random()*90000) + 10000; };
 				const emptyStateSubnodes = [
-					{ label: 'Tab Label 1', id: generateID(), content: [] },
-					{ label: 'Tab Label 2', id: generateID(), content: [] },
-					{ label: 'Tab Label 3', id: generateID(), content: [] },
-					{ label: 'Tab Label 4', id: generateID(), content: [] },
-					{ label: 'Tab Label 5', id: generateID(), content: [] }
+					{ label: 'Tab 1', id: generateID(), content: [] },
+					{ label: 'Tab 2', id: generateID(), content: [] },
+					{ label: 'Tab 3', id: generateID(), content: [] },
+					{ label: 'Tab 4', id: generateID(), content: [] },
+					{ label: 'Tab 5', id: generateID(), content: [] }
 				];
 
 				const hasConfig = typeof config !== 'undefined';

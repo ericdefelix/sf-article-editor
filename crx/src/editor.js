@@ -236,6 +236,16 @@ let editor = {
             clearTimeout(t);
           }, 50);
         }
+
+        element.parentElement
+          .insertAdjacentHTML('afterbegin', '<button type="button" class="canvas-btn canvas-btn-delete"><span>×</span></button>');
+        
+        element.parentElement.querySelector('.canvas-btn-delete').onclick = function () {
+          const targetTabIdToBeDeleted = this.nextElementSibling.id.split('target_')[1];
+          this.parentElement.remove();
+          document.getElementById(targetTabIdToBeDeleted).remove();
+          editor.updateData();
+        };
       }); 
     }
     else {
@@ -247,6 +257,7 @@ let editor = {
         element.contentEditable = false;
         element.removeAttribute('contentEditable');
         element.parentElement.classList.remove('edit-mode');
+        element.previousElementSibling.remove();
       });
     }
   },
@@ -444,6 +455,7 @@ let editor = {
   },
   close_preview: function() {
     editor.outputPane.style.display = 'none';
+    document.querySelector('body').removeAttribute('style');
   },
   select_theme: function () {
     const themeValue = this.value;
@@ -471,10 +483,11 @@ let editor = {
         elem.querySelector('#' + dataTarget).id = 'preview_' + dataTarget;
       });
     });
+
+    document.querySelector('body').style.overflow = 'hidden';
   },
   save_html: function() {
     editor.generate_html();
-    editor.outputPane.style.display = 'none';
 
     const request = {
       method: 'insertToContentEditor',
@@ -487,6 +500,7 @@ let editor = {
     };
 
     try {
+      editor.close_preview();
       chrome.runtime.sendMessage(editor.crxID, request, function () {
         let t;
 
