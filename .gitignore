@@ -1,4 +1,6 @@
 node_modules
+crx/node_modules
+crx/build
 .DS_Store
 .gitignore
 __nocommmit

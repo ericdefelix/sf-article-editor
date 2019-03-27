@@ -153,7 +153,7 @@ module.exports = {
     <section class="canvas-content-block" id="${obj.id}">
       <div class="canvas-content-config"> 
         <span class="canvas-content-draggable 
-          ${typeof tabContentId === 'undefined' ? `canvasDraggableMain` : `canvasDraggableSub_tab-` + 
+          ${typeof tabContentId === 'undefined' ? `canvasDraggableMain` : `canvasDraggableSub_` + 
             tabContentId }"></span>
         ${obj.data.hasOwnProperty('types') ? module.exports.renderOptions(obj) : ''}
         ${!obj.data.hasChildContent ? '' :

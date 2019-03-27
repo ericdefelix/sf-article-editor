@@ -195,8 +195,7 @@ body.sf-leap ol.sf-list-bullet-circular > li {
     counter-increment: listCounter;
     content: counter(listCounter);
     left: 0;
-    top: calc(50% - 1.1rem);
-    top: -webkit-calc(50% - 1.1rem);
+    top: -10px;
     text-align: center;
     font-size: 1.1rem;
     font-weight: 500;
@@ -439,8 +438,7 @@ body.sf-zaliet ol.sf-list-bullet-circular > li {
     counter-increment: listCounter;
     content: counter(listCounter);
     left: 0;
-    top: calc(50% - 1.1rem);
-    top: -webkit-calc(50% - 1.1rem);
+    top: -10px;
     text-align: center;
     font-size: 1.1rem;
     font-weight: 500;
@@ -683,8 +681,7 @@ body.sf-titlex ol.sf-list-bullet-circular > li {
     counter-increment: listCounter;
     content: counter(listCounter);
     left: 0;
-    top: calc(50% - 1.1rem);
-    top: -webkit-calc(50% - 1.1rem);
+    top: -10px;
     text-align: center;
     font-size: 1.1rem;
     font-weight: 500;
@@ -927,8 +924,7 @@ body.sf-lawconnect ol.sf-list-bullet-circular > li {
     counter-increment: listCounter;
     content: counter(listCounter);
     left: 0;
-    top: calc(50% - 1.1rem);
-    top: -webkit-calc(50% - 1.1rem);
+    top: -10px;
     text-align: center;
     font-size: 1.1rem;
     font-weight: 500;

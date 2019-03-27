@@ -30,7 +30,7 @@ module.exports = {
 			hasChildContent: false,
 			contentEditorBindToElem: 'container',
 			contentEditorConfig: {
-				plugins: 'lists link image table imagetools',
+				plugins: 'lists link image table imagetools advlist',
 				toolbar: 'undo redo | numlist bullist | link image imageupload table | bold italic strikethrough'
 			}
 		},
@@ -112,9 +112,11 @@ module.exports = {
 
 				const generateID = function() { return Math.floor(Math.random()*90000) + 10000; };
 				const emptyStateSubnodes = [
-					{ label: 'Desktop', id: generateID(), content: [] },
-					{ label: 'Web', id: generateID(), content: [] },
-					{ label: 'Mobile', id: generateID(), content: [] }
+					{ label: 'Tab Label 1', id: generateID(), content: [] },
+					{ label: 'Tab Label 2', id: generateID(), content: [] },
+					{ label: 'Tab Label 3', id: generateID(), content: [] },
+					{ label: 'Tab Label 4', id: generateID(), content: [] },
+					{ label: 'Tab Label 5', id: generateID(), content: [] }
 				];
 
 				const hasConfig = typeof config !== 'undefined';
