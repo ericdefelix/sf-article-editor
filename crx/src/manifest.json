@@ -8,9 +8,8 @@
   "page_action": {
     "default_icon": {
       "16" : "images/icon16.png",
-      "24" : "images/icon24.png",
-      "32" : "images/icon32.png",
-      "64" : "images/icon64.png"
+      "48": "images/icon48.png",
+      "124": "images/icon124.png"
     },
     "default_title": "Salesforce Knowledge Article Advanced Editor"
   },
