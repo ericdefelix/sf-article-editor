@@ -1,17 +1,23 @@
 {
   "manifest_version": 2,
   "name": "Salesforce Knowledge Advanced Editor",
+  "short_name": "SFK Advanced Editor",
   "author": "LEAP DEV: Eric De Felix",
   "version": "1.0",
   "minimum_chrome_version": "46",
-  "description": "Inject custom code for CKEDITOR in Salesforce Knowledge Article Edit",
+  "description": "Allow Salesforce Knowledge Article authors to easily compose HTML Content Blocks in the article's edit page",
+  "icons": {
+    "16": "images/icon16.png",
+    "24": "images/icon24.png",
+    "32": "images/icon32.png",
+    "48": "images/icon48.png",
+    "64": "images/icon64.png",
+    "128": "images/icon128.png"
+  },
   "page_action": {
     "default_icon": {
-      "16" : "images/icon16.png",
       "24": "images/icon24.png",
-      "32": "images/icon32.png",
-      "48": "images/icon48.png",
-      "124": "images/icon124.png"
+      "32": "images/icon32.png"
     },
     "default_title": "Salesforce Knowledge Article Advanced Editor"
   },
