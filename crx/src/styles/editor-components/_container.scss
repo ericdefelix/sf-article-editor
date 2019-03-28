@@ -348,13 +348,9 @@ select.canvas-form-control {
   }
 }
 
-// .canvas-container  > .canvas-content-block {
-//   &:hover {
-//     > .canvas-content-snippet {
-//       @include box-shadow(0,0,0,2px, $blue, inset);
-//     }
-//   }
-// }
+.text-muted {
+  color: gray;
+}
 
 [data-component-type="genericTabs"] {
   .canvas-content-block {

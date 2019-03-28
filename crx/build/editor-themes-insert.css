@@ -195,7 +195,7 @@ body.sf-leap ol.sf-list-bullet-circular > li {
     counter-increment: listCounter;
     content: counter(listCounter);
     left: 0;
-    top: -10px;
+    top: -8px;
     text-align: center;
     font-size: 1.1rem;
     font-weight: 500;
@@ -211,11 +211,21 @@ body.sf-leap ul.sf-list-bullet-circular > li {
     content: '';
     width: 0.5rem;
     height: 0.5rem;
-    top: calc(50% - 0.25rem);
-    top: -webkit-calc(50% - 0.25rem);
+    top: 6px;
     left: 0.9rem;
     border-radius: 100%;
     background-color: #4d4d4d; }
+
+body.sf-leap .sf-list-bullet-circular > li > ol > li:before {
+  padding: 5px 8px;
+  top: -7px; }
+
+body.sf-leap .sf-list-bullet-circular > li > ul {
+  margin-top: 1rem;
+  margin-bottom: 1rem; }
+  body.sf-leap .sf-list-bullet-circular > li > ul > li:before {
+    width: 0.4rem;
+    height: 0.4rem; }
 
 body.sf-leap .sf-well {
   display: block;
@@ -438,7 +448,7 @@ body.sf-zaliet ol.sf-list-bullet-circular > li {
     counter-increment: listCounter;
     content: counter(listCounter);
     left: 0;
-    top: -10px;
+    top: -8px;
     text-align: center;
     font-size: 1.1rem;
     font-weight: 500;
@@ -454,11 +464,21 @@ body.sf-zaliet ul.sf-list-bullet-circular > li {
     content: '';
     width: 0.5rem;
     height: 0.5rem;
-    top: calc(50% - 0.25rem);
-    top: -webkit-calc(50% - 0.25rem);
+    top: 6px;
     left: 0.9rem;
     border-radius: 100%;
     background-color: #4d4d4d; }
+
+body.sf-zaliet .sf-list-bullet-circular > li > ol > li:before {
+  padding: 5px 8px;
+  top: -7px; }
+
+body.sf-zaliet .sf-list-bullet-circular > li > ul {
+  margin-top: 1rem;
+  margin-bottom: 1rem; }
+  body.sf-zaliet .sf-list-bullet-circular > li > ul > li:before {
+    width: 0.4rem;
+    height: 0.4rem; }
 
 body.sf-zaliet .sf-well {
   display: block;
@@ -681,7 +701,7 @@ body.sf-titlex ol.sf-list-bullet-circular > li {
     counter-increment: listCounter;
     content: counter(listCounter);
     left: 0;
-    top: -10px;
+    top: -8px;
     text-align: center;
     font-size: 1.1rem;
     font-weight: 500;
@@ -697,11 +717,21 @@ body.sf-titlex ul.sf-list-bullet-circular > li {
     content: '';
     width: 0.5rem;
     height: 0.5rem;
-    top: calc(50% - 0.25rem);
-    top: -webkit-calc(50% - 0.25rem);
+    top: 6px;
     left: 0.9rem;
     border-radius: 100%;
     background-color: #4d4d4d; }
+
+body.sf-titlex .sf-list-bullet-circular > li > ol > li:before {
+  padding: 5px 8px;
+  top: -7px; }
+
+body.sf-titlex .sf-list-bullet-circular > li > ul {
+  margin-top: 1rem;
+  margin-bottom: 1rem; }
+  body.sf-titlex .sf-list-bullet-circular > li > ul > li:before {
+    width: 0.4rem;
+    height: 0.4rem; }
 
 body.sf-titlex .sf-well {
   display: block;
@@ -924,7 +954,7 @@ body.sf-lawconnect ol.sf-list-bullet-circular > li {
     counter-increment: listCounter;
     content: counter(listCounter);
     left: 0;
-    top: -10px;
+    top: -8px;
     text-align: center;
     font-size: 1.1rem;
     font-weight: 500;
@@ -940,11 +970,21 @@ body.sf-lawconnect ul.sf-list-bullet-circular > li {
     content: '';
     width: 0.5rem;
     height: 0.5rem;
-    top: calc(50% - 0.25rem);
-    top: -webkit-calc(50% - 0.25rem);
+    top: 6px;
     left: 0.9rem;
     border-radius: 100%;
     background-color: #4d4d4d; }
+
+body.sf-lawconnect .sf-list-bullet-circular > li > ol > li:before {
+  padding: 5px 8px;
+  top: -7px; }
+
+body.sf-lawconnect .sf-list-bullet-circular > li > ul {
+  margin-top: 1rem;
+  margin-bottom: 1rem; }
+  body.sf-lawconnect .sf-list-bullet-circular > li > ul > li:before {
+    width: 0.4rem;
+    height: 0.4rem; }
 
 body.sf-lawconnect .sf-well {
   display: block;

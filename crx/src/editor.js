@@ -48,6 +48,8 @@ let editor = {
         ImageGallery.run(editor.image_gallery);
       });
 
+      const manifestData = chrome.runtime.getManifest();
+      document.getElementById('versionNumber').innerText = 'v' + manifestData.version;
     } catch (e) {
       editor.image_gallery = imageGalleryMockData;
       editor.htmlSection.insertAdjacentHTML('afterbegin', htmlMockData);
