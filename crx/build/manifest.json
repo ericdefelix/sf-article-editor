@@ -1,7 +1,7 @@
 {
   "manifest_version": 2,
-  "name": "Salesforce Knowledge Article Content Block Manager",
-  "author": "Eric De Felix",
+  "name": "Salesforce Knowledge Advanced Editor",
+  "author": "LEAP DEV: Eric De Felix",
   "version": "1.0",
   "minimum_chrome_version": "46",
   "description": "Inject custom code for CKEDITOR in Salesforce Knowledge Article Edit",
