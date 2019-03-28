@@ -237,15 +237,30 @@ let editor = {
           }, 50);
         }
 
-        element.parentElement
-          .insertAdjacentHTML('afterbegin', '<button type="button" class="canvas-btn canvas-btn-delete"><span>×</span></button>');
-        
-        element.parentElement.querySelector('.canvas-btn-delete').onclick = function () {
-          const targetTabIdToBeDeleted = this.nextElementSibling.id.split('target_')[1];
-          this.parentElement.remove();
-          document.getElementById(targetTabIdToBeDeleted).remove();
-          editor.updateData();
-        };
+        if (element.parentElement.parentElement.children.length > 2) {
+          element.parentElement
+            .insertAdjacentHTML('afterbegin', '<button type="button" class="canvas-btn canvas-btn-delete"><span>×</span></button>');
+
+          element.parentElement.querySelector('.canvas-btn-delete').onclick = function () {
+            const
+              targetTabIdToBeDeleted = this.nextElementSibling.id.split('target_')[1],
+              tabLength = this.parentElement.parentElement.children.length,
+              prevSibling = this.parentElement.previousElementSibling;
+
+            document.getElementById(targetTabIdToBeDeleted).remove();
+
+            if (tabLength > 2) this.parentElement.remove();
+            if (tabLength == 3) {
+              document.querySelectorAll('.canvas-btn-delete').forEach(element => {
+                element.remove();
+              });
+            }
+            if (this.parentElement.classList.contains('active') &&
+              this.parentElement.nextElementSibling == null) prevSibling.querySelector('.sf-tab-item-link').click();
+
+            editor.updateData();
+          }; 
+        }
       }); 
     }
     else {
@@ -257,7 +272,8 @@ let editor = {
         element.contentEditable = false;
         element.removeAttribute('contentEditable');
         element.parentElement.classList.remove('edit-mode');
-        element.previousElementSibling.remove();
+
+        if (element.previousElementSibling !== null) element.previousElementSibling.remove();
       });
     }
   },

@@ -34,7 +34,7 @@ module.exports = {
 			}
 		},
 		'blockQuotes' : {
-			ui_label: 'Info Box',
+			ui_label: 'Info<br/>Box',
 			types: [
 				{ 
 					ui_label: 'Info', 
@@ -86,7 +86,7 @@ module.exports = {
 			}
 		},
 		'wellContainer' : {
-			ui_label: 'Gray Box',
+			ui_label: 'Gray<br/>Box',
 			template: function(config) {
 				const tmpl = `
 					<div class="sf-well">
