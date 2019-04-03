@@ -56,16 +56,17 @@ const index = {
 		chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
 			const method = request.method;
 			if (method == 'insertToContentEditor') {
-				window.postMessage(request, window.location.origin);
-				console.log('im from index');
+				if (request.crxid == sender.id) {
+					window.postMessage(request, window.location.origin);
+				}
 			}
 			if (method == 'openImageUpload') {
 				window.postMessage(request, window.location.origin);
-				console.log('im from index');
 			}
 			if (method == 'initEditor') {
-				console.log('im from index');
 			}
+
+			sendResponse({ message: 'yes' });
 		});
 	},
 	run: function () {

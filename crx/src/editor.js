@@ -519,19 +519,7 @@ let editor = {
 
     try {
       editor.close_preview();
-      chrome.runtime.sendMessage(editor.crxID, request, function () {
-        let t;
-
-        t = setTimeout(() => {
-          // Close popup window
-          clearTimeout(t);
-          chrome.windows.getCurrent(function (w) {
-            chrome.tabs.getSelected(w.id, function (response) {
-              chrome.windows.remove(response.windowId);
-            });
-          });
-        }, 20);
-      });
+      chrome.runtime.sendMessage(editor.crxID, request);
     } catch (e) {
       // statements
       console.log('Attempting to do a chrome api method. Page origin is not via chrome extension');

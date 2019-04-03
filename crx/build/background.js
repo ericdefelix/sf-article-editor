@@ -7,7 +7,9 @@ import { UrlContainsArticleEdit, RequestIsValid, SetPosition } from '/modules/ut
 let background = {
   crxID: '',
   currentTabID: '',
+  crxUpdating: false,
   currentCkeditorInstance: '',
+  
   activeWindows: [],
   activeContentEditorInstances: [],
   requests: [],
@@ -15,31 +17,69 @@ let background = {
   },
   listeners: function () {
     chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
-      if (changeInfo.status == 'loading' && UrlContainsArticleEdit(tab.url)) {
+      if (changeInfo.status == 'complete') {
         chrome.tabs.executeScript({
           file: 'index.js',
           runAt: 'document_end'
         });
       }
 
-      if (changeInfo.status == 'complete' && UrlContainsArticleEdit(tab.url)) {
-        chrome.tabs.query({ active: true, currentWindow: true }, function (tabs) {
-          background.currentTabID = tabs[0].id;
-        });
-      }
+      // if (background.crxUpdating) {
+      //   chrome.tabs.executeScript({
+      //     file: 'index.js',
+      //     runAt: 'document_end'
+      //   });
+      // }
+      // else {
+      //   if (changeInfo.status == 'loading' && UrlContainsArticleEdit(tab.url)) {
+      //     chrome.tabs.executeScript({
+      //       file: 'index.js',
+      //       runAt: 'document_end'
+      //     });
+      //   }
+
+      //   if (changeInfo.status == 'complete' && UrlContainsArticleEdit(tab.url)) {
+      //     chrome.tabs.query({ active: true, currentWindow: true }, function (tabs) {
+      //       background.currentTabID = tabs[0].id;
+      //     });
+      //   }
+      // }
     });
 
-    chrome.tabs.onRemoved.addListener((tabId, changeInfo, tab) => {
-      console.log(tab);
+    chrome.runtime.onInstalled.addListener(function () {
+      chrome.tabs.query({}, function (tabs) {
+        for (let i = 0; i < tabs.length; i++) {
+          const tab = tabs[i];
+
+          if (UrlContainsArticleEdit(tab.url)) {
+            background.currentTabID = tab.id;
+            background.crxUpdating = true;
+            chrome.tabs.reload(tab.id, {}, function () {
+              // chrome.tabs.executeScript({
+              //   file: 'index.js',
+              //   runAt: 'document_end'
+              // });
+            });
+
+            break;
+          } 
+        }
+      });
     });
 
-    chrome.windows.onRemoved.addListener((tabId, changeInfo, tab) => {
-      console.log(tab);
-    });
+    // chrome.tabs.onRemoved.addListener((tabId, changeInfo, tab) => {
+    //   console.log(tab);
+    // });
+
+    // chrome.windows.onRemoved.addListener((tabId, changeInfo, tab) => {
+    //   console.log(tab);
+    // });
 
     chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
       const method = request.method;
+      
       if (RequestIsValid(request)) background.methods[method](request);
+      sendResponse({ message: 'yes' });
     });
   },
   methods: {
@@ -87,11 +127,16 @@ let background = {
         });
       }
       else {
-
       }
     },
     insertToContentEditor: (request) => {
-      chrome.tabs.sendMessage(background.currentTabID, request);
+      chrome.tabs.sendMessage(background.currentTabID, request, function(){
+        chrome.windows.getCurrent(function (w) {
+          chrome.tabs.getSelected(w.id, function (response) {
+            chrome.windows.remove(response.windowId);
+          });
+        }); 
+      });
     },
     openImageUpload: (request) => {
       chrome.tabs.sendMessage(background.currentTabID, request);
@@ -99,7 +144,6 @@ let background = {
     initEditor: (request) => {
     },
     closePopups: (request) => {
-      console.log(request);
       for (var i = 0; i <= background.activeWindows - 1; i++) {
         chrome.windows.remove(background.activeWindows[i].windowID);
       }
@@ -112,9 +156,3 @@ let background = {
 };
 
 background.run();
-
-
-// chrome.windows.getAll({ populate: true }, function(windowList){
-//   console.log(windowList);
-// });
-
