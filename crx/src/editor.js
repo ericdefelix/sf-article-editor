@@ -11,6 +11,8 @@ import Sortable from '../node_modules/sortablejs/Sortable.min';
 import ImageGallery from './modules/ImageGallery';
 import { imageGalleryMockData, htmlMockData } from './modules/utils/mockData';
 
+console.log(chrome.runtime);
+
 let editor = {
   crxID: '',
   contentEditorInstanceId: '',
@@ -26,7 +28,7 @@ let editor = {
   existing_data:    [],
   image_gallery:    [],
   toolbox:          undefined,
-  init: function() {
+  init: function () {
     try {
       chrome.storage.sync.get(['contentEditorInstanceId'], function(objLocalStorage) {
         editor.contentEditorInstanceId = objLocalStorage.contentEditorInstanceId;
@@ -34,18 +36,19 @@ let editor = {
         editor.crxID = chrome.runtime.id;
       });
 
-      chrome.storage.sync.get(['instanceHTML'], function(objLocalStorage) {
-        const ih = objLocalStorage.instanceHTML;
-        if (ih !== '' || typeof ih !== 'undefined') {
-          editor.htmlSection.insertAdjacentHTML('afterbegin',ih);
-          editor.existing_data = dataParser(editor.htmlSection.childNodes, { GenerateID, ContentBlocks });
-          editor.start_app();
-        }
-      });
-
       chrome.storage.sync.get(['image_gallery'], function (objLocalStorage) {
         editor.image_gallery = JSON.parse(objLocalStorage.image_gallery);
         ImageGallery.run(editor.image_gallery);
+      });
+
+      chrome.storage.sync.get(['instanceHTML'], function (objLocalStorage) {
+        const ih = objLocalStorage.instanceHTML;
+
+        if (ih !== '' || typeof ih !== 'undefined') {
+          editor.htmlSection.insertAdjacentHTML('afterbegin', ih);
+          editor.existing_data = dataParser(editor.htmlSection.childNodes, { GenerateID, ContentBlocks });
+          editor.start_app();
+        }
       });
 
       const manifestData = chrome.runtime.getManifest();

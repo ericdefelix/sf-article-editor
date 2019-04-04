@@ -63,9 +63,6 @@ const index = {
 			if (method == 'openImageUpload') {
 				window.postMessage(request, window.location.origin);
 			}
-			if (method == 'initEditor') {
-			}
-
 			sendResponse({ message: 'yes' });
 		});
 	},
