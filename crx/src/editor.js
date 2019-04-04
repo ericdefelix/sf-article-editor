@@ -41,14 +41,20 @@ let editor = {
         ImageGallery.run(editor.image_gallery);
       });
 
+      chrome.storage.onChanged(function(){
+
+      });
+
       chrome.storage.sync.get(['instanceHTML'], function (objLocalStorage) {
         const ih = objLocalStorage.instanceHTML;
 
-        if (ih !== '' || typeof ih !== 'undefined') {
-          editor.htmlSection.insertAdjacentHTML('afterbegin', ih);
-          editor.existing_data = dataParser(editor.htmlSection.childNodes, { GenerateID, ContentBlocks });
-          editor.start_app();
-        }
+        console.log(ih);
+
+        // if (ih !== '' || typeof ih !== 'undefined') {
+        //   editor.htmlSection.insertAdjacentHTML('afterbegin', ih);
+        //   editor.existing_data = dataParser(editor.htmlSection.childNodes, { GenerateID, ContentBlocks });
+        //   editor.start_app();
+        // }
       });
 
       const manifestData = chrome.runtime.getManifest();

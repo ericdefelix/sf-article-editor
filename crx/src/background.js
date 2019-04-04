@@ -99,12 +99,14 @@ let background = {
           chrome.storage.sync.set({ image_gallery: request.data.image_gallery });
           chrome.storage.sync.set({ string_length: request.data.instanceHTML.length });
 
-          if (request.data.instanceHTML.length > 5000) {
-            let str = request.data.instanceHTML.substring(0, 5000);
+					do {
+						var s = str.substring(0,20);
+						arr.push(s);
 
-            console.log(str);
-            chrome.storage.sync.set({ instanceHTML: str });
-          }
+						str = str.substr(20);
+						if(str.length <= 20) arr.push(str);
+					}
+					while(str.length > 20);
 
         });
       }
