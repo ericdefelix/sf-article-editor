@@ -60,6 +60,14 @@ let background = {
   },
   methods: {
     popup: (request) => {
+      // const maxCharTreshold = 5000;
+      // const editorDataFromWebpage = {
+      //   method: 'initEditor',
+      //   data: {
+      //     instanceHTML: data.instanceHTML,
+      //     contentEditorInstanceId: data.contentEditorInstanceId
+      //   }
+      // };
       const ph = 800, pw = 1100;
       const data = request.data;
 
@@ -75,40 +83,22 @@ let background = {
         top: Math.round(py)
       };
 
-      const editorDataFromWebpage = {
-        method: 'initEditor',
-        data: {
-          instanceHTML: data.instanceHTML,
-          contentEditorInstanceId: data.contentEditorInstanceId
-        }
-      };
-
       if (data.display) {
-        chrome.windows.create(popupWindowConfig, function (win) {
-          chrome.windows.getCurrent({ populate: true }, function (currentWindow) {
-            const activeWindow = {
-              windowID: currentWindow.id,
-              instanceID: request.data.contentEditorInstanceId
-            };
+        chrome.storage.local.set({ instanceHTML: request.data.instanceHTML }, function () {
+          chrome.windows.create(popupWindowConfig, function (win) {
+            chrome.windows.getCurrent({ populate: true }, function (currentWindow) {
+              const activeWindow = {
+                windowID: currentWindow.id,
+                instanceID: request.data.contentEditorInstanceId
+              };
 
-            background.activeWindows.push(activeWindow);
-            background.activeContentEditorInstances.push(request.data.contentEditorInstanceId);
+              background.activeWindows.push(activeWindow);
+              background.activeContentEditorInstances.push(request.data.contentEditorInstanceId);
+              chrome.storage.local.set({ image_gallery: request.data.image_gallery });
+              chrome.storage.local.set({ contentEditorInstanceId: request.data.contentEditorInstanceId });
+            });
           });
-
-          chrome.storage.sync.set({ contentEditorInstanceId: request.data.contentEditorInstanceId });
-          chrome.storage.sync.set({ image_gallery: request.data.image_gallery });
-          chrome.storage.sync.set({ string_length: request.data.instanceHTML.length });
-
-          if (request.data.instanceHTML.length > 5000) {
-            let str = request.data.instanceHTML.substring(0, 5000);
-
-            console.log(str);
-            chrome.storage.sync.set({ instanceHTML: str });
-          }
-
         });
-      }
-      else {
       }
     },
     insertToContentEditor: (request) => {

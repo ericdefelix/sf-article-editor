@@ -11,8 +11,6 @@ import Sortable from '../node_modules/sortablejs/Sortable.min';
 import ImageGallery from './modules/ImageGallery';
 import { imageGalleryMockData, htmlMockData } from './modules/utils/mockData';
 
-console.log(chrome.runtime);
-
 let editor = {
   crxID: '',
   contentEditorInstanceId: '',
@@ -30,31 +28,25 @@ let editor = {
   toolbox:          undefined,
   init: function () {
     try {
-      chrome.storage.sync.get(['contentEditorInstanceId'], function(objLocalStorage) {
+      chrome.storage.local.get(['contentEditorInstanceId'], function(objLocalStorage) {
         editor.contentEditorInstanceId = objLocalStorage.contentEditorInstanceId;
         editor.btnSave.setAttribute('data-target', editor.contentEditorInstanceId);
         editor.crxID = chrome.runtime.id;
       });
 
-      chrome.storage.sync.get(['image_gallery'], function (objLocalStorage) {
+      chrome.storage.local.get(['image_gallery'], function (objLocalStorage) {
         editor.image_gallery = JSON.parse(objLocalStorage.image_gallery);
-        ImageGallery.run(editor.image_gallery);
+        ImageGallery.run(editor.image_gallery); 
       });
 
-      chrome.storage.onChanged(function(){
-
-      });
-
-      chrome.storage.sync.get(['instanceHTML'], function (objLocalStorage) {
+      chrome.storage.local.get(['instanceHTML'], function (objLocalStorage) {
         const ih = objLocalStorage.instanceHTML;
-
-        console.log(ih);
-
-        // if (ih !== '' || typeof ih !== 'undefined') {
-        //   editor.htmlSection.insertAdjacentHTML('afterbegin', ih);
-        //   editor.existing_data = dataParser(editor.htmlSection.childNodes, { GenerateID, ContentBlocks });
-        //   editor.start_app();
-        // }
+        
+        if (ih !== '' || typeof ih !== 'undefined') {
+          editor.htmlSection.insertAdjacentHTML('afterbegin', ih);
+          editor.existing_data = dataParser(editor.htmlSection.childNodes, { GenerateID, ContentBlocks });
+          editor.start_app();
+        }
       });
 
       const manifestData = chrome.runtime.getManifest();
@@ -390,17 +382,27 @@ let editor = {
   updateData: function () {
     let arr = [];
 
-    const sanitizeContentBlock = contentBlock => {
-      const clone = contentBlock.querySelector('.canvas-content-snippet').firstElementChild.cloneNode(true);
-      clone.querySelectorAll('[contenteditable="true"]').forEach(function (element) {
-        element.removeAttribute('id');
-        element.removeAttribute('contentEditable');
-        element.removeAttribute('style');
-        element.removeAttribute('spellcheck');
-        if (element.classList.contains('mce-content-body')) { element.classList.remove('mce-content-body'); }
-      });
+    const sanitizeContentBlock = (componentType, contentBlock) => {
+      let toBeSanitizedHTML;
+      const canvasContentSnippet = contentBlock.querySelector('.canvas-content-snippet');
 
-      return NormaliseHTMLString(clone.outerHTML);
+      const removeTinyMceAttributes = (contentBlock) => {
+        const clone = canvasContentSnippet.firstElementChild.cloneNode(true);
+        clone.querySelectorAll('[contenteditable="true"]').forEach(function (element) {
+          element.removeAttribute('id');
+          element.removeAttribute('contentEditable');
+          element.removeAttribute('style');
+          element.removeAttribute('spellcheck');
+          if (element.classList.contains('mce-content-body')) { element.classList.remove('mce-content-body'); }
+        });
+
+        return clone.outerHTML;
+      };
+
+      toBeSanitizedHTML = componentType == 'textEditor' ?
+        canvasContentSnippet.innerHTML : removeTinyMceAttributes(contentBlock);
+      
+      return NormaliseHTMLString(toBeSanitizedHTML);
     };
 
     const createMetadata = (componentType, contentBlock, contentHTML) => {
@@ -408,7 +410,7 @@ let editor = {
         return { subnodes: [], html: NormaliseHTMLString(contentHTML) };
       }
       else {
-        return { html: sanitizeContentBlock(contentBlock), variables: [] };        
+        return { html: sanitizeContentBlock(componentType,contentBlock), variables: [] };        
       }
     };
 
@@ -429,6 +431,8 @@ let editor = {
       let data = { id: id, type: type, metadata: {} };
 
       data.metadata = createMetadata(type, element, element.querySelector('.canvas-content-snippet').innerHTML);
+
+      console.log(element.querySelector('.canvas-content-snippet').innerHTML);
 
       if (ContentBlocks.elems[type].hasChildContent) {
         const tabLinks = element.querySelectorAll('.sf-tab-item-link');
@@ -468,7 +472,6 @@ let editor = {
 
         data.metadata.html = sanitizeTabs(data.metadata.html, extractedElementsFromTabs);
       }
-
       arr.push(data);
     });
 

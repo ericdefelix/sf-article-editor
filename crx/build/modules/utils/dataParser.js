@@ -106,10 +106,9 @@ export function dataParser(childNodes, dependencies) {
     // Determine whether we push new data or just append it from the previous data
     // if HTML elements can be grouped in one Content Editor
     _data.metadata.html = nodeValue;
-    pushAsNewObject ? tempArray.push(_data) : tempArray[tempArray.length - 1].metadata.html += nodeValue;
+    pushAsNewObject ? tempArray.push(_data) : tempArray[tempArray.length - 1].metadata.html += _data.metadata.html;
     // ================
   }
-
   return tempArray;
 };
 

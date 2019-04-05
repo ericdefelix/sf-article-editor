@@ -20,13 +20,18 @@ module.exports = {
           <button type="button" id="btnCloseImgGallery" class="canvas-btn canvas-btn-xs">
           <span style="font-size: 2em;">×</span></button>
           <div class="img-gallery-scroll">`;
-
-      for (let index = 0; index < imgArray.length; index++) {
-        const element = imgArray[index];
-        tmpl += `<div class="img-gallery-item" data-value="${element.src}">
+      
+      if (imgArray.length) {
+        for (let index = 0; index < imgArray.length; index++) {
+          const element = imgArray[index];
+          tmpl += `<div class="img-gallery-item" data-value="${element.src}">
           <div class="img-gallery-thumbnail" style="background-image: url(${element.src});"></div>
           <span class="img-gallery-label">${element.alt}</span>
           </div>`;
+        } 
+      }
+      else {
+        tmpl += `<p class="text-center img-gallery-info">Your Article Image Gallery is currently empty.</p>`;
       }
 
       return tmpl + '</div></div>';

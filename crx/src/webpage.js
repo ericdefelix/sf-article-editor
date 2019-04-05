@@ -19,17 +19,17 @@ const webpage = {
 		}
 		this.listeners();
 
-		// const iframes = document.querySelectorAll('.cke_wysiwyg_frame');
-		// iframes.forEach(element => {
-		// 	const head = element.contentWindow.document.querySelector('head');
-		// 	const body = element.contentDocument.querySelector('body');
+		const iframes = document.querySelectorAll('.cke_wysiwyg_frame');
+		iframes.forEach(element => {
+			const head = element.contentWindow.document.querySelector('head');
+			const body = element.contentDocument.querySelector('body');
 
-		// 	webpage.methods.initIframeCSS(head, body, 'sf-leap');
+			webpage.methods.initIframeCSS(head, body, 'sf-leap');
 
-		// 	if (GetClosestParent(element, '#lineArticle_Image_Gallery') !== null) {
-		// 		webpage.methods.collectImgGallery(body);
-		// 	}
-		// });
+			if (GetClosestParent(element, '#lineArticle_Image_Gallery') !== null) {
+				webpage.methods.collectImgGallery(body);
+			}
+		});
 
 		webpage.methods.initContentEditorState();
 	},
@@ -55,17 +55,17 @@ const webpage = {
 		}, false);
 
 		for (const contentEditorInstanceId in CKEDITOR.instances) {
-			// const contentEditorDOM = document.getElementById(contentEditorInstanceId);
-			// CKEDITOR.instances[contentEditorInstanceId].on('change', function () {
-			// 	const iframe = document.getElementById('cke_' + contentEditorInstanceId).querySelector('iframe');
-			// 	const head = iframe.contentDocument.querySelector('head');
-			// 	const body = iframe.contentDocument.querySelector('body');
-			// 	// webpage.methods.initIframeCSS(head, body, 'sf-leap');
+			const contentEditorDOM = document.getElementById(contentEditorInstanceId);
+			CKEDITOR.instances[contentEditorInstanceId].on('change', function () {
+				const iframe = document.getElementById('cke_' + contentEditorInstanceId).querySelector('iframe');
+				const head = iframe.contentDocument.querySelector('head');
+				const body = iframe.contentDocument.querySelector('body');
+				webpage.methods.initIframeCSS(head, body, 'sf-leap');
 
-			// 	if (GetClosestParent(contentEditorDOM, '#lineArticle_Image_Gallery') !== null) {
-			// 		webpage.methods.collectImgGallery(body);
-			// 	}
-			// });
+				if (GetClosestParent(contentEditorDOM, '#lineArticle_Image_Gallery') !== null) {
+					webpage.methods.collectImgGallery(body);
+				}
+			});
 		}
 	},
 	methods: {
