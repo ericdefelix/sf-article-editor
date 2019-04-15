@@ -34,6 +34,16 @@ let editor = {
         editor.crxID = chrome.runtime.id;
       });
 
+      chrome.storage.local.get(['tab_id'], function (objLocalStorage) {
+        editor.tabID = objLocalStorage.tab_id;
+        editor.btnSave.setAttribute('data-tab-id', editor.tabID);
+      });
+
+      chrome.storage.local.get(['popup_id'], function (objLocalStorage) {
+        editor.popupID = objLocalStorage.popup_id;
+        editor.btnSave.setAttribute('data-popup-id', editor.popupID);
+      });
+
       chrome.storage.local.get(['image_gallery'], function (objLocalStorage) {
         editor.image_gallery = JSON.parse(objLocalStorage.image_gallery);
         ImageGallery.run(editor.image_gallery); 
@@ -525,7 +535,9 @@ let editor = {
       crxid: editor.crxID,
       data: {
         html: editor.sourceSection.value,
-        ckeditorIntanceId: this.getAttribute('data-target')
+        ckeditorIntanceId: this.getAttribute('data-target'),
+        popupId: this.getAttribute('data-popup-id'),
+        tabId: this.getAttribute('data-tab-id')
       }
     };
 

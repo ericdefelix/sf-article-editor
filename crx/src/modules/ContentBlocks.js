@@ -1,7 +1,7 @@
 module.exports = {
 	elems: {
 		'textEditor' : {
-			ui_label: 'Text Editor',
+			ui_label: 'Text',
 			template: function (config) {
 				const html = typeof config !== 'undefined' ? config.value : '<p>Click here to start editing</p>';
 				const tmpl = `<div class="sf-editor-content">${html}</div>`;
@@ -14,97 +14,8 @@ module.exports = {
 				toolbar: 'undo redo | formatselect | bold italic strikethrough | alignleft aligncenter alignright alignjustify | link image table | numlist bullist'
 			}
 		},
-		'styledLists' : {
-			ui_label: 'Styled Lists',
-			template: function(config) {
-				const listType = typeof config === 'undefined' ? 'ol' : config;
-
-				const tmpl = `
-					<${listType} class="sf-list-bullet-circular">
-						<li>Click here to start editing list</li>
-						<li>Or paste content here.</li>
-					</${listType}>`;
-				return tmpl;
-			},
-			hasChildContent: false,
-			contentEditorBindToElem: 'container',
-			contentEditorConfig: {
-				plugins: 'lists link image table imagetools',
-				toolbar: 'undo redo | numlist bullist | link image imageupload table | bold italic strikethrough'
-			}
-		},
-		'blockQuotes' : {
-			ui_label: 'Info<br/>Box',
-			types: [
-				{ 
-					ui_label: 'Info', 
-					ui_value: 'info'
-				},
-				{ 
-					ui_label: 'Tip', 
-					ui_value: 'tip'
-				},
-				{ 
-					ui_label: 'Attention', 
-					ui_value: 'alert'
-				}
-			],
-			template: function(config) {
-				let setConfig = {
-					cssClass: () => {
-						const cssClass = typeof config === 'undefined' ? 'info' : 'info';
-						return cssClass;
-					},
-					header: () => {
-						const header = typeof config === 'undefined' ? 'Click here to edit heading' : config.variables[0];
-						return header;
-					},
-					body: () => {
-						const body = typeof config === 'undefined' ? 'Click here to edit/paste content' : config.variables[1];
-						return body;
-					}
-				};
-
-				// <i class="blockquote-icon"></i> taken out and replaced by SVG instead of font
-				const tmpl = `
-				<div class="sf-blockquote sf-blockquote-${setConfig.cssClass()}" role="blockquote">
-					<div class="sf-blockquote-addon"></div>
-					<div class="sf-blockquote-content">
-						<h5 class="sf-blockquote-content-header">${setConfig.header()}</h5>
-						<div class="sf-blockquote-content-body">
-							${setConfig.body()}
-						</div>
-					</div>
-				</div>`;
-				return tmpl;
-			},
-			hasChildContent: false,
-			contentEditorBindToElem: 'content',
-			contentEditorConfig: {
-        plugins: 'link image table',
-        toolbar: 'undo redo | formatselect | bold italic strikethrough | alignleft aligncenter alignright alignjustify | link image table',
-			}
-		},
-		'wellContainer' : {
-			ui_label: 'Gray<br/>Box',
-			template: function(config) {
-				const tmpl = `
-					<div class="sf-well">
-						<h5 class="sf-well-heading">Click here to edit heading</h5>
-						<div class="sf-well-body"><p>Click here to edit/paste content.</p></div>
-					</div>`;
-
-				return tmpl;
-			},
-			hasChildContent: false,
-			contentEditorBindToElem: 'content',
-			contentEditorConfig: {
-        plugins: 'link image table',
-        toolbar: 'undo redo | formatselect | bold italic strikethrough | alignleft aligncenter alignright alignjustify | link image table',
-			}
-		},
 		'genericTabs' : {
-			ui_label: 'Custom Tabs',
+			ui_label: 'Tabs',
 			template: function(config) {
 				let navTabItems = '', navTabSections = '';
 				let subnodes = [];
@@ -144,7 +55,96 @@ module.exports = {
 			},
 			contentEditorBindToElem: 'none',
 			hasChildContent: true
-		}
+		},
+		'styledLists': {
+			ui_label: 'Numbering',
+			template: function (config) {
+				const listType = typeof config === 'undefined' ? 'ol' : config;
+
+				const tmpl = `
+					<${listType} class="sf-list-bullet-circular">
+						<li>Click here to start editing list</li>
+						<li>Or paste content here.</li>
+					</${listType}>`;
+				return tmpl;
+			},
+			hasChildContent: false,
+			contentEditorBindToElem: 'container',
+			contentEditorConfig: {
+				plugins: 'lists link image table imagetools',
+				toolbar: 'undo redo | numlist bullist | link image imageupload table | bold italic strikethrough'
+			}
+		},
+		'blockQuotes': {
+			ui_label: 'Tips',
+			types: [
+				{
+					ui_label: 'Info',
+					ui_value: 'info'
+				},
+				{
+					ui_label: 'Tip',
+					ui_value: 'tip'
+				},
+				{
+					ui_label: 'Attention',
+					ui_value: 'alert'
+				}
+			],
+			template: function (config) {
+				let setConfig = {
+					cssClass: () => {
+						const cssClass = typeof config === 'undefined' ? 'info' : 'info';
+						return cssClass;
+					},
+					header: () => {
+						const header = typeof config === 'undefined' ? 'Click here to edit heading' : config.variables[0];
+						return header;
+					},
+					body: () => {
+						const body = typeof config === 'undefined' ? 'Click here to edit/paste content' : config.variables[1];
+						return body;
+					}
+				};
+
+				// <i class="blockquote-icon"></i> taken out and replaced by SVG instead of font
+				const tmpl = `
+				<div class="sf-blockquote sf-blockquote-${setConfig.cssClass()}" role="blockquote">
+					<div class="sf-blockquote-addon"></div>
+					<div class="sf-blockquote-content">
+						<h5 class="sf-blockquote-content-header">${setConfig.header()}</h5>
+						<div class="sf-blockquote-content-body">
+							${setConfig.body()}
+						</div>
+					</div>
+				</div>`;
+				return tmpl;
+			},
+			hasChildContent: false,
+			contentEditorBindToElem: 'content',
+			contentEditorConfig: {
+				plugins: 'link image table',
+				toolbar: 'undo redo | formatselect | bold italic strikethrough | alignleft aligncenter alignright alignjustify | link image table',
+			}
+		},
+		'wellContainer': {
+			ui_label: 'Info',
+			template: function (config) {
+				const tmpl = `
+					<div class="sf-well">
+						<h5 class="sf-well-heading">Click here to edit heading</h5>
+						<div class="sf-well-body"><p>Click here to edit/paste content.</p></div>
+					</div>`;
+
+				return tmpl;
+			},
+			hasChildContent: false,
+			contentEditorBindToElem: 'content',
+			contentEditorConfig: {
+				plugins: 'link image table',
+				toolbar: 'undo redo | formatselect | bold italic strikethrough | alignleft aligncenter alignright alignjustify | link image table',
+			}
+		},
 	},
 	keywords: ['sf-blockquote', 'sf-list-bullet-circular', 'sf-well', 'sf-tabs', 'sf-editor-content'],
 	keyword_map: {
