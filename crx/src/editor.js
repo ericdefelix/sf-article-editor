@@ -2,7 +2,7 @@ import './editor.scss';
 import {
   GetClosestParent,
   GenerateID,
-  NormaliseHTMLString,
+  NormaliseHTMLString
 } from './modules/utils/chromeExtensionUtils';
 import { dataParser } from './modules/utils/dataParser';
 import ContentBlocks from './modules/ContentBlocks';
@@ -11,7 +11,7 @@ import Sortable from '../node_modules/sortablejs/Sortable.min';
 import ImageGallery from './modules/ImageGallery';
 import { imageGalleryMockData, htmlMockData } from './modules/utils/mockData';
 
-let editor = {
+const editor = {
   crxID: '',
   contentEditorInstanceId: '',
   instanceHTML:     '',
@@ -83,14 +83,9 @@ let editor = {
     editor.btnThemeSelector.onchange = editor.select_theme;
   },
   build_ui: function() {
-    const replaceString = (baseStr, strLookup, strReplacement) => {
-      return baseStr.replace(strLookup, strReplacement);
-    };
-
     UserInterfaceBuilder.render('canvas', {
       data: editor.existing_data,
       trigger: 'auto',
-      dependencies: [ContentBlocks, replaceString],
       callback: function() {
         UserInterfaceBuilder.render('toolbox', ContentBlocks.elems);
 
@@ -184,7 +179,6 @@ let editor = {
 
         UserInterfaceBuilder.render('canvas', {
           data: editor.existing_data,
-          dependencies: [],
           trigger: 'user'
         });
 
@@ -222,7 +216,6 @@ let editor = {
     if (editor.existing_data.length === 0) {
       UserInterfaceBuilder.render('canvas', {
         data: editor.existing_data,
-        dependencies: [],
         trigger: 'user'
       });
 

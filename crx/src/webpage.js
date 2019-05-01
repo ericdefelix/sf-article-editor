@@ -10,6 +10,7 @@ import { NewBtnTemplateCKEDITOR, UrlContainsArticleEdit, GetClosestParent } from
 
 const webpage = {
 	image_gallery: '',
+	tempArrayImg: [],
 	init: function () {
 		const ckToolbox = document.getElementsByClassName('cke_toolbox');
 
@@ -17,18 +18,18 @@ const webpage = {
 			const btnTmpl = NewBtnTemplateCKEDITOR(i);
 			ckToolbox[i].insertAdjacentHTML('afterbegin', btnTmpl);
 		}
+
 		this.listeners();
 
 		const iframes = document.querySelectorAll('.cke_wysiwyg_frame');
+
 		iframes.forEach(element => {
-			const head = element.contentWindow.document.querySelector('head');
-			const body = element.contentDocument.querySelector('body');
+			const
+				head = element.contentWindow.document.querySelector('head'),
+				body = element.contentDocument.querySelector('body');
 
 			webpage.methods.initIframeCSS(head, body, 'sf-leap');
-
-			if (GetClosestParent(element, '#lineArticle_Image_Gallery') !== null) {
-				webpage.methods.collectImgGallery(body);
-			}
+			webpage.methods.collectImgGallery(body);
 		});
 
 		webpage.methods.initContentEditorState();
@@ -37,8 +38,9 @@ const webpage = {
 		const btnAdvancedEditor = document.querySelectorAll('.cke_button__advancededitor');
 		
 		btnAdvancedEditor.forEach((elem, index) => {
-			const ckeditorProxyInstanceId = GetClosestParent(elem, '.cke').getAttribute('id');
-			const contentEditorInstanceId = ckeditorProxyInstanceId.substring(4);
+			const
+				ckeditorProxyInstanceId = GetClosestParent(elem, '.cke').getAttribute('id'),
+				contentEditorInstanceId = ckeditorProxyInstanceId.substring(4);
 
 			elem.setAttribute('data-instance-id', contentEditorInstanceId);
 			elem.addEventListener('click', function (event) {
@@ -49,22 +51,21 @@ const webpage = {
 
 		window.addEventListener('message', function (event) {
 			const method = event.data.method;
+
 			if (event.type == 'message' && method == 'insertToContentEditor') {
 				webpage.methods.insertToContentEditor(event.data);
 			}
 		}, false);
 
 		for (const contentEditorInstanceId in CKEDITOR.instances) {
-			const contentEditorDOM = document.getElementById(contentEditorInstanceId);
 			CKEDITOR.instances[contentEditorInstanceId].on('change', function () {
-				const iframe = document.getElementById('cke_' + contentEditorInstanceId).querySelector('iframe');
-				const head = iframe.contentDocument.querySelector('head');
-				const body = iframe.contentDocument.querySelector('body');
+				const
+					iframe = document.getElementById('cke_' + contentEditorInstanceId).querySelector('iframe'),
+					head = iframe.contentDocument.querySelector('head'),
+					body = iframe.contentDocument.querySelector('body');
+				
 				webpage.methods.initIframeCSS(head, body, 'sf-leap');
-
-				if (GetClosestParent(contentEditorDOM, '#lineArticle_Image_Gallery') !== null) {
-					webpage.methods.collectImgGallery(body);
-				}
+				webpage.methods.collectImgGallery(body);
 			});
 		}
 	},
@@ -103,8 +104,10 @@ const webpage = {
 			body.classList.add(theme);
 		},
 		insertToContentEditor: (request) => {
-			const contentEditorInstanceId = request.data.ckeditorIntanceId;
-			const dataHTMLString = request.data.html;
+			const
+				contentEditorInstanceId = request.data.ckeditorIntanceId,
+				dataHTMLString = request.data.html;
+			
 			CKEDITOR.instances[contentEditorInstanceId].setData(dataHTMLString);
 
 			const contentEditorContainer = document.getElementById('cke_' + contentEditorInstanceId);
@@ -119,34 +122,41 @@ const webpage = {
 			}, 3000);
 		},
 		initContentEditorState: () => {
-			const imgGallery = document.getElementById('lineArticle_Image_Gallery');
-			const uploadToolbox = imgGallery.querySelector('.cke_toolbox');
-			const toolboxItems = [...uploadToolbox.children];
+			const
+				imgGallery = document.getElementById('lineArticle_Image_Gallery'),
+				uploadToolbox = imgGallery.querySelector('.cke_toolbox'),
+				toolboxItems = [...uploadToolbox.children];
 
 			// Hide controls for Article Image Gallery and extract URLs
 			for (let i = 0; i < toolboxItems.length; i++) {
 				const btn = toolboxItems[i].querySelector('.cke_toolgroup .cke_button');
+
 				if (btn.classList.contains('cke_button__sfdcimage') ||
-					btn.classList.contains('cke_button__source')) continue;
+					btn.classList.contains('cke_button__source'))
+					continue;
+				
 				toolboxItems[i].style.display = 'none';
 			}
 		},
 		collectImgGallery: (body) => {
 			const
 				images = body.children,
-				arr = [...images],
-				tempArray = [];
+				arr = [...images];
 			
 			for (let index = 0; index < arr.length; index++) {
-				const el = arr[index];
-				if (el.nodeType == 1 && el.nodeName == 'IMG') {
+				const
+					el = arr[index],
+					alt = el.getAttribute('alt'),
+					src = el.getAttribute('src');
+				
+				if (el.nodeType == 1 && el.nodeName == 'IMG' && !el.classList.contains('cke_anchor')) {
 					el.style.width = 200;
 					el.style.height = 'auto';
-					tempArray.push({ alt: el.getAttribute('alt'), src: el.getAttribute('src') });
+					webpage.tempArrayImg.push({ alt: alt, src: src });
 				}
 			}
 
-			webpage.image_gallery = JSON.stringify(tempArray);
+			webpage.image_gallery = JSON.stringify(webpage.tempArrayImg);
 		},
 		sendImageURL: (request) => {
 			window.postMessage(config, window.location.origin);

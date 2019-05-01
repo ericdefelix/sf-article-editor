@@ -32,7 +32,9 @@
     "webNavigation",
     "*://*/*",
     "file:///*",
-    "unlimitedStorage"
+    "unlimitedStorage",
+    "https://leap.my.salesforce.com/",
+    "https://leap--uxui.cs101.my.salesforce.com/"
   ],
   "content_security_policy": "script-src 'self' https://cdnjs.cloudflare.com ;object-src 'self'",
   "web_accessible_resources": [

@@ -24,24 +24,16 @@ let background = {
       chrome.tabs.query({}, function (tabs) {
         for (let i = 0; i < tabs.length; i++) {
           const tab = tabs[i];
-          if (UrlContainsArticleEdit(tab.url)) {
-            if (details.reason === 'install' || details.reason == 'update') {
-              background.currentTabID = tab.id;
-              chrome.tabs.update(tab.id, { highlighted: true });
-              chrome.tabs.reload(tab.id);
-            }
-            // if (details.reason == 'update') {
-            // }
+          if (UrlContainsArticleEdit(tab.url) && details.reason === 'install') {
+            background.currentTabID = tab.id;
+            chrome.tabs.update(tab.id, { highlighted: true });
+            chrome.tabs.reload(tab.id);
           }
         }
       });
     });
 
     chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
-      // if (changeInfo.status == 'loading' && UrlContainsArticleEdit(tab.url) && !background.tabRunsPlugin(tabId)) {
-      //   background.activeTabs.push(tabId);
-      // }
-
       if (changeInfo.status == 'loading' && UrlContainsArticleEdit(tab.url)) {
         chrome.tabs.executeScript(tabId, {
           file: 'index.js',

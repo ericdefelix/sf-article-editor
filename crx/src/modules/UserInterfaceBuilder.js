@@ -1,29 +1,31 @@
-module.exports = {
+import { replaceString } from './utils/chromeExtensionUtils';
+import { ContentBlocks } from './ContentBlocks';
+
+const UserInterfaceBuilder = {
   canvasContainer: document.getElementById('canvasContainer'),
-  render: function(area, data) {
-  	this[area](data);
+  render: (area, data) => {
+    UserInterfaceBuilder[area](data);
   },
-  toolbox: function(contentTypes) {
-  	let tmpl = `<div class="toolbox" id="toolbox"><ul class="toolbox-toolbar" id="toolbar" tabIndex="-1">`;
-  	for (key in contentTypes) {
-  		tmpl += `<li class="toolbar-item" data-action="add-component" data-ui-label="${key}">
+  toolbox: (contentTypes) => {
+    let tmpl = `<div class="toolbox" id="toolbox"><ul class="toolbox-toolbar" id="toolbar" tabIndex="-1">`;
+
+    for (const key in contentTypes) {
+      tmpl += `<li class="toolbar-item" data-action="add-component" data-ui-label="${key}">
 				<small>${contentTypes[key].ui_label}</small>
 			</li>`;
-  	}
-  	this.canvasContainer.insertAdjacentHTML('beforeend', tmpl + `</ul></div>`);
+    }
+
+    UserInterfaceBuilder.canvasContainer.insertAdjacentHTML('beforeend', tmpl + `</ul></div>`);
   },
-  canvas: function(obj) {
+  canvas: (obj) => {
     const
       elementCount = obj.data.length,
       data = obj.data,
       triggerBy = obj.trigger,
-      ContentBlocks = obj.dependencies[0],
-      replaceStr = obj.dependencies[1],
       emptyStateContainer = document.querySelector('[data-content="empty"]');
 
     const renderEmptyState = () => {
-      const tmpl = `
-      <section class="canvas-content-block" data-content="empty"> 
+      return `<section class="canvas-content-block" data-content="empty"> 
         <img src="images/empty-icon.svg" alt="Empty">
         <h4 class="empty-text">There's nothing in here.<br><small>Start building your content.</small></h4>
         <div class="canvas-add-component">
@@ -32,135 +34,141 @@ module.exports = {
           </button>
         </div>
       </section>`;
-      return tmpl;
+    };
+
+    const getSubnodesHTML = (dataItem) => {
+      let subnodesHTML = ``;
+
+      // Render the entire tabs HTML
+      subnodesHTML = UserInterfaceBuilder.renderContentBlock({
+          id: dataItem.id,
+          type: dataItem.type,
+          data: ContentBlocks.elems[dataItem.type]
+        },
+        ContentBlocks.elems[dataItem.type].template({ subnodes: dataItem.metadata.subnodes }),
+        undefined
+      );
+
+      dataItem.metadata.subnodes.forEach(subNodeTab => {
+        let tabContentHTML = ``;
+        tabContentHTML = subNodeTab.content.reduce((tabContentHTML, tabContentNode) => {
+          return tabContentHTML +=
+            UserInterfaceBuilder.renderContentBlock({
+              type: tabContentNode.type,
+              id: tabContentNode.id,
+              data: ContentBlocks.elems[tabContentNode.type]
+            },
+              ContentBlocks.elems[tabContentNode.type].template(),
+              tabContentNode.id
+            );
+        }, tabContentHTML);
+        subnodesHTML = replaceString(subnodesHTML, '{{ tab-' + subNodeTab.id + ' }}', tabContentHTML);
+      });
+
+      return subnodesHTML;
     };
 
     const renderExistingData = () => {
-      let tmpl = ``;
+      let existingHTML = ``;
       try {
-        for (let i = 0; i <= data.length - 1; i++) {
-          const id = data[i].id, 
-                type = data[i].type, 
-                metadata = data[i].metadata;
+        existingHTML = data.reduce((existingHTML, dataItem) => {
+          return existingHTML += dataItem.metadata.hasOwnProperty('subnodes') && dataItem.metadata.subnodes.length > 0 ?
+            getSubnodesHTML(dataItem) :
+            UserInterfaceBuilder.renderContentBlock({
+                id: dataItem.id,
+                type: dataItem.type,
+                data: ContentBlocks.elems[dataItem.type]
+              },
+              dataItem.metadata.html,
+              undefined
+            );
+        }, existingHTML);
 
-          let existingDataObj, elementTemplate;
-
-          existingDataObj = { id: id, type: type, data: ContentBlocks.elems[type] };
-
-          if (metadata.hasOwnProperty('subnodes') && metadata.subnodes.length > 0) {  
-            elementTemplate = ContentBlocks.elems[type].template({ subnodes: metadata.subnodes });
-
-            let tabsHTML = module.exports.renderContentBlock(existingDataObj, elementTemplate, undefined);
-
-            for (let x = 0; x <= metadata.subnodes.length - 1; x++) {
-              const snode = metadata.subnodes[x];
-              let snodeChildrenHTML = '';
-
-              if (snode.content.length > 0) {
-                for (let y = 0; y <= snode.content.length - 1; y++) {
-                  const tabContentObj = { 
-                    type: snode.content[y].type, 
-                    id: snode.content[y].id,
-                    data: ContentBlocks.elems[snode.content[y].type]
-                  };
-
-                  const tabContentElemHTML = ContentBlocks.elems[snode.content[y].type].template();
-                  snodeChildrenHTML += module.exports.renderContentBlock(tabContentObj, tabContentElemHTML, snode.id);
-                }
-              }
-
-              tabsHTML = replaceStr(tabsHTML, '{{ tab-'+ snode.id +' }}', snodeChildrenHTML);
-            }
-            tmpl += tabsHTML;
-          }
-          else {
-            elementTemplate = metadata.html;
-            tmpl += module.exports.renderContentBlock(existingDataObj,elementTemplate,undefined);
-          }
-        }
-      } catch(e) {
+        console.log(data);
+      } catch (e) {
         console.log(e);
         console.log('ContentBlocks module is missing');
       }
-      return tmpl;
+      return existingHTML;
     };
 
-  	if (triggerBy == 'auto') {
-			let canvasInitHTML = '';
-			canvasInitHTML = elementCount > 0 ? renderExistingData() : renderEmptyState();
-			this.canvasContainer.innerHTML = canvasInitHTML;
-  	}
-    
+    if (triggerBy == 'auto') {
+      let canvasInitHTML = '';
+      canvasInitHTML = elementCount > 0 ? renderExistingData() : renderEmptyState();
+      UserInterfaceBuilder.canvasContainer.innerHTML = canvasInitHTML;
+    }
+
     if (triggerBy == 'user') {
       if (elementCount == 0) {
-        this.canvasContainer.insertAdjacentHTML('afterbegin', renderEmptyState());
+        UserInterfaceBuilder.canvasContainer.insertAdjacentHTML('afterbegin', renderEmptyState());
       }
       if (elementCount == 1 && emptyStateContainer) {
-  			const toolbox = document.getElementById('toolbox');
+        const toolbox = document.getElementById('toolbox');
 
-  			toolbox.parentNode.removeChild(toolbox);
-  			this.canvasContainer.removeChild(emptyStateContainer);
-  			this.canvasContainer.appendChild(toolbox);
-  		}
+        toolbox.parentNode.removeChild(toolbox);
+        UserInterfaceBuilder.canvasContainer.removeChild(emptyStateContainer);
+        UserInterfaceBuilder.canvasContainer.appendChild(toolbox);
+      }
     }
-    
+
     if (obj.hasOwnProperty('callback')) {
       obj.callback();
     }
   },
-  content: function(obj) {
-  	const triggerParent = obj.trigger.closest('.canvas-content-block'),
-  	      dataContent = triggerParent.getAttribute('data-content'),
-  	      isTabContent = document.getElementById('toolbox')
-            .previousElementSibling
-            .classList
-            .contains('forTabs'),
-          elementTemplate = obj.data.template();
+  content: (obj) => {
+    const
+      triggerParent = obj.trigger.closest('.canvas-content-block'),
+      dataContent = triggerParent.getAttribute('data-content'),
+      isTabContent = document.getElementById('toolbox')
+        .previousElementSibling
+        .classList
+        .contains('forTabs'),
+      elementTemplate = obj.data.template();
 
     const displayToolboxButtons = () => {
-      const btns = document.querySelectorAll('#' + obj.id + ' .canvas-add-component [data-action="select-component"]');
-      return btns;
+      return document.querySelectorAll('#' + obj.id + ' .canvas-add-component [data-action="select-component"]');
     };
 
-    let tmpl, tabContentId, toolboxBtns;
+    let tmpl, toolboxBtns;
 
     if (dataContent === 'empty') {
-      tmpl = module.exports.renderContentBlock(obj,elementTemplate,undefined);
-      this.canvasContainer.insertAdjacentHTML('beforeend', tmpl);
+      tmpl = UserInterfaceBuilder.renderContentBlock(obj, elementTemplate, undefined);
+      UserInterfaceBuilder.canvasContainer.insertAdjacentHTML('beforeend', tmpl);
     }
     else {
       if (!isTabContent) {
-        tmpl = module.exports.renderContentBlock(obj,elementTemplate,undefined);
-        triggerParent.insertAdjacentHTML('afterend',tmpl);
+        tmpl = UserInterfaceBuilder.renderContentBlock(obj, elementTemplate, undefined);
+        triggerParent.insertAdjacentHTML('afterend', tmpl);
       }
       else {
-        const tabContentIn = triggerParent.querySelector('.sf-tab-content.in'),
-              tabContentId = tabContentIn.getAttribute('id');
+        const
+          tabContentIn = triggerParent.querySelector('.sf-tab-content.in'),
+          tabContentId = tabContentIn.getAttribute('id');
 
-        tmpl = module.exports.renderContentBlock(obj,elementTemplate,tabContentId);
+        tmpl = UserInterfaceBuilder.renderContentBlock(obj, elementTemplate, tabContentId);
         const subContent = triggerParent.querySelector('.sf-tab-content.in');
         const tabParentId = subContent.getAttribute('id');
-        subContent.childNodes.length == 0 ? 
-          (subContent.innerHTML = tmpl) : subContent.insertAdjacentHTML('beforeend',tmpl);
+        subContent.childNodes.length == 0 ?
+          (subContent.innerHTML = tmpl) : subContent.insertAdjacentHTML('beforeend', tmpl);
       }
     }
 
     toolboxBtns = displayToolboxButtons();
     obj.callback(toolboxBtns);
   },
-  renderContentBlock: function(obj,elementTemplate,tabContentId) {
+  renderContentBlock: (obj, elementTemplate, tabContentId) => {
     const tmpl = `
     <section class="canvas-content-block" id="${obj.id}">
       <div class="canvas-content-config"> 
         <span class="canvas-content-draggable 
-          ${typeof tabContentId === 'undefined' ? `canvasDraggableMain` : `canvasDraggableSub_` + 
-            tabContentId }"></span>
-        ${obj.data.hasOwnProperty('types') ? module.exports.renderOptions(obj) : ''}
+          ${typeof tabContentId === 'undefined' ? `canvasDraggableMain` : `canvasDraggableSub_` +
+        tabContentId}"></span>
+        ${obj.data.hasOwnProperty('types') ? UserInterfaceBuilder.renderOptions(obj) : ''}
         ${!obj.data.hasChildContent ? '' :
-          `<button class="canvas-btn canvas-btn-xs" 
+        `<button class="canvas-btn canvas-btn-xs" 
             data-action="edit-tab"
             data-target="snippet-${obj.id}" data-target-type="${obj.type}">Edit Tabs</button>`
-        }
+      }
         <button class="canvas-btn canvas-btn-xs" 
           data-action="remove-component"
           data-target="${obj.id}" data-target-type="${obj.type}">
@@ -170,20 +178,20 @@ module.exports = {
       <div class="canvas-content-snippet" id="snippet-${obj.id}" data-component-type="${obj.type}">
         ${elementTemplate}
       </div>
-      ${ obj.data.hasChildContent ? module.exports.renderAddSubContent() : `` }
-      ${ (typeof tabContentId === 'undefined') ? module.exports.renderAddMainContent() : `` }
+      ${ obj.data.hasChildContent ? UserInterfaceBuilder.renderAddSubContent() : ``}
+      ${ (typeof tabContentId === 'undefined') ? UserInterfaceBuilder.renderAddMainContent() : ``}
     </section>`;
 
     return tmpl;
   },
-  renderOptions: function(obj) {
+  renderOptions: (obj) => {
     let opts = '';
     for (let i = 0; i <= obj.data.types.length - 1; i++) {
       opts += `<option value="${obj.data.types[i].ui_value}">${obj.data.types[i].ui_label}</option>`;
     }
     return `<select class="canvas-form-control" name="s-${obj.id}" data-target="snippet-${obj.id}">${opts}</select>`;
   },
-  renderAddSubContent: function() {
+  renderAddSubContent: () => {
     const str = `
     <div class="canvas-add-component canvas-add-subcontent">
       <button type="button" class="canvas-btn canvas-btn-xs btn-has-text forTabs" data-action="select-component">
@@ -193,7 +201,7 @@ module.exports = {
     `;
     return str;
   },
-  renderAddMainContent: function() {
+  renderAddMainContent: () => {
     const str = `
       <div class="canvas-content-action canvas-add-component">
         <div class="content-action-hotspot">
@@ -205,6 +213,8 @@ module.exports = {
     `;
     return str;
   },
-  update: function() {
+  update: () => {
   }
 };
+
+export default UserInterfaceBuilder;

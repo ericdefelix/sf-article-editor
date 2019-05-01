@@ -78,6 +78,10 @@ export function EncodeHTMLString(str) {
 					.replace(/>/g,'&gt;');
 }
 
+export function replaceString(baseStr, strLookup, strReplacement) {
+	return baseStr.replace(strLookup, strReplacement);
+}
+
 export function GenerateID() {
 	return Math.random().toString(36).replace(/[^a-z]+/g, '').substr(2, 10);
 }

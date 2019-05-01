@@ -1,4 +1,4 @@
-module.exports = {
+const ContentBlocks = {
 	elems: {
 		'textEditor' : {
 			ui_label: 'Text',
@@ -34,7 +34,9 @@ module.exports = {
 				subnodes = !hasConfig ? emptyStateSubnodes : config.subnodes;
 
 				for (let i = 0; i <= subnodes.length-1; i++) {
-					const id = subnodes[i].id, label = subnodes[i].label;
+					const
+						id = subnodes[i].id,
+						label = subnodes[i].label;
 
 					navTabItems += `
 						<li class="sf-tab-item${ i == 0 ? ' active' : ''}">
@@ -159,3 +161,5 @@ module.exports = {
     return template;
   }
 };
+
+export default ContentBlocks;
