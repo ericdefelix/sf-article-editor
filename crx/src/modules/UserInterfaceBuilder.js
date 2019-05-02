@@ -72,7 +72,8 @@ const UserInterfaceBuilder = {
       let existingHTML = ``;
       try {
         existingHTML = data.reduce((existingHTML, dataItem) => {
-          return existingHTML += dataItem.metadata.hasOwnProperty('subnodes') && dataItem.metadata.subnodes.length > 0 ?
+          const hasSubnodes = dataItem.metadata.hasOwnProperty('subnodes') && dataItem.metadata.subnodes.length > 0;
+          return existingHTML += hasSubnodes ?
             getSubnodesHTML(dataItem) :
             UserInterfaceBuilder.renderContentBlock({
                 id: dataItem.id,
@@ -83,8 +84,6 @@ const UserInterfaceBuilder = {
               undefined
             );
         }, existingHTML);
-
-        console.log(data);
       } catch (e) {
         console.log(e);
         console.log('ContentBlocks module is missing');

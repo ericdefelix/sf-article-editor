@@ -65,6 +65,7 @@ const editor = {
       editor.image_gallery = imageGalleryMockData;
       editor.htmlSection.insertAdjacentHTML('afterbegin', htmlMockData);
       editor.existing_data = dataParser(editor.htmlSection.childNodes);
+      console.log(editor.existing_data);
       editor.start_app();
       console.log('Attempting to do a chrome api method. You are in stand-alone mode');
     }

@@ -39,6 +39,8 @@ export function dataParser(childNodes) {
       let flag = true;
       if (tempArray.length == 0) return true;
       flag = tempArray[tempArray.length - 1].type == 'textEditor' && currentPointer == 'textEditor' ? false : true;
+
+      console.log();
       return flag;
     };
   
