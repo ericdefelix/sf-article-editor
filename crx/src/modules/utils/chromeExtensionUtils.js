@@ -85,3 +85,7 @@ export function replaceString(baseStr, strLookup, strReplacement) {
 export function GenerateID() {
 	return Math.random().toString(36).replace(/[^a-z]+/g, '').substr(2, 10);
 }
+
+export function GenerateTabID() {
+	return Math.floor(Math.random() * 90000) + 10000;
+}

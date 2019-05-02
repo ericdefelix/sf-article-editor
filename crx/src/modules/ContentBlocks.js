@@ -1,14 +1,16 @@
+import { GenerateTabID } from './utils/chromeExtensionUtils';
+
 const ContentBlocks = {
 	elems: {
 		'textEditor' : {
 			ui_label: 'Text',
-			template: function (config) {
+			template: (config) => {
 				const html = typeof config !== 'undefined' ? config.value : '<p>Click here to start editing</p>';
-				const tmpl = `<div class="sf-editor-content">${html}</div>`;
-				return tmpl;
+				return `<div class="sf-editor-content">${html}</div>`;
 			},
 			hasChildContent: false,
 			contentEditorBindToElem: 'container',
+			cssClass: 'sf-editor-content',
 			contentEditorConfig: {
         plugins: 'lists link image table imagetools',
 				toolbar: 'undo redo | formatselect | bold italic strikethrough | alignleft aligncenter alignright alignjustify | link image table | numlist bullist'
@@ -16,62 +18,53 @@ const ContentBlocks = {
 		},
 		'genericTabs' : {
 			ui_label: 'Tabs',
-			template: function(config) {
-				let navTabItems = '', navTabSections = '';
-				let subnodes = [];
+			template: (config) => {
+				let
+					navTabItems = '',
+					navTabSections = '',
+					subnodes = [];
 
-				const generateID = function() { return Math.floor(Math.random()*90000) + 10000; };
-				const emptyStateSubnodes = [
-					{ label: 'Tab 1', id: generateID(), content: [] },
-					{ label: 'Tab 2', id: generateID(), content: [] },
-					{ label: 'Tab 3', id: generateID(), content: [] },
-					{ label: 'Tab 4', id: generateID(), content: [] },
-					{ label: 'Tab 5', id: generateID(), content: [] }
-				];
-
-				const hasConfig = typeof config !== 'undefined';
- 
+				const
+					hasConfig = typeof config !== 'undefined',
+					emptyStateSubnodes = Array.from({ length: 5 }, (e, i) => ({ label: `Tab ${i + 1}`, id: GenerateTabID(), content: [] }));
+				
 				subnodes = !hasConfig ? emptyStateSubnodes : config.subnodes;
 
-				for (let i = 0; i <= subnodes.length-1; i++) {
-					const
-						id = subnodes[i].id,
-						label = subnodes[i].label;
-
+				subnodes.forEach((subnode, index) => {
 					navTabItems += `
-						<li class="sf-tab-item${ i == 0 ? ' active' : ''}">
-							<span class="sf-tab-item-link" id="target_tab-${id}">${label}</span>
-						</li>
-					`;
+						<li class="sf-tab-item${ index == 0 ? ' active' : ''}">
+							<span class="sf-tab-item-link" id="target_tab-${subnode.id}">${subnode.label}</span>
+						</li>`;
 
-					navTabSections += `<div class="sf-tab-content${ i == 0 ? ' in' : ''}" id="tab-${id}">${ hasConfig ? '{{ tab-'+ id +' }}' : '' }</div>`;
-				}
+					navTabSections += `
+						<div class="sf-tab-content${index == 0 ? ' in' : ''}" 
+							id="tab-${subnode.id}">${hasConfig ? '{{ tab-' + subnode.id + ' }}' : ''}
+						</div>`;
+				});
 
-				const tmpl = `
+				return `
 					<div class="sf-tabs">
 						<div class="sf-tabs-bar"><ul class="sf-tab-nav">${navTabItems}</ul></div>${navTabSections}
-					</div>
-				`;
-
-				return tmpl;
+					</div>`;
 			},
 			contentEditorBindToElem: 'none',
+			cssClass: 'sf-tabs',
 			hasChildContent: true
 		},
 		'styledLists': {
 			ui_label: 'Numbering',
-			template: function (config) {
+			template: (config) => {
 				const listType = typeof config === 'undefined' ? 'ol' : config;
 
-				const tmpl = `
+				return `
 					<${listType} class="sf-list-bullet-circular">
 						<li>Click here to start editing list</li>
 						<li>Or paste content here.</li>
 					</${listType}>`;
-				return tmpl;
 			},
 			hasChildContent: false,
 			contentEditorBindToElem: 'container',
+			cssClass: 'sf-list-bullet-circular',
 			contentEditorConfig: {
 				plugins: 'lists link image table imagetools',
 				toolbar: 'undo redo | numlist bullist | link image imageupload table | bold italic strikethrough'
@@ -93,7 +86,7 @@ const ContentBlocks = {
 					ui_value: 'alert'
 				}
 			],
-			template: function (config) {
+			template: (config) => {
 				let setConfig = {
 					cssClass: () => {
 						const cssClass = typeof config === 'undefined' ? 'info' : 'info';
@@ -109,8 +102,7 @@ const ContentBlocks = {
 					}
 				};
 
-				// <i class="blockquote-icon"></i> taken out and replaced by SVG instead of font
-				const tmpl = `
+				return `
 				<div class="sf-blockquote sf-blockquote-${setConfig.cssClass()}" role="blockquote">
 					<div class="sf-blockquote-addon"></div>
 					<div class="sf-blockquote-content">
@@ -120,10 +112,10 @@ const ContentBlocks = {
 						</div>
 					</div>
 				</div>`;
-				return tmpl;
 			},
 			hasChildContent: false,
 			contentEditorBindToElem: 'content',
+			cssClass: 'sf-blockquote',
 			contentEditorConfig: {
 				plugins: 'link image table',
 				toolbar: 'undo redo | formatselect | bold italic strikethrough | alignleft aligncenter alignright alignjustify | link image table',
@@ -131,22 +123,24 @@ const ContentBlocks = {
 		},
 		'wellContainer': {
 			ui_label: 'Info',
-			template: function (config) {
-				const tmpl = `
+			template: (config) => {
+				return `
 					<div class="sf-well">
 						<h5 class="sf-well-heading">Click here to edit heading</h5>
 						<div class="sf-well-body"><p>Click here to edit/paste content.</p></div>
 					</div>`;
-
-				return tmpl;
 			},
 			hasChildContent: false,
 			contentEditorBindToElem: 'content',
+			cssClass: 'sf-well',
 			contentEditorConfig: {
 				plugins: 'link image table',
 				toolbar: 'undo redo | formatselect | bold italic strikethrough | alignleft aligncenter alignright alignjustify | link image table',
 			}
 		},
+	},
+  getTemplate: (elemType,config) => {
+		return ContentBlocks.elems[elemType].template(config);
 	},
 	keywords: ['sf-blockquote', 'sf-list-bullet-circular', 'sf-well', 'sf-tabs', 'sf-editor-content'],
 	keyword_map: {
@@ -155,11 +149,6 @@ const ContentBlocks = {
 		'sf-well' : 'wellContainer',
 		'sf-tabs' : 'genericTabs',
 		'sf-editor-content' : 'textEditor'
-	},
-  getTemplate: function(elemType,config) {
-  	const template = this.elems[elemType].template(config);
-    return template;
-  }
+	}
 };
-
 export default ContentBlocks;

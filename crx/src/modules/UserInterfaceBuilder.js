@@ -1,5 +1,5 @@
 import { replaceString } from './utils/chromeExtensionUtils';
-import { ContentBlocks } from './ContentBlocks';
+import ContentBlocks from './ContentBlocks';
 
 const UserInterfaceBuilder = {
   canvasContainer: document.getElementById('canvasContainer'),

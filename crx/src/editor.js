@@ -54,17 +54,17 @@ const editor = {
         
         if (ih !== '' || typeof ih !== 'undefined') {
           editor.htmlSection.insertAdjacentHTML('afterbegin', ih);
-          editor.existing_data = dataParser(editor.htmlSection.childNodes, { GenerateID, ContentBlocks });
+          editor.existing_data = dataParser(editor.htmlSection.childNodes);
           editor.start_app();
         }
       });
 
-      const manifestData = chrome.runtime.getManifest();
-      document.getElementById('versionNumber').innerText = 'v' + manifestData.version;
+      document.getElementById('versionNumber').innerText = 'v' + chrome.runtime.getManifest().version;
+
     } catch (e) {
       editor.image_gallery = imageGalleryMockData;
       editor.htmlSection.insertAdjacentHTML('afterbegin', htmlMockData);
-      editor.existing_data = dataParser(editor.htmlSection.childNodes, { GenerateID, ContentBlocks });
+      editor.existing_data = dataParser(editor.htmlSection.childNodes);
       editor.start_app();
       console.log('Attempting to do a chrome api method. You are in stand-alone mode');
     }
@@ -434,8 +434,6 @@ const editor = {
       let data = { id: id, type: type, metadata: {} };
 
       data.metadata = createMetadata(type, element, element.querySelector('.canvas-content-snippet').innerHTML);
-
-      console.log(element.querySelector('.canvas-content-snippet').innerHTML);
 
       if (ContentBlocks.elems[type].hasChildContent) {
         const tabLinks = element.querySelectorAll('.sf-tab-item-link');
