@@ -52,13 +52,22 @@ const UserInterfaceBuilder = {
       dataItem.metadata.subnodes.forEach(subNodeTab => {
         let tabContentHTML = ``;
         tabContentHTML = subNodeTab.content.reduce((tabContentHTML, tabContentNode) => {
+          const config = () => {
+            if (ContentBlocks.elems[tabContentNode.type].hasHeaderBodyText) {
+              return { header: tabContentNode.header, body: tabContentNode.body };
+            }
+            else {
+              return null;
+            }
+          };
+
           return tabContentHTML +=
             UserInterfaceBuilder.renderContentBlock({
               type: tabContentNode.type,
               id: tabContentNode.id,
               data: ContentBlocks.elems[tabContentNode.type]
             },
-              ContentBlocks.elems[tabContentNode.type].template(),
+              ContentBlocks.elems[tabContentNode.type].template(config()),
               tabContentNode.id
             );
         }, tabContentHTML);
@@ -73,6 +82,7 @@ const UserInterfaceBuilder = {
       try {
         existingHTML = data.reduce((existingHTML, dataItem) => {
           const hasSubnodes = dataItem.metadata.hasOwnProperty('subnodes') && dataItem.metadata.subnodes.length > 0;
+
           return existingHTML += hasSubnodes ?
             getSubnodesHTML(dataItem) :
             UserInterfaceBuilder.renderContentBlock({
@@ -122,11 +132,10 @@ const UserInterfaceBuilder = {
         .previousElementSibling
         .classList
         .contains('forTabs'),
-      elementTemplate = obj.data.template();
-
-    const displayToolboxButtons = () => {
-      return document.querySelectorAll('#' + obj.id + ' .canvas-add-component [data-action="select-component"]');
-    };
+      elementTemplate = obj.data.template(),
+      displayToolboxButtons = () => {
+        return document.querySelectorAll('#' + obj.id + ' .canvas-add-component [data-action="select-component"]');
+      };
 
     let tmpl, toolboxBtns;
 
@@ -142,11 +151,11 @@ const UserInterfaceBuilder = {
       else {
         const
           tabContentIn = triggerParent.querySelector('.sf-tab-content.in'),
-          tabContentId = tabContentIn.getAttribute('id');
+          tabContentId = tabContentIn.getAttribute('id'),
+          subContent = triggerParent.querySelector('.sf-tab-content.in'),
+          tabParentId = subContent.getAttribute('id');
 
         tmpl = UserInterfaceBuilder.renderContentBlock(obj, elementTemplate, tabContentId);
-        const subContent = triggerParent.querySelector('.sf-tab-content.in');
-        const tabParentId = subContent.getAttribute('id');
         subContent.childNodes.length == 0 ?
           (subContent.innerHTML = tmpl) : subContent.insertAdjacentHTML('beforeend', tmpl);
       }

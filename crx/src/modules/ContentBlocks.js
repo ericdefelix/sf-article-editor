@@ -1,5 +1,17 @@
 import { GenerateTabID } from './utils/chromeExtensionUtils';
 
+const ContentWithHeaderBodyTextConfig = {
+	cssClass: (config) => {
+		return typeof config === 'undefined' ? 'info' : 'info';
+	},
+	header: (config) => {
+		return typeof config === 'undefined' ? 'Click here to edit heading' : config.header;
+	},
+	body: (config) => {
+		return typeof config === 'undefined' ? 'Click here to edit/paste content' : config.body;
+	}
+};
+
 const ContentBlocks = {
 	elems: {
 		'textEditor' : {
@@ -9,6 +21,7 @@ const ContentBlocks = {
 				return `<div class="sf-editor-content">${html}</div>`;
 			},
 			hasChildContent: false,
+			hasHeaderBodyText: false,
 			contentEditorBindToElem: 'container',
 			cssClass: 'sf-editor-content',
 			contentEditorConfig: {
@@ -49,7 +62,8 @@ const ContentBlocks = {
 			},
 			contentEditorBindToElem: 'none',
 			cssClass: 'sf-tabs',
-			hasChildContent: true
+			hasChildContent: true,
+			hasHeaderBodyText: false
 		},
 		'styledLists': {
 			ui_label: 'Numbering',
@@ -63,6 +77,7 @@ const ContentBlocks = {
 					</${listType}>`;
 			},
 			hasChildContent: false,
+			hasHeaderBodyText: false,
 			contentEditorBindToElem: 'container',
 			cssClass: 'sf-list-bullet-circular',
 			contentEditorConfig: {
@@ -87,34 +102,19 @@ const ContentBlocks = {
 				}
 			],
 			template: (config) => {
-				console.log(config);
-				let setConfig = {
-					cssClass: () => {
-						const cssClass = typeof config === 'undefined' ? 'info' : 'info';
-						return cssClass;
-					},
-					header: () => {
-						const header = typeof config === 'undefined' ? 'Click here to edit heading' : config.variables[0];
-						return header;
-					},
-					body: () => {
-						const body = typeof config === 'undefined' ? 'Click here to edit/paste content' : config.variables[1];
-						return body;
-					}
-				};
-
 				return `
-				<div class="sf-blockquote sf-blockquote-${setConfig.cssClass()}" role="blockquote">
-					<div class="sf-blockquote-addon"></div>
-					<div class="sf-blockquote-content">
-						<h5 class="sf-blockquote-content-header">${setConfig.header()}</h5>
-						<div class="sf-blockquote-content-body">
-							${setConfig.body()}
+					<div class="sf-blockquote sf-blockquote-${ContentWithHeaderBodyTextConfig.cssClass(config)}" role="blockquote">
+						<div class="sf-blockquote-addon"></div>
+						<div class="sf-blockquote-content">
+							<h5 class="sf-blockquote-content-header">${ContentWithHeaderBodyTextConfig.header(config)}</h5>
+							<div class="sf-blockquote-content-body">
+								${ContentWithHeaderBodyTextConfig.body(config)}
+							</div>
 						</div>
-					</div>
-				</div>`;
+					</div>`;
 			},
 			hasChildContent: false,
+			hasHeaderBodyText: true,
 			contentEditorBindToElem: 'content',
 			cssClass: 'sf-blockquote',
 			contentEditorConfig: {
@@ -127,11 +127,12 @@ const ContentBlocks = {
 			template: (config) => {
 				return `
 					<div class="sf-well">
-						<h5 class="sf-well-heading">Click here to edit heading</h5>
-						<div class="sf-well-body"><p>Click here to edit/paste content.</p></div>
+						<h5 class="sf-well-heading">${ContentWithHeaderBodyTextConfig.header(config)}</h5>
+						<div class="sf-well-body">${ContentWithHeaderBodyTextConfig.body(config)}</div>
 					</div>`;
 			},
 			hasChildContent: false,
+			hasHeaderBodyText: true,
 			contentEditorBindToElem: 'content',
 			cssClass: 'sf-well',
 			contentEditorConfig: {
@@ -142,14 +143,6 @@ const ContentBlocks = {
 	},
   getTemplate: (elemType,config) => {
 		return ContentBlocks.elems[elemType].template(config);
-	},
-	keywords: ['sf-blockquote', 'sf-list-bullet-circular', 'sf-well', 'sf-tabs', 'sf-editor-content'],
-	keyword_map: {
-		'sf-blockquote' : 'blockQuotes',
-		'sf-list-bullet-circular' : 'styledLists',
-		'sf-well' : 'wellContainer',
-		'sf-tabs' : 'genericTabs',
-		'sf-editor-content' : 'textEditor'
 	}
 };
 export default ContentBlocks;

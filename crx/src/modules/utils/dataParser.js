@@ -12,7 +12,7 @@ export function dataParser(childNodes) {
     isFromEditor = (cssClasses) => {
       return cssClasses.split(' ')
         .some(className => contentBlockClassNames
-        .indexOf(className) >= 0);
+          .indexOf(className) >= 0);
     },
 
     uiType = (cssClasses) => {
@@ -39,9 +39,28 @@ export function dataParser(childNodes) {
       let flag = true;
       if (tempArray.length == 0) return true;
       flag = tempArray[tempArray.length - 1].type == 'textEditor' && currentPointer == 'textEditor' ? false : true;
-
-      console.log();
       return flag;
+    },
+
+    getHeaderBodyText = (nodeHTMLObject, section) => {
+      let queriedSelector = null;
+      const
+        headerClasses = ['sf-blockquote-content-header', 'sf-well-heading'],
+        bodyClasses = ['sf-blockquote-content-body', 'sf-well-body'],
+        definedSelector = (classes) => {
+          let cn;
+          classes.forEach(className => {
+            if (nodeHTMLObject.querySelector('.' + className) !== null) { cn = className; }
+            else { return; }
+          });          
+          return cn;
+        };
+      
+      queriedSelector = section == 'header' ?
+        nodeHTMLObject.querySelector('.' + definedSelector(headerClasses)) :
+        nodeHTMLObject.querySelector('.' + definedSelector(bodyClasses));
+      
+      return section === 'header' ? queriedSelector.textContent : queriedSelector.innerHTML;
     };
   
   let
@@ -79,12 +98,23 @@ export function dataParser(childNodes) {
                 pushAsNewObject = true;
                 _subData.type = uiType(subnode.classList.value);
                 _subData.metadata.html = subnode.outerHTML;
+
+                if (ContentBlocks.elems[uiType(subnode.classList.value)].hasHeaderBodyText) {
+                  _subData['header'] = getHeaderBodyText(subnode, 'header');
+                  _subData['body'] = getHeaderBodyText(subnode, 'body');
+                }
+
                 _data.metadata.subnodes[index].content.push(_subData);                
               });
             }
-            // ==== ================================= =====  //
+            // ==========================================  //
           });
 
+        }
+        
+        if (ContentBlocks.elems[uiType(node.classList.value)].hasHeaderBodyText) {
+          _data['header'] = getHeaderBodyText(node, 'header');
+          _data['body'] = getHeaderBodyText(node, 'body');
         }
       }
       else {
