@@ -11,7 +11,7 @@ import { NewBtnTemplateCKEDITOR, UrlContainsArticleEdit, GetClosestParent } from
 const webpage = {
 	image_gallery: '',
 	tempArrayImg: [],
-	init: function () {
+	init: () => {
 		const ckToolbox = document.getElementsByClassName('cke_toolbox');
 
 		for (let i = 0; i <= ckToolbox.length - 1; i++) {
@@ -19,7 +19,7 @@ const webpage = {
 			ckToolbox[i].insertAdjacentHTML('afterbegin', btnTmpl);
 		}
 
-		this.listeners();
+		webpage.listeners();
 
 		const iframes = document.querySelectorAll('.cke_wysiwyg_frame');
 
@@ -34,7 +34,7 @@ const webpage = {
 
 		webpage.methods.initContentEditorState();
 	},
-	listeners: function () {
+	listeners: () => {
 		const btnAdvancedEditor = document.querySelectorAll('.cke_button__advancededitor');
 		
 		btnAdvancedEditor.forEach((elem, index) => {
@@ -58,7 +58,7 @@ const webpage = {
 		}, false);
 
 		for (const contentEditorInstanceId in CKEDITOR.instances) {
-			CKEDITOR.instances[contentEditorInstanceId].on('change', function () {
+			CKEDITOR.instances[contentEditorInstanceId].on('change', (event) => {
 				const
 					iframe = document.getElementById('cke_' + contentEditorInstanceId).querySelector('iframe'),
 					head = iframe.contentDocument.querySelector('head'),
@@ -66,6 +66,13 @@ const webpage = {
 				
 				webpage.methods.initIframeCSS(head, body, 'sf-leap');
 				webpage.methods.collectImgGallery(body);
+
+				console.log(event);
+				
+			});
+
+			CKEDITOR.instances[contentEditorInstanceId].on('handleAfterCommandExec', () => {
+				console.log(CKEDITOR.instances[contentEditorInstanceId].mode);
 			});
 		}
 	},
