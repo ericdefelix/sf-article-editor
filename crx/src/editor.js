@@ -26,30 +26,30 @@ const editor = {
   existing_data:    [],
   image_gallery:    [],
   toolbox:          undefined,
-  init: function () {
+  init: () => {
     try {
-      chrome.storage.local.get(['contentEditorInstanceId'], function(objLocalStorage) {
+      chrome.storage.local.get(['contentEditorInstanceId'], (objLocalStorage) => {
         editor.contentEditorInstanceId = objLocalStorage.contentEditorInstanceId;
         editor.btnSave.setAttribute('data-target', editor.contentEditorInstanceId);
         editor.crxID = chrome.runtime.id;
       });
 
-      chrome.storage.local.get(['tab_id'], function (objLocalStorage) {
+      chrome.storage.local.get(['tab_id'], (objLocalStorage) => {
         editor.tabID = objLocalStorage.tab_id;
         editor.btnSave.setAttribute('data-tab-id', editor.tabID);
       });
 
-      chrome.storage.local.get(['popup_id'], function (objLocalStorage) {
+      chrome.storage.local.get(['popup_id'], (objLocalStorage) => {
         editor.popupID = objLocalStorage.popup_id;
         editor.btnSave.setAttribute('data-popup-id', editor.popupID);
       });
 
-      chrome.storage.local.get(['image_gallery'], function (objLocalStorage) {
+      chrome.storage.local.get(['image_gallery'], (objLocalStorage) => {
         editor.image_gallery = JSON.parse(objLocalStorage.image_gallery);
         ImageGallery.run(editor.image_gallery); 
       });
 
-      chrome.storage.local.get(['instanceHTML'], function (objLocalStorage) {
+      chrome.storage.local.get(['instanceHTML'], (objLocalStorage) => {
         const ih = objLocalStorage.instanceHTML;
         
         if (ih !== '' || typeof ih !== 'undefined') {
@@ -70,7 +70,7 @@ const editor = {
       console.log('Attempting to do a chrome api method. You are in stand-alone mode');
     }
   },
-  start_app: function () {
+  start_app: () => {
     editor.build_ui();
     editor.init_sortable({
       container: document.getElementById('canvasContainer'),
@@ -83,7 +83,7 @@ const editor = {
     editor.btnClose.onclick = editor.close_preview;
     editor.btnThemeSelector.onchange = editor.select_theme;
   },
-  build_ui: function() {
+  build_ui: () => {
     UserInterfaceBuilder.render('canvas', {
       data: editor.existing_data,
       trigger: 'auto',
@@ -284,11 +284,11 @@ const editor = {
       });
     }
   },
-  togglePageButtons: function() {
+  togglePageButtons: () => {
     editor.btnPreview.style.display = editor.existing_data.length == 0 ? 'none' : 'initial';
     editor.btnSave.style.display = editor.existing_data.length == 0 ? 'none' : 'initial';
   },
-  handleEditEventsToDOM: function(domID, targetComponentPointer) {
+  handleEditEventsToDOM: (domID, targetComponentPointer) => {
     let contentEditorContainerID;
     const targetSnippetContainer = document.getElementById('snippet-' + domID);
     const contentEditorBindToElem = ContentBlocks.elems[targetComponentPointer].contentEditorBindToElem;
@@ -340,7 +340,7 @@ const editor = {
       });
     }
   },
-  init_sortable: function(config) {
+  init_sortable: (config) => {
     const sortableConfig = {
       sort: true,
       touchStartThreshold: 5,
@@ -360,7 +360,7 @@ const editor = {
 
     new Sortable(config.container, sortableConfig);
   },
-  init_contentEditor: function(contentEditorAppConfig) {
+  init_contentEditor: (contentEditorAppConfig) => {
     let tinymceConfig = {
       selector: '#' + contentEditorAppConfig.container,  // change this value according to your HTML
       inline: true,
@@ -383,51 +383,51 @@ const editor = {
 
     tinymce.init(tinymceConfig);
   },
-  updateData: function () {
+  updateData: () => {
     let arr = [];
 
-    const sanitizeContentBlock = (componentType, contentBlock) => {
-      let toBeSanitizedHTML;
-      const canvasContentSnippet = contentBlock.querySelector('.canvas-content-snippet');
+    const
+      sanitizeContentBlock = (componentType, contentBlock) => {
+        let toBeSanitizedHTML;
+        const canvasContentSnippet = contentBlock.querySelector('.canvas-content-snippet');
+        const removeTinyMceAttributes = (contentBlock) => {
+          const clone = canvasContentSnippet.firstElementChild.cloneNode(true);
+          clone.querySelectorAll('[contenteditable="true"]').forEach(function (element) {
+            element.removeAttribute('id');
+            element.removeAttribute('contentEditable');
+            element.removeAttribute('style');
+            element.removeAttribute('spellcheck');
+            if (element.classList.contains('mce-content-body')) { element.classList.remove('mce-content-body'); }
+          });
 
-      const removeTinyMceAttributes = (contentBlock) => {
-        const clone = canvasContentSnippet.firstElementChild.cloneNode(true);
-        clone.querySelectorAll('[contenteditable="true"]').forEach(function (element) {
-          element.removeAttribute('id');
-          element.removeAttribute('contentEditable');
-          element.removeAttribute('style');
-          element.removeAttribute('spellcheck');
-          if (element.classList.contains('mce-content-body')) { element.classList.remove('mce-content-body'); }
+          return clone.outerHTML;
+        };
+
+        toBeSanitizedHTML = componentType == 'textEditor' ?
+          canvasContentSnippet.innerHTML : removeTinyMceAttributes(contentBlock);
+        
+        return NormaliseHTMLString(toBeSanitizedHTML);
+      },
+
+      createMetadata = (componentType, contentBlock, contentHTML) => {
+        if (ContentBlocks.elems[componentType].hasChildContent) {
+          return { subnodes: [], html: NormaliseHTMLString(contentHTML) };
+        }
+        else {
+          return { html: sanitizeContentBlock(componentType, contentBlock), variables: [] };
+        }
+      },
+
+      sanitizeTabs = (tabs, content) => {
+        const div = document.createElement('DIV');
+        div.innerHTML = tabs;
+
+        div.querySelectorAll('.sf-tab-content').forEach(function (tab, index) {
+          tab.innerHTML = typeof content[index] !== 'undefined' ? content[index] : '';
         });
 
-        return clone.outerHTML;
+        return div.innerHTML;
       };
-
-      toBeSanitizedHTML = componentType == 'textEditor' ?
-        canvasContentSnippet.innerHTML : removeTinyMceAttributes(contentBlock);
-      
-      return NormaliseHTMLString(toBeSanitizedHTML);
-    };
-
-    const createMetadata = (componentType, contentBlock, contentHTML) => {
-      if (ContentBlocks.elems[componentType].hasChildContent) {
-        return { subnodes: [], html: NormaliseHTMLString(contentHTML) };
-      }
-      else {
-        return { html: sanitizeContentBlock(componentType,contentBlock), variables: [] };        
-      }
-    };
-
-    const sanitizeTabs = (tabs,content) => {
-      const div = document.createElement('DIV');
-      div.innerHTML = tabs;
-
-      div.querySelectorAll('.sf-tab-content').forEach(function (tab, index) {
-        tab.innerHTML = typeof content[index] !== 'undefined' ? content[index] : '';
-      });
-
-      return div.innerHTML;
-    };
 
     document.querySelectorAll('#canvasContainer > .canvas-content-block').forEach(function (element) {
       const type = element.querySelector('.canvas-content-snippet').getAttribute('data-component-type');
@@ -478,14 +478,14 @@ const editor = {
     });
 
     editor.existing_data = arr;
-    console.log(editor.existing_data);
+    console.table(editor.existing_data);
   },
   html_view: function() {
     const view = this.value;
     editor.sourceSection.style.display = view == 'source' ? 'block' : 'none';
     editor.htmlSection.style.display = view == 'html' ? 'block' : 'none';
   },
-  close_preview: function() {
+  close_preview: () => {
     editor.outputPane.style.display = 'none';
     document.querySelector('body').removeAttribute('style');
   },

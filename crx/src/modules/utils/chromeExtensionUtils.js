@@ -1,10 +1,10 @@
 export function RequestIsValid(request) {
   let flag = false;
 
-  const hasMethod = Object.prototype.hasOwnProperty.call(request, 'method');
-  const hasData = Object.prototype.hasOwnProperty.call(request, 'data');
-
-  const setFlag = (_flag) => { flag = _flag; };
+	const
+		hasMethod = Object.prototype.hasOwnProperty.call(request, 'method'),
+		hasData = Object.prototype.hasOwnProperty.call(request, 'data'),
+		setFlag = (_flag) => { flag = _flag; };
 
   (hasMethod && hasData) ? setFlag(true) : setFlag(false);
   return flag;
@@ -62,7 +62,6 @@ export function GetClosestParent(elem, selector) {
 };
 
 export function NormaliseHTMLString(str) {
-	// return str.replace(/\r?\n|\r/g, ' ');
 	return str.replace(/\s{2,10}/g, ' ');
 }
 
@@ -82,7 +81,7 @@ export function replaceString(baseStr, strLookup, strReplacement) {
 	return baseStr.replace(strLookup, strReplacement);
 }
 
-export function GenerateID() {
+export function GenerateID ()  {
 	return Math.random().toString(36).replace(/[^a-z]+/g, '').substr(2, 10);
 }
 
