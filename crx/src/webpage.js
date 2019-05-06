@@ -35,7 +35,9 @@ const webpage = {
 		webpage.methods.initContentEditorState();
 	},
 	listeners: () => {
-		const btnAdvancedEditor = document.querySelectorAll('.cke_button__advancededitor');
+		const
+			btnAdvancedEditor = document.querySelectorAll('.cke_button__advancededitor'),
+			btnSource = document.querySelectorAll('.cke_button__source');
 		
 		btnAdvancedEditor.forEach((elem, index) => {
 			const
@@ -46,6 +48,27 @@ const webpage = {
 			elem.addEventListener('click', function (event) {
 				const btnInstanceId = this.getAttribute('data-instance-id');
 				webpage.methods.popup(btnInstanceId);
+			});
+		});
+
+		btnSource.forEach((elem, index) => {
+			const
+				ckeditorProxyInstanceId = GetClosestParent(elem, '.cke').getAttribute('id'),
+				contentEditorInstanceId = ckeditorProxyInstanceId.substring(4);
+
+			elem.addEventListener('click', function (event) {
+				if (CKEDITOR.instances[contentEditorInstanceId].mode !== 'source') {
+					let t;
+
+					t = setTimeout(() => {
+						const
+							iframe = document.getElementById(ckeditorProxyInstanceId).querySelector('iframe'),
+							head = iframe.contentWindow.document.querySelector('head'),
+							body = iframe.contentWindow.document.querySelector('body');
+
+						webpage.methods.initIframeCSS(head, body, 'sf-leap');
+					}, 100);
+				}
 			});
 		});
 
@@ -66,13 +89,6 @@ const webpage = {
 				
 				webpage.methods.initIframeCSS(head, body, 'sf-leap');
 				webpage.methods.collectImgGallery(body);
-
-				console.log(event);
-				
-			});
-
-			CKEDITOR.instances[contentEditorInstanceId].on('handleAfterCommandExec', () => {
-				console.log(CKEDITOR.instances[contentEditorInstanceId].mode);
 			});
 		}
 	},
