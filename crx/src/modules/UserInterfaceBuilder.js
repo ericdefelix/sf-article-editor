@@ -168,10 +168,12 @@ const UserInterfaceBuilder = {
     let opts = '';
     for (let i = 0; i <= obj.data.types.length - 1; i++) {
       opts +=
-        `<option value="${obj.data.types[i].ui_value}" ${obj.data.types[i].ui_value == obj.metadata.ui_value ? ' selected' : ''} >
+        `<option value="${obj.data.types[i].ui_value}" 
+          ${ typeof obj.metadata !== 'undefined' ? (obj.data.types[i].ui_value == obj.metadata.ui_value ? ' selected' : '') : '' }>
           ${obj.data.types[i].ui_label}
         </option>`;
     }
+
     return `<select class="canvas-form-control" name="s-${obj.id}" data-target="snippet-${obj.id}">${opts}</select>`;
   },
   renderAddSubContent: () => {
