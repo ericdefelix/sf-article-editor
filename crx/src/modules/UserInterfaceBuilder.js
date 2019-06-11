@@ -24,52 +24,35 @@ const UserInterfaceBuilder = {
       triggerBy = obj.trigger,
       emptyStateContainer = document.querySelector('[data-content="empty"]');
 
-    const renderEmptyState = () => {
-      return `<section class="canvas-content-block" data-content="empty"> 
-        <img src="images/empty-icon.svg" alt="Empty">
-        <h4 class="empty-text">There's nothing in here.<br><small>Start building your content.</small></h4>
-        <div class="canvas-add-component">
-          <button type="button" class="canvas-btn canvas-btn-primary" data-action="select-component">
-            Add Content Block
-          </button>
-        </div>
-      </section>`;
-    };
-
     const getSubnodesHTML = (dataItem) => {
       let subnodesHTML = ``;
 
       // Render the entire tabs HTML
       subnodesHTML = UserInterfaceBuilder.renderContentBlock({
-          id: dataItem.id,
-          type: dataItem.type,
-          data: ContentBlocks.elems[dataItem.type]
-        },
-        ContentBlocks.elems[dataItem.type].template({ subnodes: dataItem.metadata.subnodes }),
-        undefined
-      );
+        id: dataItem.id,
+        type: dataItem.type,
+        data: ContentBlocks.elems[dataItem.type],
+        template: ContentBlocks.elems[dataItem.type].template({ subnodes: dataItem.metadata.subnodes }),
+        tabContentId: false,
+      });
 
       dataItem.metadata.subnodes.forEach(subNodeTab => {
         let tabContentHTML = ``;
         tabContentHTML = subNodeTab.content.reduce((tabContentHTML, tabContentNode) => {
           const config = () => {
-            if (ContentBlocks.elems[tabContentNode.type].hasHeaderBodyText) {
-              return { header: tabContentNode.header, body: tabContentNode.body };
-            }
-            else {
-              return null;
-            }
+            return ContentBlocks.elems[tabContentNode.type].hasHeaderBodyText ?
+              { header: tabContentNode.metadata.header, body: tabContentNode.metadata.body, ui_value: tabContentNode.metadata.ui_value } : null;
           };
 
           return tabContentHTML +=
             UserInterfaceBuilder.renderContentBlock({
               type: tabContentNode.type,
               id: tabContentNode.id,
-              data: ContentBlocks.elems[tabContentNode.type]
-            },
-              ContentBlocks.elems[tabContentNode.type].template(config()),
-              tabContentNode.id
-            );
+              data: ContentBlocks.elems[tabContentNode.type],
+              template: ContentBlocks.elems[tabContentNode.type].template(config()),
+              metadata: tabContentNode.metadata,
+              tabContentId: tabContentNode.id
+            });
         }, tabContentHTML);
         subnodesHTML = replaceString(subnodesHTML, '{{ tab-' + subNodeTab.id + ' }}', tabContentHTML);
       });
@@ -83,33 +66,32 @@ const UserInterfaceBuilder = {
         existingHTML = data.reduce((existingHTML, dataItem) => {
           const hasSubnodes = dataItem.metadata.hasOwnProperty('subnodes') && dataItem.metadata.subnodes.length > 0;
 
-          return existingHTML += hasSubnodes ?
-            getSubnodesHTML(dataItem) :
+          return existingHTML += hasSubnodes ? getSubnodesHTML(dataItem) :
             UserInterfaceBuilder.renderContentBlock({
-                id: dataItem.id,
-                type: dataItem.type,
-                data: ContentBlocks.elems[dataItem.type]
-              },
-              dataItem.metadata.html,
-              undefined
-            );
+              id: dataItem.id,
+              type: dataItem.type,
+              data: ContentBlocks.elems[dataItem.type],
+              template: dataItem.metadata.html,
+              metadata: dataItem.metadata,
+              tabContentId: false
+            });
         }, existingHTML);
       } catch (e) {
-        console.log(e);
         console.log('ContentBlocks module is missing');
+        console.log(e);
       }
       return existingHTML;
     };
 
     if (triggerBy == 'auto') {
       let canvasInitHTML = '';
-      canvasInitHTML = elementCount > 0 ? renderExistingData() : renderEmptyState();
+      canvasInitHTML = elementCount > 0 ? renderExistingData() : UserInterfaceBuilder.renderEmptyState();
       UserInterfaceBuilder.canvasContainer.innerHTML = canvasInitHTML;
     }
 
     if (triggerBy == 'user') {
       if (elementCount == 0) {
-        UserInterfaceBuilder.canvasContainer.insertAdjacentHTML('afterbegin', renderEmptyState());
+        UserInterfaceBuilder.canvasContainer.insertAdjacentHTML('afterbegin', UserInterfaceBuilder.renderEmptyState());
       }
       if (elementCount == 1 && emptyStateContainer) {
         const toolbox = document.getElementById('toolbox');
@@ -128,51 +110,41 @@ const UserInterfaceBuilder = {
     const
       triggerParent = obj.trigger.closest('.canvas-content-block'),
       dataContent = triggerParent.getAttribute('data-content'),
-      isTabContent = document.getElementById('toolbox')
-        .previousElementSibling
-        .classList
-        .contains('forTabs'),
-      elementTemplate = obj.data.template(),
-      displayToolboxButtons = () => {
-        return document.querySelectorAll('#' + obj.id + ' .canvas-add-component [data-action="select-component"]');
-      };
+      isForTabs = document.getElementById('toolbox').previousElementSibling.classList.contains('forTabs');
 
-    let tmpl, toolboxBtns;
+    obj['template'] = obj.data.template();
+    obj['tabContentId'] = false;
 
     if (dataContent === 'empty') {
-      tmpl = UserInterfaceBuilder.renderContentBlock(obj, elementTemplate, undefined);
-      UserInterfaceBuilder.canvasContainer.insertAdjacentHTML('beforeend', tmpl);
+      UserInterfaceBuilder.canvasContainer.insertAdjacentHTML('beforeend', UserInterfaceBuilder.renderContentBlock(obj) );
     }
     else {
-      if (!isTabContent) {
-        tmpl = UserInterfaceBuilder.renderContentBlock(obj, elementTemplate, undefined);
-        triggerParent.insertAdjacentHTML('afterend', tmpl);
+      if (!isForTabs) {
+        triggerParent.insertAdjacentHTML('afterend', UserInterfaceBuilder.renderContentBlock(obj));
       }
       else {
         const
           tabContentIn = triggerParent.querySelector('.sf-tab-content.in'),
           tabContentId = tabContentIn.getAttribute('id'),
-          subContent = triggerParent.querySelector('.sf-tab-content.in'),
-          tabParentId = subContent.getAttribute('id');
-
-        tmpl = UserInterfaceBuilder.renderContentBlock(obj, elementTemplate, tabContentId);
-        subContent.childNodes.length == 0 ?
-          (subContent.innerHTML = tmpl) : subContent.insertAdjacentHTML('beforeend', tmpl);
+          subContent = triggerParent.querySelector('.sf-tab-content.in');
+          // tabParentId = subContent.getAttribute('id');
+        
+        obj['tabContentId'] = tabContentId;
+        subContent.childNodes.length == 0 ? (subContent.innerHTML = '') : subContent.insertAdjacentHTML('beforeend', UserInterfaceBuilder.renderContentBlock(obj));
       }
     }
 
-    toolboxBtns = displayToolboxButtons();
-    obj.callback(toolboxBtns);
+    obj.callback(document.querySelectorAll('#' + obj.id + ' .canvas-add-component [data-action="select-component"]'));
   },
-  renderContentBlock: (obj, elementTemplate, tabContentId) => {
+  renderContentBlock: (obj) => {
     const tmpl = `
     <section class="canvas-content-block" id="${obj.id}">
-      <div class="canvas-content-config"> 
+      <div class="canvas-content-config">
         <span class="canvas-content-draggable 
-          ${typeof tabContentId === 'undefined' ? `canvasDraggableMain` : `canvasDraggableSub_` +
-        tabContentId}"></span>
-        ${obj.data.hasOwnProperty('types') ? UserInterfaceBuilder.renderOptions(obj) : ''}
-        ${!obj.data.hasChildContent ? '' :
+          ${ !obj.tabContentId ? `canvasDraggableMain` :
+        `canvasDraggableSub_` + obj.tabContentId}"></span>
+          ${obj.data.hasOwnProperty('types') ? UserInterfaceBuilder.renderOptions(obj) : ''}
+          ${!obj.data.hasChildContent ? '' :
         `<button class="canvas-btn canvas-btn-xs" 
             data-action="edit-tab"
             data-target="snippet-${obj.id}" data-target-type="${obj.type}">Edit Tabs</button>`
@@ -184,18 +156,21 @@ const UserInterfaceBuilder = {
         </button>
       </div>
       <div class="canvas-content-snippet" id="snippet-${obj.id}" data-component-type="${obj.type}">
-        ${elementTemplate}
+        ${obj.template}
       </div>
       ${ obj.data.hasChildContent ? UserInterfaceBuilder.renderAddSubContent() : ``}
-      ${ (typeof tabContentId === 'undefined') ? UserInterfaceBuilder.renderAddMainContent() : ``}
+      ${ !obj.tabContentId ? UserInterfaceBuilder.renderAddMainContent() : ``}
     </section>`;
 
     return tmpl;
   },
-  renderOptions: (obj) => {
+  renderOptions: (obj) => {    
     let opts = '';
     for (let i = 0; i <= obj.data.types.length - 1; i++) {
-      opts += `<option value="${obj.data.types[i].ui_value}">${obj.data.types[i].ui_label}</option>`;
+      opts +=
+        `<option value="${obj.data.types[i].ui_value}" ${obj.data.types[i].ui_value == obj.metadata.ui_value ? ' selected' : ''} >
+          ${obj.data.types[i].ui_label}
+        </option>`;
     }
     return `<select class="canvas-form-control" name="s-${obj.id}" data-target="snippet-${obj.id}">${opts}</select>`;
   },
@@ -220,6 +195,17 @@ const UserInterfaceBuilder = {
       </div>
     `;
     return str;
+  },
+  renderEmptyState: () => {
+    return `<section class="canvas-content-block" data-content="empty"> 
+        <img src="images/empty-icon.svg" alt="Empty">
+        <h4 class="empty-text">There's nothing in here.<br><small>Start building your content.</small></h4>
+        <div class="canvas-add-component">
+          <button type="button" class="canvas-btn canvas-btn-primary" data-action="select-component">
+            Add Content Block
+          </button>
+        </div>
+      </section>`;
   },
   update: () => {
   }

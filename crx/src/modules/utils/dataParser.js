@@ -52,7 +52,7 @@ export function dataParser(childNodes) {
           classes.forEach(className => {
             if (nodeHTMLObject.querySelector('.' + className) !== null) { cn = className; }
             else { return; }
-          });          
+          });
           return cn;
         };
       
@@ -61,27 +61,51 @@ export function dataParser(childNodes) {
         nodeHTMLObject.querySelector('.' + definedSelector(bodyClasses));
       
       return section === 'header' ? queriedSelector.textContent : queriedSelector.innerHTML;
+    },
+
+    getBlockUIValue = (nodeHTMLObject, types) => {
+      const type = types.filter(i => nodeHTMLObject.classList.value.includes(i.ui_value));
+      return type[0].ui_value;
+    },
+
+    composeContentBlocksWithTypes = (contentBlockType, data, node) => {  
+      if (contentBlockType.hasHeaderBodyText) {
+        data.metadata['header'] = getHeaderBodyText(node, 'header');
+        data.metadata['body'] = getHeaderBodyText(node, 'body');
+      }
+
+      if (contentBlockType.hasOwnProperty('types')) {
+        data.metadata['ui_value'] = getBlockUIValue(node, contentBlockType.types);
+      }
     };
   
   let
     tempArray = [],
     pushAsNewObject = true;
-
+  
+  // Iterate each child element
   [...childNodes].forEach(node => {
     // ================
     const nodeType = node.nodeType;
-    let nodeValue, _data = data();
+    let nodeValue, _data = data(), contentBlockType;
 
+    // Exclude if not an HTML element
     if (!isElement(node) && !node.nodeValue || /^\s*$/.test(node.nodeValue)) return;
+
+    // If valid
     if (isElement(node)) {
+
+      // Check if the element should go to a text editor instead
       if (node.hasAttribute('class') && isFromEditor(node.classList.value)) {
         _data.type = uiType(node.classList.value);
         pushAsNewObject = checkIfNewObject(_data.type);
+        contentBlockType = ContentBlocks.elems[uiType(node.classList.value)];
 
-        if (ContentBlocks.elems[uiType(node.classList.value)].hasChildContent) {
+        if (contentBlockType.hasChildContent) {
           _data.metadata['subnodes'] = [];
           nodeValue = node.outerHTML;
 
+          // Handle tabs
           node.querySelectorAll('.sf-tab-item-link').forEach(function (el, index) {
             const
               label = el.textContent, id = el.getAttribute('id').split('target_')[1],
@@ -94,28 +118,25 @@ export function dataParser(childNodes) {
               const subHtmlNodes = tabSection.children;
 
               [...subHtmlNodes].forEach(subnode => {
-                let _subData = data();
+                let
+                  _subData = data(),
+                  subContentBlockType = ContentBlocks.elems[uiType(subnode.classList.value)];
+                  
                 pushAsNewObject = true;
                 _subData.type = uiType(subnode.classList.value);
                 _subData.metadata.html = subnode.outerHTML;
 
-                if (ContentBlocks.elems[uiType(subnode.classList.value)].hasHeaderBodyText) {
-                  _subData['header'] = getHeaderBodyText(subnode, 'header');
-                  _subData['body'] = getHeaderBodyText(subnode, 'body');
-                }
-
+                composeContentBlocksWithTypes(subContentBlockType, _subData, subnode);
+                
                 _data.metadata.subnodes[index].content.push(_subData);                
               });
             }
             // ==========================================  //
           });
+          // ============== //
+        }
 
-        }
-        
-        if (ContentBlocks.elems[uiType(node.classList.value)].hasHeaderBodyText) {
-          _data['header'] = getHeaderBodyText(node, 'header');
-          _data['body'] = getHeaderBodyText(node, 'body');
-        }
+        composeContentBlocksWithTypes(contentBlockType, _data, node);
       }
       else {
         _data.type = 'textEditor';
@@ -136,6 +157,9 @@ export function dataParser(childNodes) {
     pushAsNewObject ? tempArray.push(_data) : tempArray[tempArray.length - 1].metadata.html += _data.metadata.html;
     // ================
   });
+
+  console.log('==============');
+  console.log(tempArray);
 
   return tempArray;
 };

@@ -2,7 +2,7 @@ import { GenerateTabID } from './utils/chromeExtensionUtils';
 
 const ContentWithHeaderBodyTextConfig = {
 	cssClass: (config) => {
-		return typeof config === 'undefined' ? 'info' : 'info';
+		return typeof config === 'undefined' ? 'info' : config.ui_value;
 	},
 	header: (config) => {
 		return typeof config === 'undefined' ? 'Click here to edit heading' : config.header;
