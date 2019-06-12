@@ -388,22 +388,9 @@ const editor = {
 
     const
       sanitizeContentBlock = (componentType, contentBlock) => {
-        let toBeSanitizedHTML;
         const canvasContentSnippet = contentBlock.querySelector('.canvas-content-snippet');
-        // const removeTinyMceAttributes = (contentBlock) => {
-        //   const clone = canvasContentSnippet.firstElementChild.cloneNode(true);
-        //   clone.querySelectorAll('[contenteditable="true"]').forEach(function (element) {
-        //     element.removeAttribute('id');
-        //     element.removeAttribute('contentEditable');
-        //     element.removeAttribute('style');
-        //     element.removeAttribute('spellcheck');
-        //     if (element.classList.contains('mce-content-body')) { element.classList.remove('mce-content-body'); }
-        //   });
 
-        //   return clone.outerHTML;
-        // };
-
-        toBeSanitizedHTML = componentType == 'textEditor' ?
+        let toBeSanitizedHTML = componentType == 'textEditor' ?
           canvasContentSnippet.innerHTML : RemoveTinyMceAttributes(canvasContentSnippet);
         
         return NormaliseHTMLString(toBeSanitizedHTML);
@@ -440,16 +427,28 @@ const editor = {
       if (ContentBlocks.elems[type].hasChildContent) {
         const tabContent = element.querySelectorAll('.sf-tab-content');
 
-        let extractedElementsFromTabs = [];
-
-
         tabContent.forEach((tab, tabIndex) => {
-          const tabContentBlocks = tab.querySelectorAll('[data-component-type]');
-          console.log(tabIndex);
-          
-          tabContentBlocks.forEach((content, contentIndex) => {
-            console.log(content);
+          const content = 
+
+          data.metadata['subnodes'].push({
+            label: document.getElementById('target_' + tab.id).textContent,
+            id: tab.id,
+            content: []
+          });
+
+
+          tab.querySelectorAll('[data-component-type]').forEach((content, contentIndex) => {
+            // console.log(content);
+            console.log(content.id.split('snippet-')[1], content.getAttribute('data-component-type'));
+            console.log(content.firstElementChild);
+            console.log(data.metadata.subnodes[contentIndex]);
             
+            
+            data.metadata.subnodes[tabIndex].content.push({
+              id: content.id.split('snippet-')[1],
+              type: content.getAttribute('data-component-type'),
+              metadata: createMetadata(content.getAttribute('data-component-type'), content, '')
+            });
           });
 
         });
@@ -494,6 +493,8 @@ const editor = {
       arr.push(data);
     });
 
+    console.log(arr);
+    
     editor.existing_data = arr;
   },
   html_view: function() {
