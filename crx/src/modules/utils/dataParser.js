@@ -103,7 +103,7 @@ export function dataParser(childNodes) {
 
         if (contentBlockType.hasChildContent) {
           _data.metadata['subnodes'] = [];
-          nodeValue = node.outerHTML;
+          // nodeValue = node.outerHTML;
 
           // Handle tabs
           node.querySelectorAll('.sf-tab-item-link').forEach(function (el, index) {
@@ -114,23 +114,23 @@ export function dataParser(childNodes) {
             _data.metadata.subnodes.push({ label: label, id: id.split('tab-')[1], content: [] });
 
             // ==== If tabsection's firstChild is not null ===  //
-            if (tabSection.firstChild != null) {
-              const subHtmlNodes = tabSection.children;
-
-              [...subHtmlNodes].forEach(subnode => {
-                let
-                  _subData = data(),
-                  subContentBlockType = ContentBlocks.elems[uiType(subnode.classList.value)];
-                  
-                pushAsNewObject = true;
-                _subData.type = uiType(subnode.classList.value);
-                _subData.metadata.html = subnode.outerHTML;
-
-                composeContentBlocksWithTypes(subContentBlockType, _subData, subnode);
+            
+            // if (tabSection.firstElementChild !== null) {
+            const subHtmlNodes = tabSection.children;
+            [...subHtmlNodes].forEach(subnode => {
+              let
+                _subData = data(),
+                subContentBlockType = ContentBlocks.elems[uiType(subnode.classList.value)];
                 
-                _data.metadata.subnodes[index].content.push(_subData);                
-              });
-            }
+              pushAsNewObject = true;
+              _subData.type = uiType(subnode.classList.value);
+              _subData.metadata.html = subnode.outerHTML;
+
+              composeContentBlocksWithTypes(subContentBlockType, _subData, subnode);
+              
+              _data.metadata.subnodes[index].content.push(_subData);                
+            });
+            // }
             // ==========================================  //
           });
           // ============== //

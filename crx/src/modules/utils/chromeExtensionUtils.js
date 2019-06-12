@@ -88,3 +88,28 @@ export function GenerateID ()  {
 export function GenerateTabID() {
 	return Math.floor(Math.random() * 90000) + 10000;
 }
+
+export function RemoveTinyMceAttributes(canvasContentSnippet) {
+	const clone = canvasContentSnippet.firstElementChild.cloneNode(true);
+	clone.querySelectorAll('[contenteditable="true"]').forEach(function (element) {
+		element.removeAttribute('id');
+		element.removeAttribute('contentEditable');
+		element.removeAttribute('style');
+		element.removeAttribute('spellcheck');
+		if (element.classList.contains('mce-content-body')) { element.classList.remove('mce-content-body'); }
+	});
+
+	return clone.outerHTML;
+}
+
+export function UnwrapElement(wrapper) {
+	// place childNodes in document fragment
+	const docFrag = document.createDocumentFragment();
+	while (wrapper.firstChild) {
+		const child = wrapper.removeChild(wrapper.firstChild);
+		docFrag.appendChild(child);
+	}
+
+	// replace wrapper with document fragment
+	wrapper.parentNode.replaceChild(docFrag, wrapper);
+}

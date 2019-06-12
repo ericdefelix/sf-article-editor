@@ -145,9 +145,9 @@ const UserInterfaceBuilder = {
         `canvasDraggableSub_` + obj.tabContentId}"></span>
           ${obj.data.hasOwnProperty('types') ? UserInterfaceBuilder.renderOptions(obj) : ''}
           ${!obj.data.hasChildContent ? '' :
-        `<button class="canvas-btn canvas-btn-xs" 
-            data-action="edit-tab"
-            data-target="snippet-${obj.id}" data-target-type="${obj.type}">Edit Tabs</button>`
+        `<button class="canvas-btn canvas-btn-xs" data-action="edit-tab"
+            data-target="snippet-${obj.id}" data-target-type="${obj.type}">Edit Tabs
+        </button>`
       }
         <button class="canvas-btn canvas-btn-xs" 
           data-action="remove-component"
@@ -208,8 +208,6 @@ const UserInterfaceBuilder = {
           </button>
         </div>
       </section>`;
-  },
-  update: () => {
   }
 };
 

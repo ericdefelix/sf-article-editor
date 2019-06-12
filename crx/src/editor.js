@@ -2,7 +2,8 @@ import './editor.scss';
 import {
   GetClosestParent,
   GenerateID,
-  NormaliseHTMLString
+  NormaliseHTMLString,
+  RemoveTinyMceAttributes
 } from './modules/utils/chromeExtensionUtils';
 import { dataParser } from './modules/utils/dataParser';
 import ContentBlocks from './modules/ContentBlocks';
@@ -389,21 +390,21 @@ const editor = {
       sanitizeContentBlock = (componentType, contentBlock) => {
         let toBeSanitizedHTML;
         const canvasContentSnippet = contentBlock.querySelector('.canvas-content-snippet');
-        const removeTinyMceAttributes = (contentBlock) => {
-          const clone = canvasContentSnippet.firstElementChild.cloneNode(true);
-          clone.querySelectorAll('[contenteditable="true"]').forEach(function (element) {
-            element.removeAttribute('id');
-            element.removeAttribute('contentEditable');
-            element.removeAttribute('style');
-            element.removeAttribute('spellcheck');
-            if (element.classList.contains('mce-content-body')) { element.classList.remove('mce-content-body'); }
-          });
+        // const removeTinyMceAttributes = (contentBlock) => {
+        //   const clone = canvasContentSnippet.firstElementChild.cloneNode(true);
+        //   clone.querySelectorAll('[contenteditable="true"]').forEach(function (element) {
+        //     element.removeAttribute('id');
+        //     element.removeAttribute('contentEditable');
+        //     element.removeAttribute('style');
+        //     element.removeAttribute('spellcheck');
+        //     if (element.classList.contains('mce-content-body')) { element.classList.remove('mce-content-body'); }
+        //   });
 
-          return clone.outerHTML;
-        };
+        //   return clone.outerHTML;
+        // };
 
         toBeSanitizedHTML = componentType == 'textEditor' ?
-          canvasContentSnippet.innerHTML : removeTinyMceAttributes(contentBlock);
+          canvasContentSnippet.innerHTML : RemoveTinyMceAttributes(canvasContentSnippet);
         
         return NormaliseHTMLString(toBeSanitizedHTML);
       },
@@ -435,44 +436,61 @@ const editor = {
 
       data.metadata = createMetadata(type, element, element.querySelector('.canvas-content-snippet').innerHTML);
 
+      // Refactor
       if (ContentBlocks.elems[type].hasChildContent) {
-        const tabLinks = element.querySelectorAll('.sf-tab-item-link');
+        const tabContent = element.querySelectorAll('.sf-tab-content');
 
         let extractedElementsFromTabs = [];
 
-        tabLinks.forEach(function (tabElement, tabIndex) {
-          const 
-            tabSection = document.getElementById(tabElement.getAttribute('id').split('target_')[1]),
-            tabId = tabSection.getAttribute('id'),
-            tabText = tabElement.textContent;
 
-          data.metadata['subnodes'].push({ label: tabText, id: tabId, content: [] });
+        tabContent.forEach((tab, tabIndex) => {
+          const tabContentBlocks = tab.querySelectorAll('[data-component-type]');
+          console.log(tabIndex);
+          
+          tabContentBlocks.forEach((content, contentIndex) => {
+            console.log(content);
+            
+          });
 
-          if (tabSection.children.length > 0) {
-            const subnodes = tabSection.querySelectorAll('.canvas-content-block');
-            let sanitisedSNodeCollection = '';
-
-            subnodes.forEach(function (subElement) {
-              const 
-                subnodeID = subElement.getAttribute('id'),
-                subnodeType = document.getElementById('snippet-' + subnodeID).getAttribute('data-component-type'),
-                sanitisedSNode = createMetadata(subnodeType, subElement, '');
-
-              data.metadata.subnodes[tabIndex].content.push({
-                id: subnodeID,
-                type: subnodeType,
-                metadata: sanitisedSNode
-              });
-
-              sanitisedSNodeCollection += sanitisedSNode.html;
-            });
-
-            extractedElementsFromTabs.push(sanitisedSNodeCollection);
-          }
         });
 
-        data.metadata.html = sanitizeTabs(data.metadata.html, extractedElementsFromTabs);
+        // tabLinks.forEach(function (tabElement, tabIndex) {
+        //   const 
+        //     tabSection = document.getElementById(tabElement.getAttribute('id').split('target_')[1]),
+        //     tabId = tabSection.getAttribute('id'),
+        //     tabText = tabElement.textContent;
+
+        //   data.metadata['subnodes'].push({ label: tabText, id: tabId, content: [] });
+
+        //   // if (tabSection.firstElementChild !== null) {
+        //   const subnodes = tabSection.querySelectorAll('.canvas-content-block');
+        //   let sanitisedSNodeCollection = '';
+
+        //   subnodes.forEach(function (subElement) {
+        //     // console.log(subElement);
+            
+        //     const 
+        //       subnodeID = subElement.getAttribute('id'),
+        //       subnodeType = document.getElementById('snippet-' + subnodeID).getAttribute('data-component-type'),
+        //       sanitisedSNode = createMetadata(subnodeType, subElement, '');
+
+        //     data.metadata.subnodes[tabIndex].content.push({
+        //       id: subnodeID,
+        //       type: subnodeType,
+        //       metadata: sanitisedSNode
+        //     });
+
+        //     sanitisedSNodeCollection += sanitisedSNode.html;
+        //   });
+
+        //   extractedElementsFromTabs.push(sanitisedSNodeCollection);
+        //   // }
+        // });
+
+        // data.metadata.html = sanitizeTabs(data.metadata.html, extractedElementsFromTabs);
       }
+      // Refactor
+
       arr.push(data);
     });
 
@@ -498,15 +516,21 @@ const editor = {
     editor.outputPane.style.display = 'block';
     let html = '';
 
-    editor.existing_data.forEach(function(elem){
+    editor.existing_data.forEach(function (elem) {
       html += elem.metadata.html;
     });
 
     editor.htmlSection.innerHTML = editor.existing_data.length > 0 ? html : '<strong>Nothing to display here.</strong>';
+
+    // Always set first tab to be active on save
+    // editor.htmlSection.querySelectorAll('.sf-tab-nav').forEach(function (elem, i) {
+    //   elem.firstElementChild.querySelector('.sf-tab-item-link').click();
+    // });
+
     editor.sourceSection.value = editor.htmlSection.innerHTML;
 
     // Modify IDS just for preview
-    editor.htmlSection.querySelectorAll('.tabs').forEach(function(elem, i){
+    editor.htmlSection.querySelectorAll('.sf-tabs').forEach(function(elem, i){
       elem.querySelectorAll('.sf-tab-item-link').forEach(function(tabLink,_i){
         const dataTarget = tabLink.getAttribute('id').split('target_')[1];
         tabLink.setAttribute('id', 'target_preview_' + dataTarget);
