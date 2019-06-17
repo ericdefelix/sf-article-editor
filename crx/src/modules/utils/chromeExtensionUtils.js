@@ -89,17 +89,28 @@ export function GenerateTabID() {
 	return Math.floor(Math.random() * 90000) + 10000;
 }
 
-export function RemoveTinyMceAttributes(canvasContentSnippet) {
-	const clone = canvasContentSnippet.firstElementChild.cloneNode(true);
-	clone.querySelectorAll('[contenteditable="true"]').forEach(function (element) {
-		element.removeAttribute('id');
-		element.removeAttribute('contentEditable');
-		element.removeAttribute('style');
-		element.removeAttribute('spellcheck');
-		if (element.classList.contains('mce-content-body')) { element.classList.remove('mce-content-body'); }
+export function GetComponentType(HTMLNode) {
+	return HTMLNode.getAttribute('data-component-type');
+}
+
+export function SanitiseSubContentBlock(content) {	
+	const
+		children = content.children,
+		attrsToRemove = ['id', 'spellcheck', 'style', 'contentEditable'],
+		classesToRemove = ['mce-content-body'];
+	
+	[...children].forEach(child => {	
+		child.querySelectorAll('[contenteditable="true"]').forEach(el => {
+			attrsToRemove.forEach(attr => {
+				if (el.hasAttribute(attr)) el.removeAttribute(attr);
+			});
+			classesToRemove.forEach(cssClass => {
+				if (el.classList.contains(cssClass)) el.classList.remove(cssClass);
+			});
+		});	
 	});
 
-	return clone.outerHTML;
+	return NormaliseHTMLString(content.innerHTML);
 }
 
 export function UnwrapElement(wrapper) {

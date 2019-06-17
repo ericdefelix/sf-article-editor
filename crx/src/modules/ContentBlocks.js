@@ -65,42 +65,17 @@ const ContentBlocks = {
 			hasChildContent: true,
 			hasHeaderBodyText: false
 		},
-		// 'genericAccordion': {
-		// 	ui_label: 'Accordion',
-		// 	template: (config) => {
-		// 		let
-		// 			navTabItems = '',
-		// 			navTabSections = '',
-		// 			subnodes = [];
-
-		// 		const
-		// 			hasConfig = typeof config !== 'undefined',
-		// 			emptyStateSubnodes = Array.from({ length: 5 }, (e, i) => ({ label: `Pane ${i + 1}`, id: GenerateTabID(), content: [] }));
-
-		// 		subnodes = !hasConfig ? emptyStateSubnodes : config.subnodes;
-
-		// 		subnodes.forEach((subnode, index) => {
-		// 			navTabItems += `
-		// 				<li class="sf-accordion-item${ index == 0 ? ' active' : ''}">
-		// 					<span class="sf-accordion-item-link" id="target_pane-${subnode.id}">${subnode.label}</span>
-		// 				</li>`;
-
-		// 			navTabSections += `
-		// 				<div class="sf-accordion-content${index == 0 ? ' in' : ''}" 
-		// 					id="accordion-${subnode.id}">${hasConfig ? '{{ tab-' + subnode.id + ' }}' : ''}
-		// 				</div>`;
-		// 		});
-
-		// 		return `
-		// 			<div class="sf-accordion">
-		// 				<div class="sf-accordion-bar"><ul class="sf-accordion-nav">${navTabItems}</ul></div>${navTabSections}
-		// 			</div>`;
-		// 	},
-		// 	contentEditorBindToElem: 'none',
-		// 	cssClass: 'sf-accordion',
-		// 	hasChildContent: true,
-		// 	hasHeaderBodyText: false
-		// },
+		'genericAccordion': {
+			ui_label: 'Accordion',
+			template: (config) => {
+			
+				return `Accordion`;
+			},
+			contentEditorBindToElem: 'none',
+			cssClass: 'sf-accordion',
+			hasChildContent: true,
+			hasHeaderBodyText: false
+		},
 		'styledLists': {
 			ui_label: 'Numbering',
 			template: (config) => {

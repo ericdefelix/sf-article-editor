@@ -11,11 +11,7 @@
 	};
 
 	document.addEventListener('click', function (event) {
-		var
-			targetElem = event.target,
-			className = targetElem.classList;
-
-		if (className.value.indexOf('sf-tab-item-link') !== -1) {
+		if (event.target.classList.value.indexOf('sf-tab-item-link') !== -1) {
 			event.preventDefault();
   		var targetID,
   				activeTabBtn,
@@ -23,8 +19,8 @@
   				targetTabSiblings,
 				activeBtnTabSiblings;
 			
-			targetID = targetElem.getAttribute('id').split('target_')[1];
-  		activeTabBtn = targetElem.parentNode;
+			targetID = event.target.getAttribute('id').split('target_')[1];
+  		activeTabBtn = event.target.parentNode;
 
   		targetTab = document.getElementById(targetID);
   		targetTabSiblings = getSiblings(targetTab);
@@ -39,14 +35,6 @@
   		targetTabSiblings.forEach( function(element, index) {
   			if (element.classList.value.indexOf('in') !== -1) element.classList.remove('in');
   		});
-		}
-	
-		if (className.value.indexOf('sf-accordion-toggle') !== -1) {
-			className.value.indexOf('in') == -1 ?
-				className.add('in') : className.remove('in');
-		}
-
-		return false;
-	}, false);
-	
+  	}
+  }, false);
 })();

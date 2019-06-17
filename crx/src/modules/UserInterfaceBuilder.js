@@ -36,27 +36,25 @@ const UserInterfaceBuilder = {
         tabContentId: false,
       });
 
+      // Get each subcontent's innerHTML
       dataItem.metadata.subnodes.forEach(subNodeTab => {
         let tabContentHTML = ``;
-        tabContentHTML = subNodeTab.content.reduce((tabContentHTML, tabContentNode) => {
-          const config = () => {
-            return ContentBlocks.elems[tabContentNode.type].hasHeaderBodyText ?
-              { header: tabContentNode.metadata.header, body: tabContentNode.metadata.body, ui_value: tabContentNode.metadata.ui_value } : null;
-          };
-
+        tabContentHTML = subNodeTab.content.reduce((tabContentHTML, tabContentNode) => {          
           return tabContentHTML +=
             UserInterfaceBuilder.renderContentBlock({
               type: tabContentNode.type,
               id: tabContentNode.id,
               data: ContentBlocks.elems[tabContentNode.type],
-              template: ContentBlocks.elems[tabContentNode.type].template(config()),
+              template: tabContentNode.metadata.html,
               metadata: tabContentNode.metadata,
-              tabContentId: tabContentNode.id
+              tabContentId: subNodeTab.id
             });
         }, tabContentHTML);
+
+        // Replace tab content placeholders with processed HTML
         subnodesHTML = replaceString(subnodesHTML, '{{ tab-' + subNodeTab.id + ' }}', tabContentHTML);
       });
-
+      
       return subnodesHTML;
     };
 
@@ -66,7 +64,8 @@ const UserInterfaceBuilder = {
         existingHTML = data.reduce((existingHTML, dataItem) => {
           const hasSubnodes = dataItem.metadata.hasOwnProperty('subnodes') && dataItem.metadata.subnodes.length > 0;
 
-          return existingHTML += hasSubnodes ? getSubnodesHTML(dataItem) :
+          return existingHTML += hasSubnodes ?
+            getSubnodesHTML(dataItem) :
             UserInterfaceBuilder.renderContentBlock({
               id: dataItem.id,
               type: dataItem.type,
@@ -125,9 +124,8 @@ const UserInterfaceBuilder = {
       else {
         const
           tabContentIn = triggerParent.querySelector('.sf-tab-content.in'),
-          tabContentId = tabContentIn.getAttribute('id'),
+          tabContentId = tabContentIn.id,
           subContent = triggerParent.querySelector('.sf-tab-content.in');
-          // tabParentId = subContent.getAttribute('id');
         
         obj['tabContentId'] = tabContentId;
         subContent.childNodes.length == 0 ? (subContent.innerHTML = '') : subContent.insertAdjacentHTML('beforeend', UserInterfaceBuilder.renderContentBlock(obj));
@@ -140,9 +138,9 @@ const UserInterfaceBuilder = {
     const tmpl = `
     <section class="canvas-content-block" id="${obj.id}">
       <div class="canvas-content-config">
-        <span class="canvas-content-draggable 
-          ${ !obj.tabContentId ? `canvasDraggableMain` :
-        `canvasDraggableSub_` + obj.tabContentId}"></span>
+        <div class="canvas-content-draggable
+          ${ !obj.tabContentId ? ` canvasDraggableMain` :
+        `canvasDraggableSub_` + obj.tabContentId}"></div>
           ${obj.data.hasOwnProperty('types') ? UserInterfaceBuilder.renderOptions(obj) : ''}
           ${!obj.data.hasChildContent ? '' :
         `<button class="canvas-btn canvas-btn-xs" data-action="edit-tab"

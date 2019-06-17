@@ -1,3 +1,4 @@
+
 @import 'styles/variables';
 @import 'styles/mixins';
 @import 'styles/reset';
@@ -22,7 +23,7 @@ body {
 	padding-top: 6rem;
 }
 
-#htmlOutputContainer {
+#htmlOutputContainer { 
 	p {
 		margin-bottom: inherit;
 		margin-top: inherit;

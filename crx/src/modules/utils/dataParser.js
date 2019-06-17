@@ -106,33 +106,33 @@ export function dataParser(childNodes) {
           // nodeValue = node.outerHTML;
 
           // Handle tabs
-          node.querySelectorAll('.sf-tab-item-link').forEach(function (el, index) {
-            const
-              label = el.textContent, id = el.getAttribute('id').split('target_')[1],
-              tabSection = node.querySelector('#' + id);
+          // node.querySelectorAll('.sf-tab-item-link').forEach(function (el, index) {
+          //   const
+          //     label = el.textContent, id = el.getAttribute('id').split('target_')[1],
+          //     tabSection = node.querySelector('#' + id);
 
-            _data.metadata.subnodes.push({ label: label, id: id.split('tab-')[1], content: [] });
+          //   _data.metadata.subnodes.push({ label: label, id: id.split('tab-')[1], content: [] });
 
-            // ==== If tabsection's firstChild is not null ===  //
+          //   // ==== If tabsection's firstChild is not null ===  //
             
-            // if (tabSection.firstElementChild !== null) {
-            const subHtmlNodes = tabSection.children;
-            [...subHtmlNodes].forEach(subnode => {
-              let
-                _subData = data(),
-                subContentBlockType = ContentBlocks.elems[uiType(subnode.classList.value)];
+          //   // if (tabSection.firstElementChild !== null) {
+          //   const subHtmlNodes = tabSection.children;
+          //   [...subHtmlNodes].forEach(subnode => {
+          //     let
+          //       _subData = data(),
+          //       subContentBlockType = ContentBlocks.elems[uiType(subnode.classList.value)];
                 
-              pushAsNewObject = true;
-              _subData.type = uiType(subnode.classList.value);
-              _subData.metadata.html = subnode.outerHTML;
+          //     pushAsNewObject = true;
+          //     _subData.type = uiType(subnode.classList.value);
+          //     _subData.metadata.html = subnode.outerHTML;
 
-              composeContentBlocksWithTypes(subContentBlockType, _subData, subnode);
+          //     composeContentBlocksWithTypes(subContentBlockType, _subData, subnode);
               
-              _data.metadata.subnodes[index].content.push(_subData);                
-            });
-            // }
-            // ==========================================  //
-          });
+          //     _data.metadata.subnodes[index].content.push(_subData);                
+          //   });
+          //   // }
+          //   // ==========================================  //
+          // });
           // ============== //
         }
 

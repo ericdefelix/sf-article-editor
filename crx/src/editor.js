@@ -3,7 +3,8 @@ import {
   GetClosestParent,
   GenerateID,
   NormaliseHTMLString,
-  RemoveTinyMceAttributes
+  SanitiseSubContentBlock,
+  GetComponentType
 } from './modules/utils/chromeExtensionUtils';
 import { dataParser } from './modules/utils/dataParser';
 import ContentBlocks from './modules/ContentBlocks';
@@ -11,6 +12,8 @@ import UserInterfaceBuilder from './modules/UserInterfaceBuilder';
 import Sortable from '../node_modules/sortablejs/Sortable.min';
 import ImageGallery from './modules/ImageGallery';
 import { imageGalleryMockData, htmlMockData } from './modules/utils/mockData';
+import {Accordion} from './modules/components/accordion';
+
 
 const editor = {
   crxID: '',
@@ -318,6 +321,7 @@ const editor = {
 
       targetTabContent.forEach(function(targtTab, y) {
         const targetTabID = targtTab.getAttribute('id');
+        
         editor.init_sortable({
           container: document.getElementById(targetTabID),
           contentDraggableClass: '.canvasDraggableSub_' + targetTabID
@@ -357,7 +361,7 @@ const editor = {
         console.log('list updated');
       }
     };
-
+    
     new Sortable(config.container, sortableConfig);
   },
   init_contentEditor: (contentEditorAppConfig) => {
@@ -385,115 +389,56 @@ const editor = {
   },
   updateData: () => {
     let arr = [];
+    const snptCssClass = '.canvas-content-snippet';
 
-    const
-      sanitizeContentBlock = (componentType, contentBlock) => {
-        const canvasContentSnippet = contentBlock.querySelector('.canvas-content-snippet');
+    document.querySelectorAll('#canvasContainer > .canvas-content-block').forEach(element => {
+      const type = GetComponentType(element.querySelector(snptCssClass));
+      let data = { id: element.id, type: type, metadata: { html: '' } };
+      let queriedElement;
 
-        let toBeSanitizedHTML = componentType == 'textEditor' ?
-          canvasContentSnippet.innerHTML : RemoveTinyMceAttributes(canvasContentSnippet);
-        
-        return NormaliseHTMLString(toBeSanitizedHTML);
-      },
-
-      createMetadata = (componentType, contentBlock, contentHTML) => {
-        if (ContentBlocks.elems[componentType].hasChildContent) {
-          return { subnodes: [], html: NormaliseHTMLString(contentHTML) };
-        }
-        else {
-          return { html: sanitizeContentBlock(componentType, contentBlock), variables: [] };
-        }
-      },
-
-      sanitizeTabs = (tabs, content) => {
-        const div = document.createElement('DIV');
-        div.innerHTML = tabs;
-
-        div.querySelectorAll('.sf-tab-content').forEach(function (tab, index) {
-          tab.innerHTML = typeof content[index] !== 'undefined' ? content[index] : '';
-        });
-
-        return div.innerHTML;
-      };
-
-    document.querySelectorAll('#canvasContainer > .canvas-content-block').forEach(function (element) {
-      const type = element.querySelector('.canvas-content-snippet').getAttribute('data-component-type');
-      const id = element.getAttribute('id');
-      let data = { id: id, type: type, metadata: {} };
-
-      data.metadata = createMetadata(type, element, element.querySelector('.canvas-content-snippet').innerHTML);
-
-      // Refactor
+      // If component is a tab or accordion
       if (ContentBlocks.elems[type].hasChildContent) {
-        const tabContent = element.querySelectorAll('.sf-tab-content');
+        const
+          clonedElement = element.cloneNode(true),
+          tabContent = clonedElement.querySelectorAll('.sf-tab-content');
 
-        tabContent.forEach((tab, tabIndex) => {
-          const content = 
+        const content = (tab) => {
+          const tmpContentArr = [];
+          let mhtml = '';
+          tab.querySelectorAll('[data-component-type]').forEach(content => {
+            const tmpData = {
+              id: content.id.split('snippet-')[1],
+              type: GetComponentType(content),
+              metadata: { html: SanitiseSubContentBlock(content) }
+            };
+            mhtml += tmpData.metadata.html;
+            tmpContentArr.push(tmpData);
+          });
 
+          tab.innerHTML = mhtml;
+          return tmpContentArr;
+        };
+
+        data.metadata['subnodes'] = [];
+        tabContent.forEach(tab => { 
           data.metadata['subnodes'].push({
             label: document.getElementById('target_' + tab.id).textContent,
             id: tab.id,
-            content: []
-          });
-
-
-          tab.querySelectorAll('[data-component-type]').forEach((content, contentIndex) => {
-            // console.log(content);
-            console.log(content.id.split('snippet-')[1], content.getAttribute('data-component-type'));
-            console.log(content.firstElementChild);
-            console.log(data.metadata.subnodes[contentIndex]);
-            
-            
-            data.metadata.subnodes[tabIndex].content.push({
-              id: content.id.split('snippet-')[1],
-              type: content.getAttribute('data-component-type'),
-              metadata: createMetadata(content.getAttribute('data-component-type'), content, '')
-            });
-          });
-
+            content: tab.firstElementChild === null ? [] : content(tab)
+          });          
         });
-
-        // tabLinks.forEach(function (tabElement, tabIndex) {
-        //   const 
-        //     tabSection = document.getElementById(tabElement.getAttribute('id').split('target_')[1]),
-        //     tabId = tabSection.getAttribute('id'),
-        //     tabText = tabElement.textContent;
-
-        //   data.metadata['subnodes'].push({ label: tabText, id: tabId, content: [] });
-
-        //   // if (tabSection.firstElementChild !== null) {
-        //   const subnodes = tabSection.querySelectorAll('.canvas-content-block');
-        //   let sanitisedSNodeCollection = '';
-
-        //   subnodes.forEach(function (subElement) {
-        //     // console.log(subElement);
-            
-        //     const 
-        //       subnodeID = subElement.getAttribute('id'),
-        //       subnodeType = document.getElementById('snippet-' + subnodeID).getAttribute('data-component-type'),
-        //       sanitisedSNode = createMetadata(subnodeType, subElement, '');
-
-        //     data.metadata.subnodes[tabIndex].content.push({
-        //       id: subnodeID,
-        //       type: subnodeType,
-        //       metadata: sanitisedSNode
-        //     });
-
-        //     sanitisedSNodeCollection += sanitisedSNode.html;
-        //   });
-
-        //   extractedElementsFromTabs.push(sanitisedSNodeCollection);
-        //   // }
-        // });
-
-        // data.metadata.html = sanitizeTabs(data.metadata.html, extractedElementsFromTabs);
+        
+        queriedElement = clonedElement.querySelector(snptCssClass);
+        clonedElement.remove();
       }
-      // Refactor
+      else {
+        queriedElement = element.querySelector(snptCssClass);
+      }
+
+      data.metadata.html = NormaliseHTMLString(queriedElement.innerHTML);
 
       arr.push(data);
     });
-
-    console.log(arr);
     
     editor.existing_data = arr;
   },
@@ -524,9 +469,9 @@ const editor = {
     editor.htmlSection.innerHTML = editor.existing_data.length > 0 ? html : '<strong>Nothing to display here.</strong>';
 
     // Always set first tab to be active on save
-    // editor.htmlSection.querySelectorAll('.sf-tab-nav').forEach(function (elem, i) {
-    //   elem.firstElementChild.querySelector('.sf-tab-item-link').click();
-    // });
+    editor.htmlSection.querySelectorAll('.sf-tab-nav').forEach(function (elem, i) {
+      elem.firstElementChild.querySelector('.sf-tab-item-link').click();
+    });
 
     editor.sourceSection.value = editor.htmlSection.innerHTML;
 
@@ -569,4 +514,14 @@ const editor = {
   }
 };
 
+const editortest = {
+  test: () => {
+    const test = new Accordion;
+
+    document.getElementById('test').innerHTML = test.render();
+  }
+};
+
+
+editortest.test();
 editor.run();
