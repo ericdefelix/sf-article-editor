@@ -1,56 +1,70 @@
-export class Accordion {
-  constructor(id) {
-    this.id = id;
+import {
+  GenerateID,
+  GenerateTabID,
+  ContentBlockTemplate,
+  AddContentBlockBtnTemplate
+} from '../utils/chromeExtensionUtils';
+
+export const AccordionLabel = 'Accordion';
+
+export default class Accordion {
+  constructor() {
+    this.id = GenerateID();
+    this.name = this.name;
+    this.cssClass = 'sf-accordion';
+    this.accordionNamePrefix = 'Accordion Pane ';
+    this.accordionCountMin = 3;
+    this.accordionCurrentCount = this.accordionCountMin;
   }
 
-  render() {
-    return 'test';
+  render(html) {
+    const params = {
+      id: this.id,
+      type: this.name,
+      controlsTemplate: '',
+      draggableClass: 'canvasDraggableMain',
+      componentTemplate: this.template(html),
+      addTemplate: AddContentBlockBtnTemplate()
+    };
+
+    return ContentBlockTemplate(params);
   }
-}
 
-// "use strict";
-// class Tabset {
-//   constructor(tabSetId, ...tabNames) {
-//     this.tabSetId = tabSetId;
-//     this.tabSet = document.getElementById(this.tabSetId);
-//     this.tabNames = tabNames;
-//     this.tabBoxContents = new Map();
-//     this.render();
-//   }
+  accordionSectionTemplate(accordionID) {
+    const template = `
+      <div class="sf-accordion-item">
+        <div class="sf-accordion-toggle">
+          <h4 class="sf-accordion-text">Accordion Display Text
+            <br>
+            <small>Subheading goes here</small>
+          </h4>
+          <i class="sf-accordion-icon"></i>	
+        </div>
+        <div class="sf-accordion-content">
+          content
+        </div>
+      </div>`;
+    return template;
+  }
 
-//   render() {
-//     this.tabMaps = this.tabNames.map((tabName) => (new Map([["name", tabName], ["id", Tabset.guid()]])));
-//     var tabElts = this.tabMaps.map((obj) => (`<div class="tab" id="${obj.get("id")}"><span class="tab-span" tabindex="1">${obj.get("name")}</span></div>`));
-//     var htmlTabs = `<div class="tabs">
-//        ${tabElts.join("\n")}</div>`;
-//     this.tabSet.innerHTML = htmlTabs;
-//     var htmlTabBoxes = `<div class="tab-boxes">
-//           ${this.tabMaps.map((obj) => (`
-//           <div class="tab-box" id="${obj.get("id")}-box">
-//             ${(this.tabBoxContents.has(obj.get('name'))) ? (this.tabBoxContents.get(obj.get('name'))) : `This is the '${obj.get("name")}' box.`}
-//           </div>`)).join("\n")}
-//       </div>`;
-//     this.tabSet.innerHTML += htmlTabBoxes;
-//     this.tabBinds = new Map();
-//     this.tabNodes = [];
-//     this.tabBoxNodes = [];
-//     this.tabMaps.map((obj) => {
-//       var id = obj.get("id");
-//       var name = obj.get("name");
-//       var instance = this;
-//       var tabElt = document.getElementById(id);
-//       tabElt.firstChild.addEventListener("focus", function (evt) { instance.activeTab = evt.target.textContent });
-//       var tabBoxElt = document.getElementById(id + "-box");
-//       this.tabNodes.push(tabElt);
-//       this.tabBoxNodes.push(tabBoxElt);
-//       this.tabBinds.set(name,
-//         new Map([
-//           ["name", name],
-//           ["id", id],
-//           ["tabElt", tabElt],
-//           ["tabBoxElt", tabBoxElt]
-//         ])
-//       )
-//     });
-//   }
-// };
+  template(existingHTML) {
+    let accordionSections = ``;
+
+    for (let i = 0; i < this.accordionCountMin - 1; i++) {
+      const accordionID = GenerateTabID();
+      accordionSections += this.accordionSectionTemplate(accordionID);
+    }
+
+    const defaultTemplate = `<div class="sf-accordion">${accordionSections}</div>`;
+    
+    return defaultTemplate;
+  }
+
+  addAccordion() {
+
+  }
+
+  removeAccordion() {
+
+  }
+};

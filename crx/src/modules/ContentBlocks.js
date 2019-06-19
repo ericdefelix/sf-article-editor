@@ -1,4 +1,12 @@
 import { GenerateTabID } from './utils/chromeExtensionUtils';
+import TextContent from './components/text-content';
+// import { Accordion } from './components/accordion';
+// import { StyledLists } from './components/styled-lists';
+// import { TextContent } from './components/text-content';
+// import { Tips } from './components/blockquotes';
+// import { Info } from './components/tabs';
+
+
 
 const ContentWithHeaderBodyTextConfig = {
 	cssClass: (config) => {
@@ -13,12 +21,16 @@ const ContentWithHeaderBodyTextConfig = {
 };
 
 const ContentBlocks = {
+	components: {
+		TextContent
+		// Accordion, StyledLists, TextContent, Tips, Info
+	},
 	elems: {
 		'textEditor' : {
 			ui_label: 'Text',
-			template: (config) => {
-				const html = typeof config !== 'undefined' ? config.value : '<p>Click here to start editing</p>';
-				return `<div class="sf-editor-content">${html}</div>`;
+			render: () => {
+				// const html = typeof config !== 'undefined' ? config.value : '<p>Click here to start editing</p>';
+				return `<div class="sf-editor-content"><p>Click here to start editing</p></div>`;
 			},
 			hasChildContent: false,
 			hasHeaderBodyText: false,
@@ -31,7 +43,7 @@ const ContentBlocks = {
 		},
 		'genericTabs' : {
 			ui_label: 'Tabs',
-			template: (config) => {
+			render: (config) => {
 				let
 					navTabItems = '',
 					navTabSections = '',
@@ -67,7 +79,7 @@ const ContentBlocks = {
 		},
 		'genericAccordion': {
 			ui_label: 'Accordion',
-			template: (config) => {
+			render: (config) => {
 			
 				return `Accordion`;
 			},
@@ -78,7 +90,7 @@ const ContentBlocks = {
 		},
 		'styledLists': {
 			ui_label: 'Numbering',
-			template: (config) => {
+			render: (config) => {
 				const listType = typeof config === 'undefined' ? 'ol' : config;
 
 				return `
@@ -112,7 +124,7 @@ const ContentBlocks = {
 					ui_value: 'alert'
 				}
 			],
-			template: (config) => {
+			render: (config) => {
 				return `
 					<div class="sf-blockquote sf-blockquote-${ContentWithHeaderBodyTextConfig.cssClass(config)}" role="blockquote">
 						<div class="sf-blockquote-addon"></div>
@@ -135,7 +147,7 @@ const ContentBlocks = {
 		},
 		'wellContainer': {
 			ui_label: 'Info',
-			template: (config) => {
+			render: (config) => {
 				return `
 					<div class="sf-well">
 						<h5 class="sf-well-heading">${ContentWithHeaderBodyTextConfig.header(config)}</h5>
@@ -152,8 +164,10 @@ const ContentBlocks = {
 			}
 		},
 	},
-  getTemplate: (elemType,config) => {
+  getrender: (elemType,config) => {
 		return ContentBlocks.elems[elemType].template(config);
 	}
 };
+
+
 export default ContentBlocks;

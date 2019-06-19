@@ -38,6 +38,47 @@ export function NewBtnTemplateCKEDITOR(id) {
 					</span>`;
 }
 
+export function ContentBlockTemplate(params) {
+	return `<section class="canvas-content-block" id="${params.id}">
+		<div class="canvas-content-config">
+			<div class="canvas-content-draggable ${params.draggableClass}"></div>
+			${ params.controlsTemplate }
+			<button class="canvas-btn canvas-btn-xs" data-action="remove-component" data-target="${params.id}" data-target-type="${params.type}">
+				<i class="icon-delete"></i> Remove
+			</button>
+		</div>
+		<div class="canvas-content-snippet" id="snippet-${params.id}" data-component-type="${params.type}">
+			${ params.componentTemplate }
+		</div>
+		${ params.addTemplate }
+	</section>`;
+}
+
+export function EmptyStateTemplate() {
+	return `<section class="canvas-content-block" data-content="empty"> 
+			<img src="images/empty-icon.svg" alt="Empty">
+			<h4 class="empty-text">There's nothing in here.<br><small>Start building your content.</small></h4>
+			<div class="canvas-add-component">
+				<button type="button" class="canvas-btn canvas-btn-primary" data-action="select-component">
+					Add Content Block
+				</button>
+			</div>
+		</section>`;
+}
+
+export function AddContentBlockBtnTemplate() {
+	const template = `
+		<div class="canvas-content-action canvas-add-component">
+			<div class="content-action-hotspot">
+				<button type="button" class="canvas-btn canvas-btn-xs" data-action="select-component">
+					<i class="icon-plus">&#43;</i>
+				</button>
+			</div>
+		</div>
+	`;
+	return template;
+}
+
 export function GetClosestParent(elem, selector) {
 	if (!Element.prototype.matches) {
 		Element.prototype.matches =
@@ -66,15 +107,11 @@ export function NormaliseHTMLString(str) {
 }
 
 export function DecodeHTMLString(str) {
-	return str
-					.replace(/&lt;/g,'<')
-					.replace(/&gt;/g,'>');
+	return str.replace(/&lt;/g,'<').replace(/&gt;/g,'>');
 }
 
 export function EncodeHTMLString(str) {
-	return str
-					.replace(/</g,'&lt;')
-					.replace(/>/g,'&gt;');
+	return str.replace(/</g,'&lt;').replace(/>/g,'&gt;');
 }
 
 export function replaceString(baseStr, strLookup, strReplacement) {

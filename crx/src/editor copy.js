@@ -12,6 +12,7 @@ import UserInterfaceBuilder from './modules/UserInterfaceBuilder';
 import Sortable from '../node_modules/sortablejs/Sortable.min';
 import ImageGallery from './modules/ImageGallery';
 import { imageGalleryMockData, htmlMockData } from './modules/utils/mockData';
+import {Accordion} from './modules/components/accordion';
 
 
 const editor = {
@@ -67,8 +68,7 @@ const editor = {
     } catch (e) {
       editor.image_gallery = imageGalleryMockData;
       editor.htmlSection.insertAdjacentHTML('afterbegin', htmlMockData);
-      // editor.existing_data = dataParser(editor.htmlSection.childNodes);
-      editor.existing_data = [];
+      editor.existing_data = dataParser(editor.htmlSection.childNodes);
       editor.start_app();
       console.log('Attempting to do a chrome api method. You are in stand-alone mode');
     }
@@ -87,78 +87,24 @@ const editor = {
     editor.btnThemeSelector.onchange = editor.select_theme;
   },
   build_ui: () => {
-    UserInterfaceBuilder.render(document.getElementById('canvasContainer'), {
-      data: editor.existing_data
+    UserInterfaceBuilder.render('canvas', {
+      data: editor.existing_data,
+      trigger: 'auto'
     });
-
-      // ,
-      // callback: function() {
-      //   UserInterfaceBuilder.render('toolbox', ContentBlocks.elems);
-
-      //   let canvasContainer,
-      //       canvasContentBlocks,
-      //       btnsAddComponent,
-      //       btnsRemoveComponent,
-      //       btnsSelectComponent;
-
-      //   // This is where we bind each element event listeners to display the toolbox
-      //   btnsSelectComponent = document.querySelectorAll('[data-action="select-component"]');
-      //   btnsSelectComponent.forEach((elem, index) => {
-      //     elem.onclick = editor._bindEvtDisplayToolbox;
-      //   });
-
-      //   // This is where we bind each element event listeners to add components
-      //   btnsAddComponent = document.querySelectorAll('[data-action="add-component"]');
-      //   btnsAddComponent.forEach((elem, index) => {
-      //     elem.onclick = editor._bindEvtAddComponent;
-      //   });
-
-      //   // This is where we bind each element event listeners to delete components
-      //   btnsRemoveComponent = document.querySelectorAll('[data-action="remove-component"]');
-      //   btnsRemoveComponent.forEach((elem, index) => {
-      //     elem.onclick = editor._bindEvtRemoveComponent;
-      //   });
-
-      //   // Initialise edit events to our elements
-      //   canvasContainer = document.getElementById('canvasContainer');
-      //   canvasContentBlocks = canvasContainer.querySelectorAll('.canvas-content-block');
-
-      //   if (canvasContentBlocks.length > 0) {
-      //     canvasContentBlocks.forEach((elem, index) => {
-      //       if (elem.getAttribute('data-content') !== 'empty') {
-      //         const domID = elem.getAttribute('id');
-      //         const targetComponentPointer = elem
-      //           .querySelector('.canvas-content-snippet')
-      //           .getAttribute('data-component-type');
-
-      //         editor.handleEditEventsToDOM(domID, targetComponentPointer);
-      //       }
-      //     });
-      //   }
-
-      //   // Init toolbox menu actions
-      //   document.addEventListener('click', function(event) {
-      //     const parent = GetClosestParent(event.target, '.canvas-add-component');
-      //     if (parent === null) toolbox.classList.remove('in');
-      //   }, false);
-
-      //   // Hide/show page controls
-      //   editor.togglePageButtons();
-      // }
   },
-  // _bindEvtDisplayToolbox: function() {
-  //   const toolbox = document.getElementById('toolbox');
-  //   toolbox.classList.remove('in');
-  //   toolbox.style.display = 'block';
+  _bindEvtDisplayToolbox: function() {
+    const toolbox = document.getElementById('toolbox');
+    toolbox.classList.remove('in');
+    toolbox.style.display = 'block';
 
-  //   this.parentElement.appendChild(toolbox);
-  //   const toolboxWidth = toolbox.offsetWidth;
-  //   const isAddingFromTab = this.parentElement.classList.contains('canvas-add-subcontent');
+    this.parentElement.appendChild(toolbox);
+    const toolboxWidth = toolbox.offsetWidth;
+    const isAddingFromTab = this.parentElement.classList.contains('canvas-add-subcontent');
 
-  //   toolbox.style.left = isAddingFromTab ? '0' : 'calc(50% - ' + (toolboxWidth / 2 + 4) + 'px)';
-  //   toolbox.classList.contains('in') ? toolbox.classList.remove('in') : toolbox.classList.add('in');
-  //   toolbox.focus();
-  // },
+    toolbox.style.left = isAddingFromTab ? '0' : 'calc(50% - ' + (toolboxWidth / 2 + 4) + 'px)';
+    toolbox.classList.contains('in') ? toolbox.classList.remove('in') : toolbox.classList.add('in');
+    toolbox.focus();
+  },
   _bindEvtAddComponent: function() {
     const
       domID = GenerateID(),
