@@ -17,7 +17,8 @@ import { imageGalleryMockData, htmlMockData } from './modules/utils/mockData';
 const editor = {
   crxID: '',
   contentEditorInstanceId: '',
-  instanceHTML:     '',
+  instanceHTML: '',
+  canvasContainer:  document.getElementById('canvasContainer'),
   outputPane:       document.getElementById('outputContainer'),
   htmlSection:      document.getElementById('htmlOutputContainer'),
   sourceSection:    document.getElementById('viewSourcePreview'),
@@ -87,7 +88,7 @@ const editor = {
     editor.btnThemeSelector.onchange = editor.select_theme;
   },
   build_ui: () => {
-    UserInterfaceBuilder.render(document.getElementById('canvasContainer'), {
+    UserInterfaceBuilder.init(editor.canvasContainer, {
       data: editor.existing_data
     });
 
@@ -514,18 +515,6 @@ const editor = {
     this.init();
   }
 };
-
-const editortest = {
-  test: () => {
-    const test = new Accordion;
-
-    document.getElementById('test').innerHTML = test.template();
-
-    console.log(test);
-    
-  }
-};
-
 
 // editortest.test();
 editor.run();

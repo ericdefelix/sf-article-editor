@@ -1,6 +1,15 @@
 import { EmptyStateTemplate } from './utils/chromeExtensionUtils';
 import { Components, ComponentTypes } from './components/components';
 
+const EventAddComponent = function (container) {
+  const
+    componentType = this.getAttribute('data-ui-label'),
+    component = new Components[componentType],
+    componentTemplate = component.render();
+
+  UserInterfaceBuilder.container.insertAdjacentHTML('beforeend', componentTemplate);
+};
+
 const Toolbox = {
   html: null,
   init: () => {
@@ -16,16 +25,11 @@ const Toolbox = {
 
     //Bind event for adding components
     document.querySelectorAll('[data-action="add-component"]').forEach(btn => {
-      btn.onclick = Toolbox._bindEvtAddComponent;
+      btn.onclick = EventAddComponent();
     });
   },
-  _bindEvtAddComponent: function () {
-    const
-      componentType = this.getAttribute('data-ui-label'),
-      component = new Components[componentType],
-      componentTemplate = component.render();
-
-    UserInterfaceBuilder.container.insertAdjacentHTML('beforeend', componentTemplate);
+  _bindEvtAddComponent: () => {
+    EventAddComponent();
   },
   render: () => {
     let template = `<div class="toolbox" id="toolbox"><ul class="toolbox-toolbar" id="toolbar" tabIndex="-1">`;
@@ -58,18 +62,23 @@ const UserInterfaceBuilder = {
   container: document.getElementById('canvasContainer'),
   toolboxIsInit: false,
   toolboxActiveSection: null,
-  mutations: {
-    componentCount: 0,
-  },
-  render: (container, params) => {
+  deletedNode: null,
+  addedNode: null,
+  elements: {},
+  init: (container, params) => {
     UserInterfaceBuilder.container = container;
 
+    // If data is empty emptyStateTemplate, if not renderExistingData
+    params.data.length === 0 ?
+      UserInterfaceBuilder.renderEmptyState() :
+      UserInterfaceBuilder.renderExistingData(params.data);
+
     // Attach mutation observer
-    UserInterfaceBuilder.observe(container);
-    UserInterfaceBuilder.renderInitState(params);
+    UserInterfaceBuilder.observe();
+
     Toolbox.init();
   },
-  observe: (container) => {
+  observe: () => {
     // config object
     const config = {
       attributes: true,
@@ -83,38 +92,25 @@ const UserInterfaceBuilder = {
 
     // subscriber function
     const subscriber = (mutations) => {
-      console.log(mutations);
-      
-      // mutations.forEach((mutation) => {
-      //   console.log(mutation);
-
-      //   if (mutation.addedNodes.length) {
-      //     if (mutation.addedNodes[0].classList.value == 'canvas-content-block') {
-      //       UserInterfaceBuilder._bindDisplayToolbox(mutation.addedNodes[0]);
-      //       UserInterfaceBuilder.toolboxActiveSection = mutation.addedNodes[0];
-      //     }
-      //   }
-      // });
       const
         addedNode = mutations[0].addedNodes,
         removedNode = mutations[0].removedNodes;
+      
+      console.log(addedNode);
+      console.log(removedNode);
     };
 
     // instantiating observer
     const containerObserver = new MutationObserver(subscriber);
 
     // observing target
-    containerObserver.observe(container, config);
+    containerObserver.observe(UserInterfaceBuilder.container, config);
   },
-  renderInitState: (params) => {
-    // If data is empty emptyStateTemplate, if not renderExistingData
-    params.data.length === 0 ?
-      UserInterfaceBuilder.renderEmptyState() :
-      UserInterfaceBuilder.renderExistingData(params.data);
+  render: () => {
+
   },
   renderEmptyState: () => {
     UserInterfaceBuilder.container.insertAdjacentHTML('afterbegin', EmptyStateTemplate());
-    UserInterfaceBuilder.mutations.componentCount = 0;
   },
   renderExistingData: (data) => {
     UserInterfaceBuilder.mutations.componentCount = data.length;

@@ -19,6 +19,7 @@ export default class StyledLists {
 
   render(html) {
     const params = {
+      id: this.id,
       type: this.name,
       controlsTemplate: '',
       draggableClass: 'canvasDraggableMain',

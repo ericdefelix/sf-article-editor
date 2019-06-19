@@ -9,7 +9,7 @@ export const TextContentLabel = 'Text';
 export default class TextContent {
   constructor() {
     this.id = GenerateID();
-    this.name = this.name;
+    this.type = this.name;
     this.cssClass = 'sf-editor-content';
     this.contentEditorConfig = {
       plugins: 'lists link image table imagetools',
@@ -20,19 +20,17 @@ export default class TextContent {
   render(html) {
     const params = {
       id: this.id,
-      type: this.name,
       controlsTemplate: '',
       draggableClass: 'canvasDraggableMain',
-      componentTemplate: this.template(html),
+      componentTemplate: typeof html === 'undefined' ? this.template() : html,
       addTemplate: AddContentBlockBtnTemplate()
     };
 
     return ContentBlockTemplate(params);
   }
 
-  template(existingHTML) {
-    let defaultTemplate = `<div class="sf-editor-content"><p>Click to edit content</p></div>`;
-
-    return typeof existingHTML === 'undefined' ? defaultTemplate : existingHTML;
+  template() {
+    const defaultTemplate = `<div class="sf-editor-content"><p>Click to edit content</p></div>`;
+    return defaultTemplate;
   }
 }
