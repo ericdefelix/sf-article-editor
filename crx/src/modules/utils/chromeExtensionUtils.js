@@ -39,8 +39,6 @@ export function NewBtnTemplateCKEDITOR(id) {
 }
 
 export function ContentBlockTemplate(params) {
-	console.log(params);
-	
 	return `<section class="canvas-content-block" id="${params.id}">
 		<div class="canvas-content-config">
 			<div class="canvas-content-draggable ${params.draggableClass}"></div>
@@ -49,16 +47,18 @@ export function ContentBlockTemplate(params) {
 				<i class="icon-delete"></i> Remove
 			</button>
 		</div>
-		<div class="canvas-content-snippet" id="snippet-${params.id}">${ params.componentTemplate }</div>
+		<div class="canvas-content-snippet" id="snippet-${params.id}">
+			${ params.componentTemplate }
+		</div>
 		${ params.addTemplate }
 	</section>`;
 }
 
-export function EmptyStateTemplate() {
+export function EmptyStateTemplate(containerID) {
 	return `<section class="canvas-content-block" data-content="empty"> 
 			<img src="images/empty-icon.svg" alt="Empty">
 			<h4 class="empty-text">There's nothing in here.<br><small>Start building your content.</small></h4>
-			<div class="canvas-add-component">
+			<div class="canvas-add-component" data-attached-to="${containerID}">
 				<button type="button" class="canvas-btn canvas-btn-primary" data-action="select-component">
 					Add Content Block
 				</button>

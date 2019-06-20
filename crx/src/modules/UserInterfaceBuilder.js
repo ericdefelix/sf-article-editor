@@ -1,17 +1,25 @@
-import { EmptyStateTemplate } from './utils/chromeExtensionUtils';
+import { EmptyStateTemplate, GetClosestParent } from './utils/chromeExtensionUtils';
 import { Components, ComponentTypes } from './components/components';
-
-const EventAddComponent = function (container) {
-  const
-    componentType = this.getAttribute('data-ui-label'),
-    component = new Components[componentType],
-    componentTemplate = component.render();
-
-  UserInterfaceBuilder.container.insertAdjacentHTML('beforeend', componentTemplate);
+const handler = {
+  set(target, key, value) {
+    console.log(`Setting value ${key} as ${value}`);
+    target[key] = value;
+  },
+  get(target, key) {
+    console.log(`Getting value of ${key}`);
+    return target[key];
+  },
+  deleteProperty(target, key) {
+    console.log(`Deleting ${key}`);
+    delete target[key];
+  }
 };
+let ProxyElements = {};
+let Elements = {};
 
 const Toolbox = {
   html: null,
+  targetContainerID: '',
   init: () => {
     // Render Toolbox
     const template = Toolbox.render();
@@ -20,16 +28,14 @@ const Toolbox = {
 
     // Init first add component button
     selectComponentBtn.onclick = function () {
+      Toolbox.targetContainer = 'canvasContainer';
       Toolbox.display(this.parentElement);
     };
 
     //Bind event for adding components
     document.querySelectorAll('[data-action="add-component"]').forEach(btn => {
-      btn.onclick = EventAddComponent();
+      btn.onclick = UserInterfaceBuilder._evtAddComponent;
     });
-  },
-  _bindEvtAddComponent: () => {
-    EventAddComponent();
   },
   render: () => {
     let template = `<div class="toolbox" id="toolbox"><ul class="toolbox-toolbar" id="toolbar" tabIndex="-1">`;
@@ -47,24 +53,19 @@ const Toolbox = {
 
     toolbox.classList.remove('in');
     toolbox.style.display = 'block';
-
     container.appendChild(toolbox);
-    // const isAddingFromTab = this.parentElement.classList.contains('canvas-add-subcontent');
-    // toolbox.style.left = isAddingFromTab ? '0' : 'calc(50% - ' + (toolboxWidth / 2 + 4) + 'px)';
-    const toolboxWidth = toolbox.offsetWidth;
-    toolbox.style.left = 'calc(50% - ' + (toolboxWidth / 2 + 4) + 'px)';
+    toolbox.style.left = 'calc(50% - ' + (toolbox.offsetWidth / 2 + 4) + 'px)';
     toolbox.classList.contains('in') ? toolbox.classList.remove('in') : toolbox.classList.add('in');
     toolbox.focus();
   }
 };
 
 const UserInterfaceBuilder = {
-  container: document.getElementById('canvasContainer'),
-  toolboxIsInit: false,
-  toolboxActiveSection: null,
+  container: null,
   deletedNode: null,
   addedNode: null,
   elements: {},
+  proxy: {},
   init: (container, params) => {
     UserInterfaceBuilder.container = container;
 
@@ -75,45 +76,52 @@ const UserInterfaceBuilder = {
 
     // Attach mutation observer
     UserInterfaceBuilder.observe();
+    ProxyElements = new Proxy(Elements, handler);
 
     Toolbox.init();
   },
+  subscriber: (mutations) => {
+    const addedNode = mutations[0].addedNodes;
+    const deletedNode = mutations[0].removedNodes;
+
+    console.log(addedNode, deletedNode);
+    if (addedNode.length) {
+      for (let index = 0; index < addedNode.length; index++) {
+        const element = addedNode[index];
+        element.querySelector('[data-action="remove-component"]').onclick = UserInterfaceBuilder._evtRemoveComponent;
+      } 
+    }
+  },
   observe: () => {
-    // config object
-    const config = {
+    // instantiating observer
+    const containerObserver = new MutationObserver(UserInterfaceBuilder.subscriber);
+
+    // observing target
+    containerObserver.observe(UserInterfaceBuilder.container, {
       attributes: true,
       subtree: false,
       childList: true
-      // attributeOldValue: true,
-      // characterData: true,
-      // characterDataOldValue: true,
-      // childList: true,
-    };
-
-    // subscriber function
-    const subscriber = (mutations) => {
-      const
-        addedNode = mutations[0].addedNodes,
-        removedNode = mutations[0].removedNodes;
-      
-      console.log(addedNode);
-      console.log(removedNode);
-    };
-
-    // instantiating observer
-    const containerObserver = new MutationObserver(subscriber);
-
-    // observing target
-    containerObserver.observe(UserInterfaceBuilder.container, config);
-  },
-  render: () => {
-
+    });
   },
   renderEmptyState: () => {
-    UserInterfaceBuilder.container.insertAdjacentHTML('afterbegin', EmptyStateTemplate());
+    UserInterfaceBuilder.container.insertAdjacentHTML('afterbegin', EmptyStateTemplate(UserInterfaceBuilder.container.id));
   },
   renderExistingData: (data) => {
     UserInterfaceBuilder.mutations.componentCount = data.length;
+  },
+  _evtAddComponent: function () {
+    const
+      componentType = this.getAttribute('data-ui-label'),
+      containerID = GetClosestParent(this,'[data-attached-to]').getAttribute('data-attached-to'),
+      component = new Components[componentType],
+      componentTemplate = component.render();
+    
+    document.getElementById(containerID).insertAdjacentHTML('beforeend', componentTemplate);
+  },
+  _evtRemoveComponent: function () {
+    const targetContainerID = this.getAttribute('data-target');
+    document.getElementById(targetContainerID).remove();
+    delete UserInterfaceBuilder.proxy['canvasContainer'];
   }
 };
 
