@@ -23,7 +23,7 @@ export default class TextContent {
       controlsTemplate: '',
       draggableClass: 'canvasDraggableMain',
       componentTemplate: typeof html === 'undefined' ? this.template() : html,
-      addTemplate: AddContentBlockBtnTemplate()
+      addTemplate: AddContentBlockBtnTemplate(this.id)
     };
 
     return ContentBlockTemplate(params);

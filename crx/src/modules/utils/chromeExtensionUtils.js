@@ -58,7 +58,7 @@ export function EmptyStateTemplate(containerID) {
 	return `<section class="canvas-content-block" data-content="empty"> 
 			<img src="images/empty-icon.svg" alt="Empty">
 			<h4 class="empty-text">There's nothing in here.<br><small>Start building your content.</small></h4>
-			<div class="canvas-add-component" data-attached-to="${containerID}">
+			<div class="canvas-add-component">
 				<button type="button" class="canvas-btn canvas-btn-primary" data-action="select-component">
 					Add Content Block
 				</button>
@@ -66,7 +66,7 @@ export function EmptyStateTemplate(containerID) {
 		</section>`;
 }
 
-export function AddContentBlockBtnTemplate() {
+export function AddContentBlockBtnTemplate(containerID) {
 	const template = `
 		<div class="canvas-content-action canvas-add-component">
 			<div class="content-action-hotspot">

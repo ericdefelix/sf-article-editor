@@ -1,36 +1,13 @@
 import { EmptyStateTemplate, GetClosestParent } from './utils/chromeExtensionUtils';
 import { Components, ComponentTypes } from './components/components';
-const handler = {
-  set(target, key, value) {
-    console.log(`Setting value ${key} as ${value}`);
-    target[key] = value;
-  },
-  get(target, key) {
-    console.log(`Getting value of ${key}`);
-    return target[key];
-  },
-  deleteProperty(target, key) {
-    console.log(`Deleting ${key}`);
-    delete target[key];
-  }
-};
-let ProxyElements = {};
-let Elements = {};
 
 const Toolbox = {
-  html: null,
-  targetContainerID: '',
   init: () => {
     // Render Toolbox
     const template = Toolbox.render();
-    const selectComponentBtn = document.querySelector('[data-action="select-component"]');
     document.getElementById('toolboxPlaceholder').insertAdjacentHTML('beforeend', template);
 
-    // Init first add component button
-    selectComponentBtn.onclick = function () {
-      Toolbox.targetContainer = 'canvasContainer';
-      Toolbox.display(this.parentElement);
-    };
+    UserInterfaceBuilder.initEmptyStateButton();
 
     //Bind event for adding components
     document.querySelectorAll('[data-action="add-component"]').forEach(btn => {
@@ -48,8 +25,9 @@ const Toolbox = {
 
     return template + `</ul></div>`;
   },
-  display: (container) => {
+  display: function () {    
     const toolbox = document.getElementById('toolbox');
+    const container = this.parentElement;
 
     toolbox.classList.remove('in');
     toolbox.style.display = 'block';
@@ -57,6 +35,9 @@ const Toolbox = {
     toolbox.style.left = 'calc(50% - ' + (toolbox.offsetWidth / 2 + 4) + 'px)';
     toolbox.classList.contains('in') ? toolbox.classList.remove('in') : toolbox.classList.add('in');
     toolbox.focus();
+  },
+  hide: () => {
+    document.getElementById('toolboxPlaceholder').appendChild(document.getElementById('toolbox'));
   }
 };
 
@@ -65,7 +46,6 @@ const UserInterfaceBuilder = {
   deletedNode: null,
   addedNode: null,
   elements: {},
-  proxy: {},
   init: (container, params) => {
     UserInterfaceBuilder.container = container;
 
@@ -76,20 +56,37 @@ const UserInterfaceBuilder = {
 
     // Attach mutation observer
     UserInterfaceBuilder.observe();
-    ProxyElements = new Proxy(Elements, handler);
-
     Toolbox.init();
   },
   subscriber: (mutations) => {
     const addedNode = mutations[0].addedNodes;
     const deletedNode = mutations[0].removedNodes;
-
-    console.log(addedNode, deletedNode);
-    if (addedNode.length) {
+    const emptyStateContainer = document.querySelector('[data-content="empty"]');
+    const canvasContainer = document.getElementById('canvasContainer');
+    
+    if (addedNode.length !== 0) {
       for (let index = 0; index < addedNode.length; index++) {
         const element = addedNode[index];
-        element.querySelector('[data-action="remove-component"]').onclick = UserInterfaceBuilder._evtRemoveComponent;
-      } 
+
+        if (element.getAttribute('data-content') !== 'empty') {
+          element.querySelector('[data-action="remove-component"]').onclick = UserInterfaceBuilder._evtRemoveComponent;
+          element.querySelector('[data-action="select-component"]').onclick = Toolbox.display;          
+        }
+      }
+
+      Toolbox.hide();
+
+      if (emptyStateContainer !== null && emptyStateContainer.nextElementSibling !== null) {
+        emptyStateContainer.remove();
+      }
+    }
+    
+    if (emptyStateContainer === null && canvasContainer.firstElementChild === null) {
+      UserInterfaceBuilder.renderEmptyState();
+    }
+
+    if (emptyStateContainer !== null) {
+      UserInterfaceBuilder.initEmptyStateButton();
     }
   },
   observe: () => {
@@ -121,7 +118,11 @@ const UserInterfaceBuilder = {
   _evtRemoveComponent: function () {
     const targetContainerID = this.getAttribute('data-target');
     document.getElementById(targetContainerID).remove();
-    delete UserInterfaceBuilder.proxy['canvasContainer'];
+  },
+  initEmptyStateButton: () => {
+    // Init first add component button
+    const selectComponentBtn = document.querySelector('[data-action="select-component"]');
+    selectComponentBtn.onclick = Toolbox.display;
   }
 };
 
