@@ -1,12 +1,80 @@
-// import Components from './components/components';
-
-export function dataParser(htmlNodes) {
+export function dataParser(childNodes) {
   const
     contentBlocks = [],
-    contentBlockKeywords = [];
+
+    data = () => {
+      return { isTextContent: '',  html: ''  };
+    },
+
+    isElement = (obj) => {
+      try {
+        return obj instanceof HTMLElement;
+      }
+      catch (e) {
+        return (typeof obj === "object") &&
+          (obj.nodeType === 1) && (typeof obj.style === "object") &&
+          (typeof obj.ownerDocument === "object");
+      }
+    },
   
-  // Components.forEach();
+    checkIfNewObject = (currentPointer) => {
+      let flag = true;
+      if (contentBlocks.length == 0) return true;
+      flag = contentBlocks[contentBlocks.length - 1].type == 'textEditor' && currentPointer == 'textEditor' ? false : true;
+      return flag;
+    };
+
+  let _data = data();
   
+  // Iterate each child element
+  [...childNodes].forEach(node => {
+    // ================
+    const nodeType = node.nodeType;
+
+  // Exclude if not an HTML element
+    if (!isElement(node) && !node.nodeValue || /^\s*$/.test(node.nodeValue)) return;
+
+    // If valid
+    if (isElement(node) ) {
+      console.log(node);
+    }
+    else {
+      console.log(node);
+    }
+    
+    // let nodeValue, _data = data(), contentBlockType;
+
+    // // Exclude if not an HTML element
+    // if (!isElement(node) && !node.nodeValue || /^\s*$/.test(node.nodeValue)) return;
+
+    // // If valid
+    // if (isElement(node)) {
+
+    //   // Check if the element should go to a text editor instead
+    //   if (node.hasAttribute('class') && isFromEditor(node.classList.value)) {
+    //     _data.type = uiType(node.classList.value);
+    //     pushAsNewObject = checkIfNewObject(_data.type);
+    //     contentBlockType = ContentBlocks.elems[uiType(node.classList.value)];
+    //   }
+    //   else {
+    //     _data.type = 'textEditor';
+    //     pushAsNewObject = checkIfNewObject('textEditor');
+    //   }
+
+    //   nodeValue = node.outerHTML;
+    // }
+    // else {
+    //   _data.type = 'textEditor';
+    //   pushAsNewObject = checkIfNewObject('textEditor');
+    //   nodeValue = node.nodeValue;
+    // }
+
+    // // Determine whether we push new data or just append it from the previous data
+    // // if HTML elements can be grouped in one Content Editor
+    // _data.html = nodeValue;
+    // pushAsNewObject ? contentBlocks.push(_data) : contentBlocks[contentBlocks.length - 1].html += _data.html;
+    // // ================
+  });
 
   return contentBlocks;
 }

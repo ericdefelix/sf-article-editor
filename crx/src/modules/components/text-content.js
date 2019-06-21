@@ -28,6 +28,8 @@ export default class TextContent {
 
     return ContentBlockTemplate(params);
   }
+  
+  
 
   template() {
     const defaultTemplate = `<div class="sf-editor-content"><p>Click to edit content</p></div>`;

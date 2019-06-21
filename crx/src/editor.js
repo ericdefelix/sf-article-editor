@@ -1,6 +1,5 @@
 import './editor.scss';
 import {
-  GetClosestParent,
   GenerateID,
   NormaliseHTMLString,
   SanitiseSubContentBlock,
@@ -68,8 +67,7 @@ const editor = {
     } catch (e) {
       editor.image_gallery = imageGalleryMockData;
       editor.htmlSection.insertAdjacentHTML('afterbegin', htmlMockData);
-      // editor.existing_data = dataParser(editor.htmlSection.childNodes);
-      editor.existing_data = [];
+      editor.existing_data = dataParser(editor.htmlSection.childNodes);
       editor.start_app();
       console.log('Attempting to do a chrome api method. You are in stand-alone mode');
     }

@@ -17,7 +17,7 @@ const Toolbox = {
   render: () => {
     let template = `<div class="toolbox" id="toolbox"><ul class="toolbox-toolbar" id="toolbar" tabIndex="-1">`;
     
-    for (const key in ComponentTypes) {      
+    for (const key in ComponentTypes) {   
       template += `<li class="toolbar-item" data-action="add-component" data-ui-label="${key}">
 				<small>${ ComponentTypes[key] }</small>
 			</li>`;

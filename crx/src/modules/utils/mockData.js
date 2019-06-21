@@ -77,7 +77,14 @@ export const htmlMockData = `
     <div class="sf-editor-content">
       <p>This is a test. The quick brown fox</p>
     </div>
+
     <p>Testasdfa sfasd fsadf asdfa sdfa sdfa fasd </p>
+
+    test
+
+    <div class="sf-editor-content">
+      <p>This is a test. The quick brown fox</p>
+    </div>
 `;
 
 // export const htmlMockData = `<div class="sf-tabs">
