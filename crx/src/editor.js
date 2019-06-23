@@ -68,12 +68,17 @@ const editor = {
       editor.image_gallery = imageGalleryMockData;
       editor.htmlSection.insertAdjacentHTML('afterbegin', htmlMockData);
       editor.existing_data = dataParser(editor.htmlSection.childNodes);
+      console.log(editor.existing_data);
+      
       editor.start_app();
       console.log('Attempting to do a chrome api method. You are in stand-alone mode');
     }
   },
   start_app: () => {
-    editor.build_ui();
+    UserInterfaceBuilder.init(editor.canvasContainer, {
+      data: editor.existing_data
+    });
+  
     editor.init_sortable({
       container: document.getElementById('canvasContainer'),
       contentDraggableClass: '.canvasDraggableMain'
@@ -84,208 +89,6 @@ const editor = {
     editor.toggleView.onchange = editor.html_view;
     editor.btnClose.onclick = editor.close_preview;
     editor.btnThemeSelector.onchange = editor.select_theme;
-  },
-  build_ui: () => {
-    UserInterfaceBuilder.init(editor.canvasContainer, {
-      data: editor.existing_data
-    });
-
-      // ,
-      // callback: function() {
-      //   UserInterfaceBuilder.render('toolbox', ContentBlocks.elems);
-
-      //   let canvasContainer,
-      //       canvasContentBlocks,
-      //       btnsAddComponent,
-      //       btnsRemoveComponent,
-      //       btnsSelectComponent;
-
-      //   // This is where we bind each element event listeners to display the toolbox
-      //   btnsSelectComponent = document.querySelectorAll('[data-action="select-component"]');
-      //   btnsSelectComponent.forEach((elem, index) => {
-      //     elem.onclick = editor._bindEvtDisplayToolbox;
-      //   });
-
-      //   // This is where we bind each element event listeners to add components
-      //   btnsAddComponent = document.querySelectorAll('[data-action="add-component"]');
-      //   btnsAddComponent.forEach((elem, index) => {
-      //     elem.onclick = editor._bindEvtAddComponent;
-      //   });
-
-      //   // This is where we bind each element event listeners to delete components
-      //   btnsRemoveComponent = document.querySelectorAll('[data-action="remove-component"]');
-      //   btnsRemoveComponent.forEach((elem, index) => {
-      //     elem.onclick = editor._bindEvtRemoveComponent;
-      //   });
-
-      //   // Initialise edit events to our elements
-      //   canvasContainer = document.getElementById('canvasContainer');
-      //   canvasContentBlocks = canvasContainer.querySelectorAll('.canvas-content-block');
-
-      //   if (canvasContentBlocks.length > 0) {
-      //     canvasContentBlocks.forEach((elem, index) => {
-      //       if (elem.getAttribute('data-content') !== 'empty') {
-      //         const domID = elem.getAttribute('id');
-      //         const targetComponentPointer = elem
-      //           .querySelector('.canvas-content-snippet')
-      //           .getAttribute('data-component-type');
-
-      //         editor.handleEditEventsToDOM(domID, targetComponentPointer);
-      //       }
-      //     });
-      //   }
-
-      //   // Init toolbox menu actions
-      //   document.addEventListener('click', function(event) {
-      //     const parent = GetClosestParent(event.target, '.canvas-add-component');
-      //     if (parent === null) toolbox.classList.remove('in');
-      //   }, false);
-
-      //   // Hide/show page controls
-      //   editor.togglePageButtons();
-      // }
-  },
-  // _bindEvtDisplayToolbox: function() {
-  //   const toolbox = document.getElementById('toolbox');
-  //   toolbox.classList.remove('in');
-  //   toolbox.style.display = 'block';
-
-  //   this.parentElement.appendChild(toolbox);
-  //   const toolboxWidth = toolbox.offsetWidth;
-  //   const isAddingFromTab = this.parentElement.classList.contains('canvas-add-subcontent');
-
-  //   toolbox.style.left = isAddingFromTab ? '0' : 'calc(50% - ' + (toolboxWidth / 2 + 4) + 'px)';
-  //   toolbox.classList.contains('in') ? toolbox.classList.remove('in') : toolbox.classList.add('in');
-  //   toolbox.focus();
-  // },
-  _bindEvtAddComponent: function() {
-    const
-      domID = GenerateID(),
-      targetComponentPointer = this.getAttribute('data-ui-label');
-    
-    if (editor.existing_data.length === 0) editor.existing_data.push({});
-
-    UserInterfaceBuilder.render('content', {
-      id: domID,
-      type: targetComponentPointer,
-      data: ContentBlocks.elems[targetComponentPointer],
-      trigger: this,
-      callback: function (displayToolboxButtons) {
-        let removeBtn;
-        editor.handleEditEventsToDOM(domID, targetComponentPointer);
-
-        displayToolboxButtons.forEach(function(btn, index) {
-          btn.onclick = editor._bindEvtDisplayToolbox;
-        });
-
-        removeBtn = document.querySelector('[data-action="remove-component"][data-target="' + domID + '"]');
-        removeBtn.onclick = editor._bindEvtRemoveComponent;
-
-        UserInterfaceBuilder.render('canvas', {
-          data: editor.existing_data,
-          trigger: 'user'
-        });
-
-        editor.updateData();
-        editor.togglePageButtons();
-      }
-    });
-  },
-  _bindEvtSelectionDropdown: function() {
-    const
-      selectedStyle = this.value,
-      targetSnippetContainer = this.getAttribute('data-target'),
-      blockquote = document.getElementById(targetSnippetContainer).firstElementChild;
-
-    blockquote.className = 'sf-blockquote';
-    blockquote.classList.add('sf-blockquote-' + selectedStyle);
-  },
-  _bindEvtHeaderInput: function() {
-    if (this.textContent == '') this.textContent = 'Click here to edit heading';
-  },
-  _bindEvtRemoveComponent: function() {
-    const
-      id = this.getAttribute('data-target'),
-      container = document.getElementById('canvasContainer'),
-      targetElem = document.getElementById(id),
-      toolbox = document.getElementById('toolbox');
-    
-    toolbox.classList.remove('in');
-    toolbox.style.display = 'block';
-    container.appendChild(toolbox);
-    targetElem.remove();
-
-    editor.updateData();
-
-    if (editor.existing_data.length === 0) {
-      UserInterfaceBuilder.render('canvas', {
-        data: editor.existing_data,
-        trigger: 'user'
-      });
-
-      container.querySelector('[data-action="select-component"]').onclick = editor._bindEvtDisplayToolbox;
-    }
-  },
-  _bindEvtEditTabs: function () {
-    const snippetContainer = document.getElementById(this.getAttribute('data-target'));
-    if (!this.classList.contains('canvas-btn-primary')) {
-      this.textContent = 'Save';
-      this.classList.add('canvas-btn-primary');
-      editor.btnSave.disabled = true;
-      editor.btnPreview.disabled = true;
-      snippetContainer.querySelectorAll('.sf-tab-item-link').forEach((element, index) => {
-        element.contentEditable = true;
-        element.parentElement.classList.add('edit-mode');
-
-        if (index == 0) {
-          let t;
-          element.focus();
-
-          t = setTimeout(() => {
-            document.execCommand('selectAll', false, null);
-            clearTimeout(t);
-          }, 50);
-        }
-
-        if (element.parentElement.parentElement.children.length > 2) {
-          element.parentElement
-            .insertAdjacentHTML('afterbegin', '<button type="button" class="canvas-btn canvas-btn-delete"><span>×</span></button>');
-
-          element.parentElement.querySelector('.canvas-btn-delete').onclick = function () {
-            const
-              targetTabIdToBeDeleted = this.nextElementSibling.id.split('target_')[1],
-              tabLength = this.parentElement.parentElement.children.length,
-              prevSibling = this.parentElement.previousElementSibling;
-
-            document.getElementById(targetTabIdToBeDeleted).remove();
-
-            if (tabLength > 2) this.parentElement.remove();
-            if (tabLength == 3) {
-              document.querySelectorAll('.canvas-btn-delete').forEach(element => {
-                element.remove();
-              });
-            }
-            if (this.parentElement.classList.contains('active') &&
-              this.parentElement.nextElementSibling == null) prevSibling.querySelector('.sf-tab-item-link').click();
-
-            editor.updateData();
-          }; 
-        }
-      }); 
-    }
-    else {
-      this.textContent = 'Edit Tabs';
-      this.classList.remove('canvas-btn-primary');
-      editor.btnSave.disabled = false;
-      editor.btnPreview.disabled = false;
-      snippetContainer.querySelectorAll('.sf-tab-item-link').forEach((element, index) => {
-        element.contentEditable = false;
-        element.removeAttribute('contentEditable');
-        element.parentElement.classList.remove('edit-mode');
-
-        if (element.previousElementSibling !== null) element.previousElementSibling.remove();
-      });
-    }
   },
   togglePageButtons: () => {
     editor.btnPreview.style.display = editor.existing_data.length == 0 ? 'none' : 'initial';
@@ -355,11 +158,7 @@ const editor = {
       animation: 300,
       easing: 'cubic-bezier(1, 0, 0, 1)',
       handle: config.contentDraggableClass,
-      direction: 'vertical',
-      onUpdate: function () {
-        // editor.updateData();
-        console.log('list updated');
-      }
+      direction: 'vertical'
     };
     
     new Sortable(config.container, sortableConfig);
@@ -388,59 +187,7 @@ const editor = {
     tinymce.init(tinymceConfig);
   },
   updateData: () => {
-    let arr = [];
-    const snptCssClass = '.canvas-content-snippet';
 
-    document.querySelectorAll('#canvasContainer > .canvas-content-block').forEach(element => {
-      const type = GetComponentType(element.querySelector(snptCssClass));
-      let data = { id: element.id, type: type, metadata: { html: '' } };
-      let queriedElement;
-
-      // If component is a tab or accordion
-      if (ContentBlocks.elems[type].hasChildContent) {
-        const
-          clonedElement = element.cloneNode(true),
-          tabContent = clonedElement.querySelectorAll('.sf-tab-content');
-
-        const content = (tab) => {
-          const tmpContentArr = [];
-          let mhtml = '';
-          tab.querySelectorAll('[data-component-type]').forEach(content => {
-            const tmpData = {
-              id: content.id.split('snippet-')[1],
-              type: GetComponentType(content),
-              metadata: { html: SanitiseSubContentBlock(content) }
-            };
-            mhtml += tmpData.metadata.html;
-            tmpContentArr.push(tmpData);
-          });
-
-          tab.innerHTML = mhtml;
-          return tmpContentArr;
-        };
-
-        data.metadata['subnodes'] = [];
-        tabContent.forEach(tab => { 
-          data.metadata['subnodes'].push({
-            label: document.getElementById('target_' + tab.id).textContent,
-            id: tab.id,
-            content: tab.firstElementChild === null ? [] : content(tab)
-          });          
-        });
-        
-        queriedElement = clonedElement.querySelector(snptCssClass);
-        clonedElement.remove();
-      }
-      else {
-        queriedElement = element.querySelector(snptCssClass);
-      }
-
-      data.metadata.html = NormaliseHTMLString(queriedElement.innerHTML);
-
-      arr.push(data);
-    });
-    
-    editor.existing_data = arr;
   },
   html_view: function() {
     const view = this.value;
@@ -514,5 +261,4 @@ const editor = {
   }
 };
 
-// editortest.test();
 editor.run();

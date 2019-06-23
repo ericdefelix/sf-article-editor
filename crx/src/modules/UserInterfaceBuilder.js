@@ -104,7 +104,18 @@ const UserInterfaceBuilder = {
     UserInterfaceBuilder.container.insertAdjacentHTML('afterbegin', EmptyStateTemplate(UserInterfaceBuilder.container.id));
   },
   renderExistingData: (data) => {
-    UserInterfaceBuilder.mutations.componentCount = data.length;
+    // TODO
+    const test = `<div class="sf-editor-content"><p>This is a test. The quick brown fox</p></div>`;
+    const
+      componentType = 'TextContent',
+      component = new Components[componentType],
+      componentTemplate = component.render(test);
+    
+    document.getElementById('canvasContainer').insertAdjacentHTML('beforeend', componentTemplate);
+    // UserInterfaceBuilder.mutations.componentCount = data.length;
+  },
+  renderTo: () => {
+
   },
   _evtAddComponent: function () {
     const

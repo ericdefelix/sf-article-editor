@@ -6,6 +6,9 @@ import {
 
 export const InfoLabel = 'Info';
 
+export function ParseHTML(str) {
+  return str.includes('sf-info') ? 'Info' : '';
+}
 export default class Info {
   constructor() {
     this.id = GenerateID();
@@ -39,3 +42,7 @@ export default class Info {
     return typeof existingHTML === 'undefined' ? defaultTemplate : existingHTML;
   }
 };
+
+// _bindEvtHeaderInput: function() {
+//   if (this.textContent == '') this.textContent = 'Click here to edit heading';
+// },

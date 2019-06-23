@@ -6,6 +6,10 @@ import {
 
 export const TipsLabel = 'Tips';
 
+export function ParseHTML(str) {
+  return 'Tips';
+}
+
 export default class Tips {
   constructor() {
     this.id = GenerateID();
@@ -69,3 +73,17 @@ export default class Tips {
 
   }
 };
+
+// _bindEvtSelectionDropdown: function() {
+//   const
+//     selectedStyle = this.value,
+//     targetSnippetContainer = this.getAttribute('data-target'),
+//     blockquote = document.getElementById(targetSnippetContainer).firstElementChild;
+
+//   blockquote.className = 'sf-blockquote';
+//   blockquote.classList.add('sf-blockquote-' + selectedStyle);
+// },
+
+// _bindEvtHeaderInput: function() {
+//   if (this.textContent == '') this.textContent = 'Click here to edit heading';
+// },

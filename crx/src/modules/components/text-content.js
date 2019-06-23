@@ -6,6 +6,10 @@ import {
 
 export const TextContentLabel = 'Text';
 
+export function ParseHTML(str) {
+  return str.includes('sf-editor-content') ? 'TextContent' : '';
+}
+
 export default class TextContent {
   constructor() {
     this.id = GenerateID();
@@ -28,8 +32,6 @@ export default class TextContent {
 
     return ContentBlockTemplate(params);
   }
-  
-  
 
   template() {
     const defaultTemplate = `<div class="sf-editor-content"><p>Click to edit content</p></div>`;

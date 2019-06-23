@@ -7,6 +7,10 @@ import {
 
 export const AccordionLabel = 'Accordion';
 
+export function ParseHTML(str) {
+  return 'Accordion';
+}
+
 export default class Accordion {
   constructor() {
     this.id = GenerateID();

@@ -1,9 +1,9 @@
-import TextContent, { TextContentLabel } from './text-content';
-import Info, { InfoLabel } from './info';
-import Tips, { TipsLabel } from './tips';
-import StyledLists, { StyledListsLabel } from './styled-lists';
-import Tabs, { TabsLabel } from './tabs';
-import Accordion, { AccordionLabel } from './accordion';
+import TextContent, { TextContentLabel, ParseHTML as TextContentParser } from './text-content';
+import Info, { InfoLabel, ParseHTML as InfoParser } from './info';
+import Tips, { TipsLabel, ParseHTML as TipsParser } from './tips';
+import StyledLists, { StyledListsLabel, ParseHTML as StyledListsParser } from './styled-lists';
+import Tabs, { TabsLabel, ParseHTML as TabsParser } from './tabs';
+import Accordion, { AccordionLabel, ParseHTML as AccordionParser } from './accordion';
 
 const ComponentTypes = {
   [TextContent.name]: TextContentLabel,
@@ -21,5 +21,13 @@ const Components = {
   Tabs,
   Accordion
 };
+const ComponentParser = {
+  TextContentParser,
+  InfoParser,
+  // TipsParser,
+  // StyledListsParser,
+  // TabsParser,
+  // AccordionParser
+};
 
-export { ComponentTypes, Components };
+export { ComponentTypes, Components, ComponentParser };

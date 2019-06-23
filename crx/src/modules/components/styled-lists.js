@@ -6,6 +6,10 @@ import {
 
 export const StyledListsLabel = 'Numbering';
 
+export function ParseHTML(str) {
+  return 'StyledLists';
+}
+
 export default class StyledLists {
   constructor() {
     this.id = GenerateID();
