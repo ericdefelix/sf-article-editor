@@ -1,4 +1,5 @@
-import { EmptyStateTemplate, GetClosestParent } from './utils/chromeExtensionUtils';
+import { GetClosestParent } from './utils/chromeExtensionUtils';
+import { EmptyStateTemplate } from './utils/interfaceTemplates';
 import { Components, ComponentTypes } from './components/components';
 
 const Toolbox = {

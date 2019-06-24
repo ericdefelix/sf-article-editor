@@ -1,9 +1,5 @@
-import {
-  GenerateID,
-  ContentBlockTemplate,
-  AddContentBlockBtnTemplate,
-  TinyMCEHelper
-} from '../utils/chromeExtensionUtils';
+import { GenerateID, TinyMCEHelper } from '../utils/chromeExtensionUtils';
+import { ContentBlockTemplate, AddContentBlockBtnTemplate } from '../utils/interfaceTemplates';
 
 export const InfoLabel = 'Info';
 

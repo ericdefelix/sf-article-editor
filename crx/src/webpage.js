@@ -6,7 +6,8 @@
 // CKEDITOR object from Window
 // =================================================================================
 
-import { NewBtnTemplateCKEDITOR, UrlContainsArticleEdit, GetClosestParent } from '/modules/utils/chromeExtensionUtils.js';
+import { UrlContainsArticleEdit, GetClosestParent } from '/modules/utils/chromeExtensionUtils.js';
+import { NewBtnTemplateCKEDITOR } from './modules/utils/interfaceTemplates';
 
 const webpage = {
 	image_gallery: '',

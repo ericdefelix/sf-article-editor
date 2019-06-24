@@ -1,9 +1,5 @@
-import {
-  GenerateID,
-  GenerateTabID,
-  ContentBlockTemplate,
-  AddContentBlockBtnTemplate
-} from '../utils/chromeExtensionUtils';
+import { GenerateID, GenerateTabID } from '../utils/chromeExtensionUtils';
+import { ContentBlockTemplate, AddContentBlockBtnTemplate } from '../utils/interfaceTemplates';
 
 export const AccordionLabel = 'Accordion';
 
