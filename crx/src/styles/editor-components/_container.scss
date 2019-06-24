@@ -247,6 +247,15 @@
   }
 }
 
+.subcontent-action-hotspot {
+  width: 20rem;
+  position: relative;
+
+  .toolbox.in:after {
+    left: 10% !important;
+  }
+}
+
 .canvas-btn {
 	@include button();
 	@include button-config-color($light-grey);

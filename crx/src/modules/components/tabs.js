@@ -1,5 +1,5 @@
 import { GenerateID, GenerateTabID } from '../utils/chromeExtensionUtils';
-import { ContentBlockTemplate, AddContentBlockBtnTemplate } from '../utils/interfaceTemplates';
+import { ContentBlockTemplate, AddContentBlockBtnTemplate, AddSubContentBlockBtnTemplate } from '../utils/interfaceTemplates';
 
 export const TabsLabel = 'Tabs';
 
@@ -62,7 +62,7 @@ export default class Tabs {
     <div class="sf-tabs">
       <div class="sf-tabs-bar"><ul class="sf-tab-nav">${navTabItems}</ul></div>
       ${navTabSections}
-      ${ AddContentBlockBtnTemplate() }
+      ${ AddSubContentBlockBtnTemplate() }
     </div>`;
 
     return defaultTemplate;
