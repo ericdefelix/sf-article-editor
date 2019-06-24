@@ -24,10 +24,10 @@ const Components = {
 const ComponentParser = {
   TextContentParser,
   InfoParser,
-  // TipsParser,
-  // StyledListsParser,
-  // TabsParser,
-  // AccordionParser
+  TipsParser,
+  StyledListsParser,
+  TabsParser,
+  AccordionParser
 };
 
 export { ComponentTypes, Components, ComponentParser };

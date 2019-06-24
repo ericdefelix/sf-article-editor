@@ -8,7 +8,7 @@ import {
 export const TabsLabel = 'Tabs';
 
 export function ParseHTML(str) {
-  return 'Tabs';
+  return str.includes('sf-tabs') ? 'Tabs' : '';
 }
 
 export default class Tabs {
@@ -76,6 +76,17 @@ export default class Tabs {
 
   removeTab() {
 
+  }
+
+  updateDOM(HTMLObject) {
+
+    try {
+      console.log(HTMLObject);
+
+    } catch (error) {
+      console.log('NO HTML Object to attached to');
+
+    }
   }
 }
 

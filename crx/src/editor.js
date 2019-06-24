@@ -1,15 +1,7 @@
 import './editor.scss';
-import {
-  GenerateID,
-  NormaliseHTMLString,
-  SanitiseSubContentBlock,
-  GetComponentType
-} from './modules/utils/chromeExtensionUtils';
 import { dataParser } from './modules/utils/dataParser';
-import ContentBlocks from './modules/ContentBlocks';
 import UserInterfaceBuilder from './modules/UserInterfaceBuilder';
 import Sortable from '../node_modules/sortablejs/Sortable.min';
-import ImageGallery from './modules/ImageGallery';
 import { imageGalleryMockData, htmlMockData } from './modules/utils/mockData';
 
 
@@ -94,59 +86,6 @@ const editor = {
     editor.btnPreview.style.display = editor.existing_data.length == 0 ? 'none' : 'initial';
     editor.btnSave.style.display = editor.existing_data.length == 0 ? 'none' : 'initial';
   },
-  // handleEditEventsToDOM: (domID, targetComponentPointer) => {
-  //   let contentEditorContainerID;
-  //   const targetSnippetContainer = document.getElementById('snippet-' + domID);
-  //   const contentEditorBindToElem = ContentBlocks.elems[targetComponentPointer].contentEditorBindToElem;
-
-  //   const attachAttributesForCKEDITOR = (id, headerClass, bodyClass) => {
-  //     const targetContentHeading = document.querySelector('#snippet-' + id + ' .' + headerClass),
-  //         targetContentBody = document.querySelector('#snippet-' + id + ' .' + bodyClass);
-
-  //     targetContentHeading.contentEditable = true;
-  //     targetContentBody.contentEditable = true;
-
-  //     targetContentHeading.onblur = editor._bindEvtHeaderInput;
-  //     targetContentBody.id = 'contentEditableBody-' + id;
-  //   };
-
-  //   if (targetComponentPointer == 'blockQuotes') {
-  //     attachAttributesForCKEDITOR(domID, 'sf-blockquote-content-header', 'sf-blockquote-content-body', editor._bindEvtHeaderInput);
-  //     document.querySelector('[data-target="snippet-' + domID + '"]').onchange = editor._bindEvtSelectionDropdown;
-  //   }
-
-  //   if (targetComponentPointer == 'wellContainer') {
-  //     attachAttributesForCKEDITOR(domID, 'sf-well-heading', 'sf-well-body', editor._bindEvtHeaderInput);
-  //   }
-
-  //   if (targetComponentPointer == 'genericTabs') {
-  //     const targetTabContent = targetSnippetContainer.querySelectorAll('.sf-tab-content');
-
-  //     targetTabContent.forEach(function(targtTab, y) {
-  //       const targetTabID = targtTab.getAttribute('id');
-        
-  //       editor.init_sortable({
-  //         container: document.getElementById(targetTabID),
-  //         contentDraggableClass: '.canvasDraggableSub_' + targetTabID
-  //       });
-  //     });
-
-  //     document.querySelector('[data-target="snippet-' + domID + '"]').onclick = editor._bindEvtEditTabs;
-  //   }
-
-  //   if (targetComponentPointer == 'styledLists' || targetComponentPointer == 'textEditor') {
-  //     targetSnippetContainer.contentEditable = true;
-  //   }
-
-  //   if (contentEditorBindToElem !== 'none') {
-  //     const contentEditorContainerID = contentEditorBindToElem == 'content' ? 'contentEditableBody-' + domID : 'snippet-' + domID;
-  //     editor.init_contentEditor({
-  //       container: contentEditorContainerID,
-  //       value: ContentBlocks.elems[targetComponentPointer].template(),
-  //       config: ContentBlocks.elems[targetComponentPointer].contentEditorConfig
-  //     });
-  //   }
-  // },
   init_sortable: (config) => {
     const sortableConfig = {
       sort: true,
@@ -262,3 +201,57 @@ const editor = {
 };
 
 editor.run();
+
+  // handleEditEventsToDOM: (domID, targetComponentPointer) => {
+  //   let contentEditorContainerID;
+  //   const targetSnippetContainer = document.getElementById('snippet-' + domID);
+  //   const contentEditorBindToElem = ContentBlocks.elems[targetComponentPointer].contentEditorBindToElem;
+
+  //   const attachAttributesForCKEDITOR = (id, headerClass, bodyClass) => {
+  //     const targetContentHeading = document.querySelector('#snippet-' + id + ' .' + headerClass),
+  //         targetContentBody = document.querySelector('#snippet-' + id + ' .' + bodyClass);
+
+  //     targetContentHeading.contentEditable = true;
+  //     targetContentBody.contentEditable = true;
+
+  //     targetContentHeading.onblur = editor._bindEvtHeaderInput;
+  //     targetContentBody.id = 'contentEditableBody-' + id;
+  //   };
+
+  //   if (targetComponentPointer == 'blockQuotes') {
+  //     attachAttributesForCKEDITOR(domID, 'sf-blockquote-content-header', 'sf-blockquote-content-body', editor._bindEvtHeaderInput);
+  //     document.querySelector('[data-target="snippet-' + domID + '"]').onchange = editor._bindEvtSelectionDropdown;
+  //   }
+
+  //   if (targetComponentPointer == 'wellContainer') {
+  //     attachAttributesForCKEDITOR(domID, 'sf-well-heading', 'sf-well-body', editor._bindEvtHeaderInput);
+  //   }
+
+  //   if (targetComponentPointer == 'genericTabs') {
+  //     const targetTabContent = targetSnippetContainer.querySelectorAll('.sf-tab-content');
+
+  //     targetTabContent.forEach(function(targtTab, y) {
+  //       const targetTabID = targtTab.getAttribute('id');
+
+  //       editor.init_sortable({
+  //         container: document.getElementById(targetTabID),
+  //         contentDraggableClass: '.canvasDraggableSub_' + targetTabID
+  //       });
+  //     });
+
+  //     document.querySelector('[data-target="snippet-' + domID + '"]').onclick = editor._bindEvtEditTabs;
+  //   }
+
+  //   if (targetComponentPointer == 'styledLists' || targetComponentPointer == 'textEditor') {
+  //     targetSnippetContainer.contentEditable = true;
+  //   }
+
+  //   if (contentEditorBindToElem !== 'none') {
+  //     const contentEditorContainerID = contentEditorBindToElem == 'content' ? 'contentEditableBody-' + domID : 'snippet-' + domID;
+  //     editor.init_contentEditor({
+  //       container: contentEditorContainerID,
+  //       value: ContentBlocks.elems[targetComponentPointer].template(),
+  //       config: ContentBlocks.elems[targetComponentPointer].contentEditorConfig
+  //     });
+  //   }
+  // },

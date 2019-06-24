@@ -161,3 +161,27 @@ export function UnwrapElement(wrapper) {
 	// replace wrapper with document fragment
 	wrapper.parentNode.replaceChild(docFrag, wrapper);
 }
+
+export function TinyMCEHelper(contentEditorAppConfig) {
+	let tinymceConfig = {
+		selector: '#' + contentEditorAppConfig.container,  // change this value according to your HTML
+		inline: true,
+		menubar: false,
+		default_link_target: "_blank"
+	};
+
+	tinymceConfig['toolbar'] = contentEditorAppConfig.config.toolbar;
+	tinymceConfig['plugins'] = contentEditorAppConfig.config.plugins;
+	
+	if (contentEditorAppConfig.config.toolbar.indexOf('image') !== -1) {
+		tinymceConfig['image_title'] = true;
+		tinymceConfig['automatic_uploads'] = true;
+		tinymceConfig['paste_data_images '] = true;
+		tinymceConfig['file_picker_types'] = 'image';
+		tinymceConfig['file_picker_callback'] = function (cb, value, meta) {
+			ImageGallery.run(editor.image_gallery);
+		};
+	}
+
+	return tinymceConfig;
+}

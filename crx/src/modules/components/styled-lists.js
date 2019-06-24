@@ -7,7 +7,7 @@ import {
 export const StyledListsLabel = 'Numbering';
 
 export function ParseHTML(str) {
-  return 'StyledLists';
+  return str.includes('sf-list-bullet-circular') ? 'StyledLists' : '';
 }
 
 export default class StyledLists {
@@ -42,5 +42,16 @@ export default class StyledLists {
     </ol>`;
 
     return typeof existingHTML === 'undefined' ? defaultTemplate : existingHTML;
+  }
+
+  updateDOM(HTMLObject) {
+
+    try {
+      console.log(HTMLObject);
+
+    } catch (error) {
+      console.log('NO HTML Object to attached to');
+
+    }
   }
 };

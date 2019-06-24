@@ -1,7 +1,5 @@
 import { ComponentParser } from '../components/components';
 
-console.log(ComponentParser);
-
 export function dataParser(childNodes) {
   const
     temp = [],
@@ -27,10 +25,10 @@ export function dataParser(childNodes) {
   temp.forEach((item, index) => {
     // If editor comp
     if (item.html.includes('<div class="sf-', 0)) {
+      // TODO: 
       // if (index > 1 && temp[index].html.includes('<div class="sf-editor', 0)) {
       //   console.log(item.html);
       // }
-// TODO: 
       if (obj !== null) {
         obj.html = `<div class="sf-editor-content">${obj.html}</div>`;
         obj = null;
@@ -49,8 +47,16 @@ export function dataParser(childNodes) {
 
   return temp.filter((item) => {
     item.type = (() => {
-      return ComponentParser['TextContentParser'].parseHTML(item.html);
-    });
+      let type = '';
+
+      for (const key in ComponentParser) {
+        if (ComponentParser[key](item.html) !== '') {
+          type = ComponentParser[key](item.html);
+          break;
+        }
+      }
+      return type;
+    })();
 
     return item.html !== '';
   });

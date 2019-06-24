@@ -1,7 +1,7 @@
 import {
   GenerateID,
   ContentBlockTemplate,
-  AddContentBlockBtnTemplate
+  AddContentBlockBtnTemplate,
 } from '../utils/chromeExtensionUtils';
 
 export const InfoLabel = 'Info';
@@ -40,6 +40,17 @@ export default class Info {
     </div>`;
   
     return typeof existingHTML === 'undefined' ? defaultTemplate : existingHTML;
+  }
+
+  updateDOM(HTMLObject) {
+    try {
+
+      console.log(HTMLObject);
+
+    } catch (error) {
+      console.log('NO HTML Object to attached to');
+
+    }
   }
 };
 

@@ -8,7 +8,7 @@ import {
 export const AccordionLabel = 'Accordion';
 
 export function ParseHTML(str) {
-  return 'Accordion';
+  return str.includes('sf-accordion') ? 'Accordion' : '';
 }
 
 export default class Accordion {
@@ -70,5 +70,16 @@ export default class Accordion {
 
   removeAccordion() {
 
+  }
+
+  updateDOM(HTMLObject) {
+
+    try {
+      console.log(HTMLObject);
+
+    } catch (error) {
+      console.log('NO HTML Object to attached to');
+
+    }
   }
 };

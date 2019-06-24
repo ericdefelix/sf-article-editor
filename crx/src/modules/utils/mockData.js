@@ -62,7 +62,11 @@ export const imageGalleryMockData = [
 ];
 
 
-export const htmlMockData = `              
+export const htmlMockData = `         
+    <div class="sf-editor-content">
+      <p>This is a test. The quick brown fox</p>
+    </div>
+
     <div class="sf-blockquote sf-blockquote-tip">
       <div class="sf-blockquote-addon">&nbsp;</div>
 

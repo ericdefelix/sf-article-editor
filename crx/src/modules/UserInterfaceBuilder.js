@@ -45,33 +45,37 @@ const UserInterfaceBuilder = {
   container: null,
   deletedNode: null,
   addedNode: null,
+  elementCount: 0,
   elements: {},
   init: (container, params) => {
     UserInterfaceBuilder.container = container;
+
+    // Attach mutation observer
+    UserInterfaceBuilder.observe();
 
     // If data is empty emptyStateTemplate, if not renderExistingData
     params.data.length === 0 ?
       UserInterfaceBuilder.renderEmptyState() :
       UserInterfaceBuilder.renderExistingData(params.data);
-
-    // Attach mutation observer
-    UserInterfaceBuilder.observe();
     Toolbox.init();
   },
-  subscriber: (mutations) => {
-    const addedNode = mutations[0].addedNodes;
-    const deletedNode = mutations[0].removedNodes;
+  subscriber: (mutations) => {    
     const emptyStateContainer = document.querySelector('[data-content="empty"]');
     const canvasContainer = document.getElementById('canvasContainer');
     
-    if (addedNode.length !== 0) {
-      for (let index = 0; index < addedNode.length; index++) {
-        const element = addedNode[index];
 
-        if (element.getAttribute('data-content') !== 'empty') {
-          element.querySelector('[data-action="remove-component"]').onclick = UserInterfaceBuilder._evtRemoveComponent;
-          element.querySelector('[data-action="select-component"]').onclick = Toolbox.display;          
-        }
+    console.log(mutations);
+    
+    if (mutations.length !== 0) {
+      if (mutations[0].addedNodes.length !== 0) {
+        for (let index = 0; index < mutations.length; index++) {
+          const element = mutations[index].addedNodes[0];
+          UserInterfaceBuilder.addedNode = element;
+          if (element.getAttribute('data-content') !== 'empty') {
+            element.querySelector('[data-action="remove-component"]').onclick = UserInterfaceBuilder._evtRemoveComponent;
+            element.querySelector('[data-action="select-component"]').onclick = Toolbox.display;
+          }
+        } 
       }
 
       Toolbox.hide();
@@ -104,15 +108,21 @@ const UserInterfaceBuilder = {
     UserInterfaceBuilder.container.insertAdjacentHTML('afterbegin', EmptyStateTemplate(UserInterfaceBuilder.container.id));
   },
   renderExistingData: (data) => {
-    // TODO
-    const test = `<div class="sf-editor-content"><p>This is a test. The quick brown fox</p></div>`;
-    const
-      componentType = 'TextContent',
-      component = new Components[componentType],
-      componentTemplate = component.render(test);
+    UserInterfaceBuilder.elementCount = data.length;
     
-    document.getElementById('canvasContainer').insertAdjacentHTML('beforeend', componentTemplate);
-    // UserInterfaceBuilder.mutations.componentCount = data.length;
+
+    data.forEach((item) => {
+      // Create a component instance
+      const component = new Components[item.type];
+      const componentTemplate = component.render(item.html);
+
+      // Attach to DOM
+      document.getElementById('canvasContainer').insertAdjacentHTML('beforeend', componentTemplate);
+
+      // Apply Events and Behavior
+      const appendedChild = document.getElementById('canvasContainer').lastElementChild;
+      component.updateDOM(appendedChild);
+    });
   },
   renderTo: () => {
 
@@ -127,6 +137,7 @@ const UserInterfaceBuilder = {
     document.getElementById(containerID).insertAdjacentHTML('beforeend', componentTemplate);
   },
   _evtRemoveComponent: function () {
+    Toolbox.hide();
     const targetContainerID = this.getAttribute('data-target');
     document.getElementById(targetContainerID).remove();
   },

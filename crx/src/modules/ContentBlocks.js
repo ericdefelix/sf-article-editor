@@ -21,10 +21,6 @@ const ContentWithHeaderBodyTextConfig = {
 };
 
 const ContentBlocks = {
-	components: {
-		TextContent
-		// Accordion, StyledLists, TextContent, Tips, Info
-	},
 	elems: {
 		'textEditor' : {
 			ui_label: 'Text',

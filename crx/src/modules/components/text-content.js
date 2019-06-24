@@ -1,7 +1,8 @@
 import {
   GenerateID,
   ContentBlockTemplate,
-  AddContentBlockBtnTemplate
+  AddContentBlockBtnTemplate,
+  TinyMCEHelper
 } from '../utils/chromeExtensionUtils';
 
 export const TextContentLabel = 'Text';
@@ -31,6 +32,21 @@ export default class TextContent {
     };
 
     return ContentBlockTemplate(params);
+  }
+
+  updateDOM(HTMLObject) {
+
+    try {
+      const contentEditorAppConfig = {
+        container: `snippet-${HTMLObject.id}`,
+        config: this.contentEditorConfig
+      };
+      
+      tinymce.init(TinyMCEHelper(contentEditorAppConfig));
+    } catch (error) {
+      console.log('Update DOM is not defined properly');
+      
+    }
   }
 
   template() {

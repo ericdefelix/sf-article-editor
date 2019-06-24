@@ -7,7 +7,7 @@ import {
 export const TipsLabel = 'Tips';
 
 export function ParseHTML(str) {
-  return 'Tips';
+  return str.includes('sf-blockquote') ? 'Tips' : '';
 }
 
 export default class Tips {
@@ -71,6 +71,17 @@ export default class Tips {
 
   parse() {
 
+  }
+
+  updateDOM(HTMLObject) {
+
+    try {
+      // console.log(HTMLObject);
+
+    } catch (error) {
+      console.log('NO HTML Object to attached to');
+
+    }
   }
 };
 
