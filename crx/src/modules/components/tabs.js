@@ -22,13 +22,14 @@ export default class Tabs {
   }
 
   render(html) {
+    const toBeParsedHTML = typeof html === 'undefined' ? this.template() : html;
     const params = {
       id: this.id,
       type: this.name,
       controlsTemplate: '',
       draggableClass: 'canvasDraggableMain',
-      componentTemplate: this.template(html),
-      addTemplate: AddContentBlockBtnTemplate()
+      componentTemplate: toBeParsedHTML,
+      addTemplate: AddContentBlockBtnTemplate(this.id)
     };
 
     return ContentBlockTemplate(params);
@@ -50,7 +51,7 @@ export default class Tabs {
     return template;
   }
 
-  template(existingHTML) {
+  template() {
     let navTabItems = ``, navTabSections = ``;
 
     for (let i = 0; i < this.tabCountMin; i++) {

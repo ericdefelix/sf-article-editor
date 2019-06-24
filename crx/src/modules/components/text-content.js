@@ -35,17 +35,15 @@ export default class TextContent {
   }
 
   updateDOM(HTMLObject) {
-
     try {
       const contentEditorAppConfig = {
-        container: `snippet-${HTMLObject.id}`,
+        container: `#snippet-${HTMLObject.id}`,
         config: this.contentEditorConfig
       };
       
       tinymce.init(TinyMCEHelper(contentEditorAppConfig));
     } catch (error) {
       console.log('Update DOM is not defined properly');
-      
     }
   }
 

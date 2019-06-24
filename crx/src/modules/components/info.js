@@ -2,6 +2,7 @@ import {
   GenerateID,
   ContentBlockTemplate,
   AddContentBlockBtnTemplate,
+  TinyMCEHelper
 } from '../utils/chromeExtensionUtils';
 
 export const InfoLabel = 'Info';
@@ -21,39 +22,51 @@ export default class Info {
   }
 
   render(html) {
+    const toBeParsedHTML = typeof html === 'undefined' ? this.template() : html;
     const params = {
       id: this.id,
       type: this.name,
       controlsTemplate: '',
       draggableClass: 'canvasDraggableMain',
-      componentTemplate: this.template(html),
-      addTemplate: AddContentBlockBtnTemplate()
+      componentTemplate: toBeParsedHTML,
+      addTemplate: AddContentBlockBtnTemplate(this.id)
     };
 
     return ContentBlockTemplate(params);
   }
 
-  template(existingHTML) {
-    let defaultTemplate = `
-    <div class="sf-well"><h5 class="sf-well-heading">Click here to edit heading</h5>
+  updateDOM(HTMLObject) {
+    try {
+      let
+        contentEditorAppConfig,
+        heading;
+
+      contentEditorAppConfig = {
+        container: `#snippet-${HTMLObject.id} .sf-well-body`,
+        config: this.contentEditorConfig
+      };
+
+      tinymce.init(TinyMCEHelper(contentEditorAppConfig));
+
+      heading = HTMLObject.querySelector('.sf-well-heading');
+      heading.contentEditable = true;
+      heading.onblur = this._bindEvtHeaderInput;
+    } catch (error) {
+      console.log(error);
+      console.log('NO HTML Object to attached to');
+    }
+  }
+
+  _bindEvtHeaderInput() {
+    if (this.textContent == '') this.textContent = 'Click to edit heading';
+  }
+
+  template() {
+    const defaultTemplate = `
+    <div class="sf-well"><h5 class="sf-well-heading">Click to edit heading</h5>
 			<div class="sf-well-body">Click here to edit/paste content</div>
     </div>`;
   
-    return typeof existingHTML === 'undefined' ? defaultTemplate : existingHTML;
-  }
-
-  updateDOM(HTMLObject) {
-    try {
-
-      console.log(HTMLObject);
-
-    } catch (error) {
-      console.log('NO HTML Object to attached to');
-
-    }
+    return defaultTemplate;
   }
 };
-
-// _bindEvtHeaderInput: function() {
-//   if (this.textContent == '') this.textContent = 'Click here to edit heading';
-// },

@@ -1,7 +1,8 @@
 import {
   GenerateID,
   ContentBlockTemplate,
-  AddContentBlockBtnTemplate
+  AddContentBlockBtnTemplate,
+  TinyMCEHelper
 } from '../utils/chromeExtensionUtils';
 
 export const StyledListsLabel = 'Numbering';
@@ -22,36 +23,39 @@ export default class StyledLists {
   }
 
   render(html) {
+    const toBeParsedHTML = typeof html === 'undefined' ? this.template() : html;
     const params = {
       id: this.id,
       type: this.name,
       controlsTemplate: '',
       draggableClass: 'canvasDraggableMain',
-      componentTemplate: this.template(html),
-      addTemplate: AddContentBlockBtnTemplate()
+      componentTemplate: toBeParsedHTML,
+      addTemplate: AddContentBlockBtnTemplate(this.id)
     };
 
     return ContentBlockTemplate(params);
   }
 
-  template(existingHTML) {
-    let defaultTemplate = `
+  updateDOM(HTMLObject) {
+    try {
+      const contentEditorAppConfig = {
+        container: `#snippet-${HTMLObject.id}`,
+        config: this.contentEditorConfig
+      };
+
+      tinymce.init(TinyMCEHelper(contentEditorAppConfig));
+    } catch (error) {
+      console.log('NO HTML Object to attached to');
+    }
+  }
+
+  template() {
+    const defaultTemplate = `
     <ol class="sf-list-bullet-circular">
       <li>Click here to start editing list</li>
       <li>Or paste content here.</li>
     </ol>`;
 
-    return typeof existingHTML === 'undefined' ? defaultTemplate : existingHTML;
-  }
-
-  updateDOM(HTMLObject) {
-
-    try {
-      console.log(HTMLObject);
-
-    } catch (error) {
-      console.log('NO HTML Object to attached to');
-
-    }
+    return defaultTemplate;
   }
 };

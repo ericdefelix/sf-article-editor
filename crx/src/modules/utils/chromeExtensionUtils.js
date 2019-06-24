@@ -164,7 +164,7 @@ export function UnwrapElement(wrapper) {
 
 export function TinyMCEHelper(contentEditorAppConfig) {
 	let tinymceConfig = {
-		selector: '#' + contentEditorAppConfig.container,  // change this value according to your HTML
+		selector: contentEditorAppConfig.container,  // change this value according to your HTML
 		inline: true,
 		menubar: false,
 		default_link_target: "_blank"

@@ -35,6 +35,9 @@ const Toolbox = {
     toolbox.style.left = 'calc(50% - ' + (toolbox.offsetWidth / 2 + 4) + 'px)';
     toolbox.classList.contains('in') ? toolbox.classList.remove('in') : toolbox.classList.add('in');
     toolbox.focus();
+
+    // Record which add component button the user is clicking. If yes, append after this button
+    UserInterfaceBuilder.placeholderPointerID = GetClosestParent(this, '.canvas-content-block').id;  
   },
   hide: () => {
     document.getElementById('toolboxPlaceholder').appendChild(document.getElementById('toolbox'));
@@ -46,6 +49,7 @@ const UserInterfaceBuilder = {
   deletedNode: null,
   addedNode: null,
   elementCount: 0,
+  placeholderPointerID: '',
   elements: {},
   init: (container, params) => {
     UserInterfaceBuilder.container = container;
@@ -57,12 +61,12 @@ const UserInterfaceBuilder = {
     params.data.length === 0 ?
       UserInterfaceBuilder.renderEmptyState() :
       UserInterfaceBuilder.renderExistingData(params.data);
+
     Toolbox.init();
   },
   subscriber: (mutations) => {    
     const emptyStateContainer = document.querySelector('[data-content="empty"]');
     const canvasContainer = document.getElementById('canvasContainer');
-    
 
     console.log(mutations);
     
@@ -109,7 +113,6 @@ const UserInterfaceBuilder = {
   },
   renderExistingData: (data) => {
     UserInterfaceBuilder.elementCount = data.length;
-    
 
     data.forEach((item) => {
       // Create a component instance
@@ -124,17 +127,18 @@ const UserInterfaceBuilder = {
       component.updateDOM(appendedChild);
     });
   },
-  renderTo: () => {
-
-  },
   _evtAddComponent: function () {
     const
       componentType = this.getAttribute('data-ui-label'),
-      containerID = GetClosestParent(this,'[data-attached-to]').getAttribute('data-attached-to'),
       component = new Components[componentType],
-      componentTemplate = component.render();
+      componentTemplate = component.render(),
+      targetPreviousElementSibling = document.getElementById(UserInterfaceBuilder.placeholderPointerID);
     
-    document.getElementById(containerID).insertAdjacentHTML('beforeend', componentTemplate);
+    targetPreviousElementSibling.insertAdjacentHTML('afterend', componentTemplate);
+    
+    // Apply Events and Behavior
+    const appendedChild = targetPreviousElementSibling.nextElementSibling;
+    component.updateDOM(appendedChild);
   },
   _evtRemoveComponent: function () {
     Toolbox.hide();
