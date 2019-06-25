@@ -50,7 +50,7 @@ export default class Tabs {
     const template = `
 		<div class="canvas-add-component" >
 			<div class="subcontent-action-hotspot">
-				<button type="button" class="canvas-btn canvas-btn-xs" data-action="select-component">
+				<button type="button" class="canvas-btn canvas-btn-xs" data-action="select-component" data-for="sub">
 					Add content to this tab
 				</button>
 			</div>
