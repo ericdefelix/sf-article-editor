@@ -56,16 +56,3 @@ export function AddContentBlockBtnTemplate(containerID) {
 	`;
   return template;
 }
-
-export function AddSubContentBlockBtnTemplate(containerID) {
-	const template = `
-		<div class="canvas-add-component">
-			<div class="subcontent-action-hotspot">
-				<button type="button" class="canvas-btn canvas-btn-xs" data-action="select-component">
-					Add content to this tab
-				</button>
-			</div>
-		</div>
-	`;
-	return template;
-}

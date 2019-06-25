@@ -1,5 +1,6 @@
-import { GenerateID, GenerateTabID } from '../utils/chromeExtensionUtils';
+import { GenerateID, GenerateTabID, GetClosestParent } from '../utils/chromeExtensionUtils';
 import { ContentBlockTemplate, AddContentBlockBtnTemplate, AddSubContentBlockBtnTemplate } from '../utils/interfaceTemplates';
+import UserInterfaceBuilder from '../UserInterfaceBuilder';
 
 export const TabsLabel = 'Tabs';
 
@@ -41,9 +42,19 @@ export default class Tabs {
 
   tabBodyTemplate(tabID, isActive) {
     const template = `
-    <div class="sf-tab-content${isActive ? ' in' : ''}"
-      id="tab-${ tabID }">
-    </div>`;
+    <div class="sf-tab-content${isActive ? ' in' : ''} " id="tab-${tabID}"></div>`;
+    return template;
+  }
+
+  addSubContentBlockBtnTemplate(containerID) {
+    const template = `
+		<div class="canvas-add-component" >
+			<div class="subcontent-action-hotspot">
+				<button type="button" class="canvas-btn canvas-btn-xs" data-action="select-component">
+					Add content to this tab
+				</button>
+			</div>
+		</div>`;
     return template;
   }
 
@@ -62,7 +73,6 @@ export default class Tabs {
     <div class="sf-tabs">
       <div class="sf-tabs-bar"><ul class="sf-tab-nav">${navTabItems}</ul></div>
       ${navTabSections}
-      ${ AddSubContentBlockBtnTemplate() }
     </div>`;
 
     return defaultTemplate;
@@ -77,13 +87,17 @@ export default class Tabs {
   }
 
   updateDOM(HTMLObject) {
-
     try {
-      console.log(HTMLObject);
+      document
+        .getElementById(`snippet-${HTMLObject.id}`)
+        .insertAdjacentHTML('beforeend', this.addSubContentBlockBtnTemplate());
+
+      // const activeTabID = GetClosestParent(this, '.canvas-content-snippet').querySelector('.sf-tab-content.in').id;
+      // UserInterfaceBuilder.placeholderPointerID = activeTabID;
 
     } catch (error) {
+      console.log(error);
       console.log('NO HTML Object to attached to');
-
     }
   }
 }

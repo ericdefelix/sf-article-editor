@@ -14,6 +14,8 @@ const Toolbox = {
     document.querySelectorAll('[data-action="add-component"]').forEach(btn => {
       btn.onclick = UserInterfaceBuilder._evtAddComponent;
     });
+
+    // document.getElementById('toolbox').onfocusout = UserInterfaceBuilder.hide;
   },
   render: () => {
     let template = `<div class="toolbox" id="toolbox"><ul class="toolbox-toolbar" id="toolbar" tabIndex="-1">`;
@@ -38,7 +40,9 @@ const Toolbox = {
     toolbox.focus();
 
     // Record which add component button the user is clicking. If yes, append after this button
-    UserInterfaceBuilder.placeholderPointerID = GetClosestParent(this, '.canvas-content-block').id;  
+    UserInterfaceBuilder.placeholderPointerID = GetClosestParent(this, '.canvas-content-block').id;
+    console.log(UserInterfaceBuilder.placeholderPointerID);
+
   },
   hide: () => {
     document.getElementById('toolboxPlaceholder').appendChild(document.getElementById('toolbox'));
@@ -50,6 +54,7 @@ const UserInterfaceBuilder = {
   deletedNode: null,
   addedNode: null,
   elementCount: 0,
+  currentContainerID: '',
   placeholderPointerID: '',
   elements: {},
   init: (container, params) => {
@@ -78,7 +83,9 @@ const UserInterfaceBuilder = {
           UserInterfaceBuilder.addedNode = element;
           if (element.getAttribute('data-content') !== 'empty') {
             element.querySelector('[data-action="remove-component"]').onclick = UserInterfaceBuilder._evtRemoveComponent;
-            element.querySelector('[data-action="select-component"]').onclick = Toolbox.display;
+            element.querySelectorAll('[data-action="select-component"]').forEach(btn => {
+              btn.onclick = Toolbox.display;
+            });
           }
         } 
       }
@@ -104,10 +111,12 @@ const UserInterfaceBuilder = {
 
     // observing target
     containerObserver.observe(UserInterfaceBuilder.container, {
-      attributes: true,
+      attributes: false,
       subtree: false,
       childList: true
     });
+
+    // TODO: DC if sorting
   },
   renderEmptyState: () => {
     UserInterfaceBuilder.container.insertAdjacentHTML('afterbegin', EmptyStateTemplate(UserInterfaceBuilder.container.id));
