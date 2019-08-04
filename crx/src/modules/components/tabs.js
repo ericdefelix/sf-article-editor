@@ -11,11 +11,10 @@ export function ParseHTML(str) {
 export default class Tabs {
   constructor() {
     this.id = GenerateID();
-    this.name = this.name;
     this.cssClass = 'sf-tabs';
     this.tabNamePrefix = 'Tab ';
     this.tabCountMin = 5;
-    this.tabCurrentCount = this.tabCountMin;
+    this.tabCurrentCount = this.tabCountMin;    
   }
 
   render(html) {
@@ -42,19 +41,9 @@ export default class Tabs {
 
   tabBodyTemplate(tabID, isActive) {
     const template = `
-    <div class="sf-tab-content${isActive ? ' in' : ''} " id="tab-${tabID}"></div>`;
-    return template;
-  }
-
-  addSubContentBlockBtnTemplate(containerID) {
-    const template = `
-		<div class="canvas-add-component" >
-			<div class="subcontent-action-hotspot">
-				<button type="button" class="canvas-btn canvas-btn-xs" data-action="select-component" data-for="sub">
-					Add content to this tab
-				</button>
-			</div>
-		</div>`;
+    <div class="sf-tab-content${isActive ? ' in' : ''} " id="tab-${tabID}">
+      ${AddSubContentBlockBtnTemplate(tabID)}
+    </div>`;
     return template;
   }
 
@@ -87,14 +76,19 @@ export default class Tabs {
   }
 
   updateDOM(HTMLObject) {
+    console.log(HTMLObject);
+    
     try {
-      document
-        .getElementById(`snippet-${HTMLObject.id}`)
-        .insertAdjacentHTML('beforeend', this.addSubContentBlockBtnTemplate());
-
-      // const activeTabID = GetClosestParent(this, '.canvas-content-snippet').querySelector('.sf-tab-content.in').id;
-      // UserInterfaceBuilder.placeholderPointerID = activeTabID;
-
+      // const snippetContainer = document.getElementById(`snippet-${HTMLObject.id}`);
+      // snippetContainer.insertAdjacentHTML('beforeend', AddSubContentBlockBtnTemplate());
+      
+      // const addSubnodeBtn = HTMLObject.querySelector('[data-node-level="2"]');
+      // addSubnodeBtn.addEventListener('click', (event) => {
+      //   const
+      //     targetElem = GetClosestParent(event.target,'.canvas-content-block').id,
+      //     targetContainer = document.getElementById(targetElem).querySelector('.sf-tab-content.in');
+      //   addSubnodeBtn.setAttribute('data-target', targetContainer.id);
+      // });
     } catch (error) {
       console.log(error);
       console.log('NO HTML Object to attached to');

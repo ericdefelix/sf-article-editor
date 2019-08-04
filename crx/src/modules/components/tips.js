@@ -1,5 +1,4 @@
 import { GenerateID, TinyMCEHelper } from '../utils/chromeExtensionUtils';
-import { ContentBlockTemplate, AddContentBlockBtnTemplate } from '../utils/interfaceTemplates';
 
 export const TipsLabel = 'Tips';
 

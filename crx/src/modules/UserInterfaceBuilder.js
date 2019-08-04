@@ -1,6 +1,16 @@
 import { GetClosestParent } from './utils/chromeExtensionUtils';
-import { EmptyStateTemplate } from './utils/interfaceTemplates';
 import { Components, ComponentTypes } from './components/components';
+import {
+  EmptyStateTemplate,
+  ContentBlockTemplate,
+  AddContentBlockBtnTemplate
+} from './utils/interfaceTemplates';
+
+const Elements = {
+  targetNodeLevel: '',
+  placeholderPointerID: '',
+  items: {}
+}
 
 const Toolbox = {
   init: () => {
@@ -11,11 +21,9 @@ const Toolbox = {
     UserInterfaceBuilder.initEmptyStateButton();
 
     //Bind event for adding components
-    document.querySelectorAll('[data-action="add-component"]').forEach(btn => {
+    document.querySelectorAll('[data-action="add-component"]').forEach(btn => {     
       btn.onclick = UserInterfaceBuilder._evtAddComponent;
     });
-
-    // document.getElementById('toolbox').onfocusout = UserInterfaceBuilder.hide;
   },
   render: () => {
     let template = `<div class="toolbox" id="toolbox"><ul class="toolbox-toolbar" id="toolbar" tabIndex="-1">`;
@@ -28,7 +36,7 @@ const Toolbox = {
 
     return template + `</ul></div>`;
   },
-  display: function () {    
+  display: function () {
     const toolbox = document.getElementById('toolbox');
     const container = this.parentElement;
 
@@ -38,11 +46,13 @@ const Toolbox = {
     toolbox.style.left = 'calc(50% - ' + (toolbox.offsetWidth / 2 + 4) + 'px)';
     toolbox.classList.contains('in') ? toolbox.classList.remove('in') : toolbox.classList.add('in');
     toolbox.focus();
-
+    
     // Record which add component button the user is clicking. If yes, append after this button
-    UserInterfaceBuilder.placeholderPointerID = GetClosestParent(this, '.canvas-content-block').id;
-    console.log(UserInterfaceBuilder.placeholderPointerID);
+    UserInterfaceBuilder.targetNodeLevel = parseInt(this.getAttribute('data-node-level'));
+    UserInterfaceBuilder.placeholderPointerID = this.getAttribute('data-target');
 
+    console.log(UserInterfaceBuilder.placeholderPointerID);
+    
   },
   hide: () => {
     document.getElementById('toolboxPlaceholder').appendChild(document.getElementById('toolbox'));
@@ -54,7 +64,7 @@ const UserInterfaceBuilder = {
   deletedNode: null,
   addedNode: null,
   elementCount: 0,
-  currentContainerID: '',
+  targetNodeLevel: '',
   placeholderPointerID: '',
   elements: {},
   init: (container, params) => {
@@ -135,20 +145,40 @@ const UserInterfaceBuilder = {
       // Apply Events and Behavior
       const appendedChild = document.getElementById('canvasContainer').lastElementChild;
       component.updateDOM(appendedChild);
+
+      UserInterfaceBuilder.elements[component.id] = component;
     });
   },
   _evtAddComponent: function () {
     const
       componentType = this.getAttribute('data-ui-label'),
       component = new Components[componentType],
-      componentTemplate = component.render(),
-      targetPreviousElementSibling = document.getElementById(UserInterfaceBuilder.placeholderPointerID);
+      componentTemplate = component.render();
     
-    targetPreviousElementSibling.insertAdjacentHTML('afterend', componentTemplate);
+    UserInterfaceBuilder.elements[component.id] = component;
     
+    let targetPreviousElementSibling, appendedChild;
+
+    targetPreviousElementSibling = document.getElementById(UserInterfaceBuilder.placeholderPointerID);
+
+    if (UserInterfaceBuilder.targetNodeLevel === 1) {      
+      targetPreviousElementSibling.insertAdjacentHTML('afterend', componentTemplate);
+      appendedChild = targetPreviousElementSibling.nextElementSibling;
+    }
+
+    if (UserInterfaceBuilder.targetNodeLevel === 2) {      
+      targetPreviousElementSibling.insertAdjacentHTML('beforeend', componentTemplate);
+      appendedChild = targetPreviousElementSibling.lastElementChild;
+    }
+
     // Apply Events and Behavior
-    const appendedChild = targetPreviousElementSibling.nextElementSibling;
     component.updateDOM(appendedChild);
+
+    // Hide toolbox popup
+    Toolbox.hide();
+
+    console.log(UserInterfaceBuilder.elements);
+    
   },
   _evtRemoveComponent: function () {
     Toolbox.hide();
