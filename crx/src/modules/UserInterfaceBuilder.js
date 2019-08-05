@@ -1,16 +1,16 @@
 import { GetClosestParent } from './utils/chromeExtensionUtils';
 import { Components, ComponentTypes } from './components/components';
-import {
-  EmptyStateTemplate,
-  ContentBlockTemplate,
-  AddContentBlockBtnTemplate
-} from './utils/interfaceTemplates';
+// import {
+//   EmptyStateTemplate,
+//   ContentBlockTemplate,
+//   AddContentBlockBtnTemplate
+// } from './utils/interfaceTemplates';
 
 const Elements = {
   targetNodeLevel: '',
   placeholderPointerID: '',
   items: {}
-}
+};
 
 const Toolbox = {
   init: () => {
@@ -39,10 +39,11 @@ const Toolbox = {
   display: function () {
     const toolbox = document.getElementById('toolbox');
     const container = this.parentElement;
+    toolbox.parentNode.removeChild(toolbox);
+    container.appendChild(toolbox);
 
     toolbox.classList.remove('in');
     toolbox.style.display = 'block';
-    container.appendChild(toolbox);
     toolbox.style.left = 'calc(50% - ' + (toolbox.offsetWidth / 2 + 4) + 'px)';
     toolbox.classList.contains('in') ? toolbox.classList.remove('in') : toolbox.classList.add('in');
     toolbox.focus();
@@ -50,9 +51,6 @@ const Toolbox = {
     // Record which add component button the user is clicking. If yes, append after this button
     UserInterfaceBuilder.targetNodeLevel = parseInt(this.getAttribute('data-node-level'));
     UserInterfaceBuilder.placeholderPointerID = this.getAttribute('data-target');
-
-    console.log(UserInterfaceBuilder.placeholderPointerID);
-    
   },
   hide: () => {
     document.getElementById('toolboxPlaceholder').appendChild(document.getElementById('toolbox'));
@@ -71,7 +69,7 @@ const UserInterfaceBuilder = {
     UserInterfaceBuilder.container = container;
 
     // Attach mutation observer
-    UserInterfaceBuilder.observe();
+    UserInterfaceBuilder.observe('canvasContainer',1);
 
     // If data is empty emptyStateTemplate, if not renderExistingData
     params.data.length === 0 ?
@@ -80,27 +78,31 @@ const UserInterfaceBuilder = {
 
     Toolbox.init();
   },
-  subscriber: (mutations) => {    
+  subscriber: (mutations) => {
     const emptyStateContainer = document.querySelector('[data-content="empty"]');
     const canvasContainer = document.getElementById('canvasContainer');
 
-    console.log(mutations);
-    
+    // console.log(mutations);
     if (mutations.length !== 0) {
       if (mutations[0].addedNodes.length !== 0) {
+
         for (let index = 0; index < mutations.length; index++) {
           const element = mutations[index].addedNodes[0];
-          UserInterfaceBuilder.addedNode = element;
-          if (element.getAttribute('data-content') !== 'empty') {
+          
+          if (element.getAttribute('data-content') !== 'empty' && element.classList.contains('canvas-content-block')) {
             element.querySelector('[data-action="remove-component"]').onclick = UserInterfaceBuilder._evtRemoveComponent;
-            element.querySelectorAll('[data-action="select-component"]').forEach(btn => {
-              btn.onclick = Toolbox.display;
-            });
+            element.querySelector('.content-action-hotspot [data-action="select-component"]').onclick = Toolbox.display;
+
+            if (element.querySelector('.subcontent-action-hotspot') !== null) {
+              element.querySelectorAll('.subcontent-action-hotspot [data-action="select-component"]').forEach(btn => {
+                btn.onclick = Toolbox.display;
+              });
+            }
           }
-        } 
+        }
       }
 
-      Toolbox.hide();
+      // Toolbox.hide();
 
       if (emptyStateContainer !== null && emptyStateContainer.nextElementSibling !== null) {
         emptyStateContainer.remove();
@@ -115,21 +117,22 @@ const UserInterfaceBuilder = {
       UserInterfaceBuilder.initEmptyStateButton();
     }
   },
-  observe: () => {
+  observe: (containerID,nodeLevel) => {
     // instantiating observer
     const containerObserver = new MutationObserver(UserInterfaceBuilder.subscriber);
+    const observedElement = document.getElementById(containerID);
 
     // observing target
-    containerObserver.observe(UserInterfaceBuilder.container, {
+    containerObserver.observe(observedElement, {
       attributes: false,
-      subtree: false,
+      subtree: true,
       childList: true
     });
 
     // TODO: DC if sorting
   },
   renderEmptyState: () => {
-    UserInterfaceBuilder.container.insertAdjacentHTML('afterbegin', EmptyStateTemplate(UserInterfaceBuilder.container.id));
+    UserInterfaceBuilder.container.insertAdjacentHTML('afterbegin', EmptyStateTemplate('canvasContainer'));
   },
   renderExistingData: (data) => {
     UserInterfaceBuilder.elementCount = data.length;
@@ -159,16 +162,20 @@ const UserInterfaceBuilder = {
     
     let targetPreviousElementSibling, appendedChild;
 
-    targetPreviousElementSibling = document.getElementById(UserInterfaceBuilder.placeholderPointerID);
+    const containerID = UserInterfaceBuilder.targetNodeLevel == 2 ?
+      `canvasSubContainer_${UserInterfaceBuilder.placeholderPointerID}` : UserInterfaceBuilder.placeholderPointerID;
 
-    if (UserInterfaceBuilder.targetNodeLevel === 1) {      
+    targetPreviousElementSibling = document.getElementById(containerID);
+
+    if (UserInterfaceBuilder.targetNodeLevel === 1) {
       targetPreviousElementSibling.insertAdjacentHTML('afterend', componentTemplate);
       appendedChild = targetPreviousElementSibling.nextElementSibling;
     }
 
-    if (UserInterfaceBuilder.targetNodeLevel === 2) {      
+    if (UserInterfaceBuilder.targetNodeLevel === 2) {
       targetPreviousElementSibling.insertAdjacentHTML('beforeend', componentTemplate);
       appendedChild = targetPreviousElementSibling.lastElementChild;
+      // targetPreviousElementSibling.removeChild(targetPreviousElementSibling.querySelector('.canvas-add-component'));
     }
 
     // Apply Events and Behavior
@@ -176,9 +183,6 @@ const UserInterfaceBuilder = {
 
     // Hide toolbox popup
     Toolbox.hide();
-
-    console.log(UserInterfaceBuilder.elements);
-    
   },
   _evtRemoveComponent: function () {
     Toolbox.hide();

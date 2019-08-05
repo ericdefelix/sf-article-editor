@@ -42,6 +42,7 @@ export default class Tabs {
   tabBodyTemplate(tabID, isActive) {
     const template = `
     <div class="sf-tab-content${isActive ? ' in' : ''} " id="tab-${tabID}">
+      <div id="canvasSubContainer_${tabID}"></div>
       ${AddSubContentBlockBtnTemplate(tabID)}
     </div>`;
     return template;

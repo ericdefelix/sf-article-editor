@@ -1,4 +1,9 @@
 import { GenerateID, TinyMCEHelper } from '../utils/chromeExtensionUtils';
+import {
+  EmptyStateTemplate,
+  ContentBlockTemplate,
+  AddContentBlockBtnTemplate
+} from '../utils/interfaceTemplates';
 
 export const TipsLabel = 'Tips';
 
@@ -42,7 +47,7 @@ export default class Tips {
     return `<select class="canvas-form-control" name="s-${this.id}" data-target="snippet-${this.id}">${template}</select>`;
   }
 
-  render(html) {
+  render(html) {    
     const toBeParsedHTML = typeof html === 'undefined' ? this.template() : html;
     const params = {
       id: this.id,
