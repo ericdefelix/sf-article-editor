@@ -18,13 +18,13 @@ export default class TextContent {
     };
   }
 
-  render(html) {
+  render(html, options) {
     const params = {
       id: this.id,
       controlsTemplate: '',
-      draggableClass: 'canvasDraggableMain',
-      componentTemplate: typeof html === 'undefined' ? this.template() : html,
-      addTemplate: AddContentBlockBtnTemplate(this.id)
+      draggableClass: options.draggableClass,
+      componentTemplate: html === '' ? this.template() : html,
+      addTemplate: parseInt(options.nodeLevel) == 1 ? AddContentBlockBtnTemplate(this.id) : ''
     };
 
     return ContentBlockTemplate(params);

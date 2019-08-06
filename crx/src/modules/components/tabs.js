@@ -1,6 +1,6 @@
 import { GenerateID, GenerateTabID, GetClosestParent } from '../utils/chromeExtensionUtils';
 import { ContentBlockTemplate, AddContentBlockBtnTemplate, AddSubContentBlockBtnTemplate } from '../utils/interfaceTemplates';
-import UserInterfaceBuilder from '../UserInterfaceBuilder';
+import { UserInterfaceSortable } from '../utils/sortableHandler';
 
 export const TabsLabel = 'Tabs';
 
@@ -14,17 +14,16 @@ export default class Tabs {
     this.cssClass = 'sf-tabs';
     this.tabNamePrefix = 'Tab ';
     this.tabCountMin = 5;
-    this.tabCurrentCount = this.tabCountMin;    
+    this.tabCurrentCount = this.tabCountMin;
   }
 
-  render(html) {
-    const toBeParsedHTML = typeof html === 'undefined' ? this.template() : html;
+  render(html, options) {
     const params = {
       id: this.id,
       type: this.name,
       controlsTemplate: '',
-      draggableClass: 'canvasDraggableMain',
-      componentTemplate: toBeParsedHTML,
+      draggableClass: options.draggableClass,
+      componentTemplate: html === '' ? this.template() : html,
       addTemplate: AddContentBlockBtnTemplate(this.id)
     };
 
@@ -41,8 +40,8 @@ export default class Tabs {
 
   tabBodyTemplate(tabID, isActive) {
     const template = `
-    <div class="sf-tab-content${isActive ? ' in' : ''} " id="tab-${tabID}">
-      <div id="canvasSubContainer_${tabID}"></div>
+    <div class="sf-tab-content${isActive ? ' in' : ''}" id="tab-${tabID}">
+      <div class="canvas-subcontainer" id="canvasSubContainer_${tabID}"></div>
       ${AddSubContentBlockBtnTemplate(tabID)}
     </div>`;
     return template;
@@ -77,19 +76,14 @@ export default class Tabs {
   }
 
   updateDOM(HTMLObject) {
-    console.log(HTMLObject);
-    
     try {
-      // const snippetContainer = document.getElementById(`snippet-${HTMLObject.id}`);
-      // snippetContainer.insertAdjacentHTML('beforeend', AddSubContentBlockBtnTemplate());
-      
-      // const addSubnodeBtn = HTMLObject.querySelector('[data-node-level="2"]');
-      // addSubnodeBtn.addEventListener('click', (event) => {
-      //   const
-      //     targetElem = GetClosestParent(event.target,'.canvas-content-block').id,
-      //     targetContainer = document.getElementById(targetElem).querySelector('.sf-tab-content.in');
-      //   addSubnodeBtn.setAttribute('data-target', targetContainer.id);
-      // });
+      HTMLObject.querySelectorAll('.sf-tab-content').forEach((tabContainer) => {
+        const tabID = tabContainer.id.split('tab-')[1];
+        UserInterfaceSortable({
+          container: document.getElementById(`canvasSubContainer_${tabID}`),
+          contentDraggableClass: `.canvasDraggableSub_${tabID}`
+        });
+      });
     } catch (error) {
       console.log(error);
       console.log('NO HTML Object to attached to');

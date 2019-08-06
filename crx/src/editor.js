@@ -1,7 +1,7 @@
 import './editor.scss';
 import { dataParser } from './modules/utils/dataParser';
 import UserInterfaceBuilder from './modules/UserInterfaceBuilder';
-import Sortable from '../node_modules/sortablejs/Sortable.min';
+// import Sortable from '../node_modules/sortablejs/Sortable.min';
 import { imageGalleryMockData, htmlMockData } from './modules/utils/mockData';
 
 
@@ -71,10 +71,10 @@ const editor = {
       data: editor.existing_data
     });
   
-    editor.init_sortable({
-      container: document.getElementById('canvasContainer'),
-      contentDraggableClass: '.canvasDraggableMain'
-    });
+    // editor.init_sortable({
+    //   container: document.getElementById('canvasContainer'),
+    //   contentDraggableClass: '.canvasDraggableMain'
+    // });
 
     editor.btnPreview.onclick = editor.generate_html;
     editor.btnSave.onclick = editor.save_html;
@@ -86,22 +86,22 @@ const editor = {
     editor.btnPreview.style.display = editor.existing_data.length == 0 ? 'none' : 'initial';
     editor.btnSave.style.display = editor.existing_data.length == 0 ? 'none' : 'initial';
   },
-  init_sortable: (config) => {
-    const sortableConfig = {
-      sort: true,
-      touchStartThreshold: 5,
-      filter: '[data-content="empty"]',
-      chosenClass: 'canvas-content-chosen',
-      ghostClass: 'canvas-content-ghost',
-      dragClass: 'canvas-content-dragging',
-      animation: 300,
-      easing: 'cubic-bezier(1, 0, 0, 1)',
-      handle: config.contentDraggableClass,
-      direction: 'vertical'
-    };
+  // init_sortable: (config) => {
+  //   const sortableConfig = {
+  //     sort: true,
+  //     touchStartThreshold: 5,
+  //     filter: '[data-content="empty"]',
+  //     chosenClass: 'canvas-content-chosen',
+  //     ghostClass: 'canvas-content-ghost',
+  //     dragClass: 'canvas-content-dragging',
+  //     animation: 300,
+  //     easing: 'cubic-bezier(1, 0, 0, 1)',
+  //     handle: config.contentDraggableClass,
+  //     direction: 'vertical'
+  //   };
     
-    new Sortable(config.container, sortableConfig);
-  },
+  //   new Sortable(config.container, sortableConfig);
+  // },
   html_view: function() {
     const view = this.value;
     editor.sourceSection.style.display = view == 'source' ? 'block' : 'none';

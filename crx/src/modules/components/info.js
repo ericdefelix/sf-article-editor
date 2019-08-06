@@ -17,15 +17,14 @@ export default class Info {
     };
   }
 
-  render(html) {
-    const toBeParsedHTML = typeof html === 'undefined' ? this.template() : html;
+  render(html, options) {
     const params = {
       id: this.id,
       type: this.name,
       controlsTemplate: '',
-      draggableClass: 'canvasDraggableMain',
-      componentTemplate: toBeParsedHTML,
-      addTemplate: AddContentBlockBtnTemplate(this.id)
+      draggableClass: options.draggableClass,
+      componentTemplate: html === '' ? this.template() : html,
+      addTemplate: parseInt(options.nodeLevel) == 1 ? AddContentBlockBtnTemplate(this.id) : ''
     };
 
     return ContentBlockTemplate(params);

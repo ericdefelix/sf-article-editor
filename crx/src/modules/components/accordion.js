@@ -1,5 +1,6 @@
 import { GenerateID, GenerateTabID } from '../utils/chromeExtensionUtils';
-import { ContentBlockTemplate, AddContentBlockBtnTemplate } from '../utils/interfaceTemplates';
+import { ContentBlockTemplate, AddContentBlockBtnTemplate, AddSubContentBlockBtnTemplate } from '../utils/interfaceTemplates';
+import { UserInterfaceSortable } from '../utils/sortableHandler';
 
 export const AccordionLabel = 'Accordion';
 
@@ -17,14 +18,14 @@ export default class Accordion {
     this.accordionCurrentCount = this.accordionCountMin;
   }
 
-  render(html) {
+  render(html,options) {
     const params = {
       id: this.id,
       type: this.name,
       controlsTemplate: '',
-      draggableClass: 'canvasDraggableMain',
-      componentTemplate: this.template(html),
-      addTemplate: AddContentBlockBtnTemplate()
+      draggableClass: options.draggableClass,
+      componentTemplate: html === '' ? this.template() : html,
+      addTemplate: AddContentBlockBtnTemplate(this.id)
     };
 
     return ContentBlockTemplate(params);
@@ -33,15 +34,13 @@ export default class Accordion {
   accordionSectionTemplate(accordionID) {
     const template = `
       <div class="sf-accordion-item">
-        <div class="sf-accordion-toggle">
-          <h4 class="sf-accordion-text">Accordion Display Text
-            <br>
-            <small>Subheading goes here</small>
-          </h4>
+        <div class="sf-accordion-toggle" id="pane-${accordionID}">
+          <h4 class="sf-accordion-text">Accordion Display Text</h4>
           <i class="sf-accordion-icon"></i>	
         </div>
         <div class="sf-accordion-content">
-          content
+          <div class="canvas-subcontainer" id="canvasSubContainer_${accordionID}"></div>
+          ${AddSubContentBlockBtnTemplate(accordionID)}
         </div>
       </div>`;
     return template;
@@ -68,14 +67,18 @@ export default class Accordion {
 
   }
 
-  updateDOM(HTMLObject) {
-
+  updateDOM(HTMLObject) {    
     try {
-      console.log(HTMLObject);
-
+      HTMLObject.querySelectorAll('.sf-accordion-toggle').forEach((toggle) => {
+        const toggleID = toggle.id.split('pane-')[1];
+        UserInterfaceSortable({
+          container: document.getElementById(`canvasSubContainer_${accordionID}`),
+          contentDraggableClass: `.canvasDraggableSub_${accordionID}`
+        });
+      });
     } catch (error) {
+      console.log(error);
       console.log('NO HTML Object to attached to');
-
     }
   }
 };

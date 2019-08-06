@@ -47,15 +47,14 @@ export default class Tips {
     return `<select class="canvas-form-control" name="s-${this.id}" data-target="snippet-${this.id}">${template}</select>`;
   }
 
-  render(html) {    
-    const toBeParsedHTML = typeof html === 'undefined' ? this.template() : html;
+  render(html,options) {    
     const params = {
       id: this.id,
       type: this.name,
-      controlsTemplate: this.renderControlsTemplate(toBeParsedHTML),
-      draggableClass: 'canvasDraggableMain',
-      componentTemplate: toBeParsedHTML,
-      addTemplate: AddContentBlockBtnTemplate(this.id)
+      controlsTemplate: this.renderControlsTemplate(html === '' ? this.template() : html),
+      draggableClass: options.draggableClass,
+      componentTemplate: html === '' ? this.template() : html,
+      addTemplate: parseInt(options.nodeLevel) == 1 ? AddContentBlockBtnTemplate(this.id) : ''
     };
 
     return ContentBlockTemplate(params);
