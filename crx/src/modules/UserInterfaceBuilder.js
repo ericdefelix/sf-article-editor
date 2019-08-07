@@ -82,13 +82,16 @@ const UserInterfaceBuilder = {
       if (mutations[0].addedNodes.length !== 0) {
 
         for (let index = 0; index < mutations.length; index++) {
-          if (typeof mutations[index].addedNodes[0] !== 'undefined') {
+          if (typeof mutations[index].addedNodes[0] !== 'undefined' && mutations[index].addedNodes[0].nodeType == 1) {
             const element = mutations[index].addedNodes[0];
 
             if (element.getAttribute('data-content') !== 'empty' && element.classList.contains('canvas-content-block')) {
               element.querySelector('[data-action="remove-component"]').onclick = UserInterfaceBuilder._evtRemoveComponent;
-              element.querySelector('.content-action-hotspot [data-action="select-component"]').onclick = Toolbox.display;
-
+              
+              if (element.querySelector('.content-action-hotspot [data-action="select-component"]') !== null) {
+                element.querySelector('.content-action-hotspot [data-action="select-component"]').onclick = Toolbox.display;
+              }
+              
               if (element.querySelector('.subcontent-action-hotspot') !== null) {
                 element.querySelectorAll('.subcontent-action-hotspot [data-action="select-component"]').forEach(btn => {
                   btn.onclick = Toolbox.display;

@@ -95,6 +95,7 @@
 
 .canvas-content-snippet {
   padding: 1rem;
+  position: relative;
 
   &.cke_editable_inline {
     ol,ul {
@@ -282,8 +283,8 @@
 
 .canvas-form-control {
   display: inline-block;
-  height: 26px;
-  padding: 1rem;
+  height: 1.625rem;
+  padding: 0.2rem 0.5rem;
   line-height: 1.2;
   color: $canvas-text-color;
   background-color: white;
@@ -360,6 +361,43 @@ select.canvas-form-control {
 
 .text-muted {
   color: gray;
+}
+
+.canvas-content-edit-overlay {
+  padding: $canvas-gui-padding;
+
+  ol {
+    margin: 0;
+    padding-left: 0.9375rem;
+  }
+
+  h4 {
+    margin-top: 0;
+  }
+
+  ol > li {
+    margin-bottom: 0.625rem;
+
+    > input {
+      width: calc(100% - 6.25rem);
+    }
+
+    > button {
+     margin-left: 0.2rem;
+    }
+  }
+
+  > .canvas-btn {
+    margin-left: 0.9375rem;
+  }
+
+  .deselected {
+    text-decoration: line-through;
+    pointer-events: none;
+    border-color: transparent !important;
+    color: $canvas-content-action-gray;
+    @include box-shadow(0,0,0,0);
+  }
 }
 
 [data-component-type="genericTabs"] {

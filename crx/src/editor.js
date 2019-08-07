@@ -1,7 +1,6 @@
 import './editor.scss';
 import { dataParser } from './modules/utils/dataParser';
 import UserInterfaceBuilder from './modules/UserInterfaceBuilder';
-// import Sortable from '../node_modules/sortablejs/Sortable.min';
 import { imageGalleryMockData, htmlMockData } from './modules/utils/mockData';
 
 

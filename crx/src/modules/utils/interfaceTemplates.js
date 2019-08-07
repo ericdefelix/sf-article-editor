@@ -22,7 +22,7 @@ export function ContentBlockTemplate(params) {
 			<div class="canvas-content-draggable ${params.draggableClass}"></div>
 			${ params.controlsTemplate}
 			<button class="canvas-btn canvas-btn-xs" data-action="remove-component" data-target="${params.id}">
-				<i class="icon-delete"></i> Remove
+				<i class="icon-delete"></i>
 			</button>
 		</div>
 		<div class="canvas-content-snippet" id="snippet-${params.id}">
