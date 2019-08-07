@@ -126,8 +126,10 @@ export default class Accordion {
               
               if (!targetInput.classList.value.includes('deselected')) {
                 targetInput.classList.add('deselected');
-                console.log('test');
-                
+                btn.innerHTML = 'Undo';
+              }
+              else {
+                btn.innerHTML = '<i class="icon-delete"></i>';
               }
             };
           });
