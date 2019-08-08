@@ -35,11 +35,11 @@ export default class Accordion {
     return `<button class="canvas-btn canvas-btn-xs" data-action="edit-component" data-target="${componentID}">Edit Accordion</button>`;
   }
 
-  accordionSectionTemplate(accordionID) {
+  accordionSectionTemplate(accordionID, accordionTitle) {
     const template = `
       <div class="sf-accordion-item">
         <div class="sf-accordion-toggle" id="pane-${accordionID}">
-          <h4 class="sf-accordion-text">Accordion Display Text</h4>
+          <h4 class="sf-accordion-text">${accordionTitle == '' ? 'Accordion Display Text' : accordionTitle }</h4>
           <i class="sf-accordion-icon"></i>	
         </div>
         <div class="sf-accordion-content">
@@ -69,14 +69,50 @@ export default class Accordion {
       </div>`;
   }
 
+  updateAccordionList(editFields, accordionSectionTemplateFxn) {
+    const accordionList = editFields.nextElementSibling;
+    editFields.querySelectorAll('input').forEach((input) => {
+      const
+        toggleID = input.id.split('editInput-')[1],
+        toggle = document.getElementById(toggleID);
+
+      if (toggle === null) {
+        accordionList.insertAdjacentHTML('beforeend', accordionSectionTemplateFxn(toggleID, input.value));
+      }
+      else {
+        if (input.classList.value.includes('deselected')) {
+          accordionList.removeChild(toggle.parentElement);
+        }
+        else {
+          if (toggle.querySelector('.sf-accordion-text').textContent !== input.value) {
+            toggle.querySelector('.sf-accordion-text').textContent = input.value;
+          }
+        }
+      }
+    });
+  }
+
   template(existingHTML) {
     let accordionSections = ``;
 
     for (let i = 0; i < this.accordionCountMin; i++) {
       const accordionID = GenerateTabID();
-      accordionSections += this.accordionSectionTemplate(accordionID);
+      accordionSections += this.accordionSectionTemplate(accordionID, '');
     }
     return `${this.editComponentSectionTemplate()}<div class="sf-accordion">${accordionSections}</div>`;
+  }
+
+  deleteAccordionItem() {
+    const targetInput = document.getElementById(`editInput-${this.getAttribute('data-target')}`);
+
+    if (!targetInput.classList.value.includes('deselected')) {
+      targetInput.classList.add('deselected');
+      this.innerHTML = 'Undo';
+    }
+    else {
+      targetInput.classList.remove('deselected');
+      this.innerHTML = '<i class="icon-delete"></i>';
+    }
   }
 
   updateDOM(HTMLObject) {
@@ -84,11 +120,13 @@ export default class Accordion {
       const
         editFieldTemplateFxn = this.editFieldTemplate,
         accordionSectionTemplateFxn = this.accordionSectionTemplate,
+        deleteAccordionItemFxn = this.deleteAccordionItem,
+        updateAccordionListFxn = this.updateAccordionList,
         editFieldsIsHidden = () => {
           return editFields.style.display == 'none' ? true : false;
         };
       
-      let editFields, editFieldsInput, accordionSections = [];
+      let editFields, editFieldsInput;
 
       HTMLObject.querySelectorAll('.sf-accordion-toggle').forEach((toggle) => {
         const toggleID = toggle.id.split('pane-')[1];
@@ -113,37 +151,30 @@ export default class Accordion {
             const accordionTitle = accordionToggle.querySelector('.sf-accordion-text');
             if (!editFieldsIsHidden()) {
               editFieldsInput += editFieldTemplateFxn(accordionTitle.textContent, accordionToggle.id);
-              accordionSections.push({ id: accordionToggle.id, text: accordionTitle.textContent, status: 1, });
             }
           });
-
+        
+        // If Update field is active
         if (!editFieldsIsHidden()) {
           editFields.nextElementSibling.style.display = 'none';
           editFields.querySelector('.canvas-content-edit-list').innerHTML = editFieldsInput;
           editFields.querySelectorAll('[data-action="delete-accordion-item"]').forEach((btn) => {
-            btn.onclick = function (event) {
-              const targetInput = document.getElementById(`editInput-${this.getAttribute('data-target')}`);
-              
-              if (!targetInput.classList.value.includes('deselected')) {
-                targetInput.classList.add('deselected');
-                btn.innerHTML = 'Undo';
-              }
-              else {
-                btn.innerHTML = '<i class="icon-delete"></i>';
-              }
-            };
+            btn.onclick = deleteAccordionItemFxn;
           });
-          console.log(accordionSections);
-          
         }
+
+        // Goes back to Accordion List
         else {
+          updateAccordionListFxn(editFields, accordionSectionTemplateFxn);
           editFields.nextElementSibling.removeAttribute('style');
         }
       };
 
       // Add New Line - DOM Display Only
       HTMLObject.querySelector('[data-action="add-accordion-item"]').onclick = function (event) {
-        HTMLObject.querySelector('.canvas-content-edit-list').insertAdjacentHTML('beforeend', editFieldTemplateFxn('', `pane-${GenerateTabID()}`));
+        const newBtnTabID = `pane-${GenerateTabID()}`;
+        HTMLObject.querySelector('.canvas-content-edit-list').insertAdjacentHTML('beforeend', editFieldTemplateFxn('', newBtnTabID));
+        document.querySelector(`[data-target="${newBtnTabID}"]`).onclick = deleteAccordionItemFxn;
       };
 
     } catch (error) {

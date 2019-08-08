@@ -1,57 +1,7 @@
-import { GetClosestParent } from './utils/chromeExtensionUtils';
-import { Components, ComponentTypes } from './components/components';
+import { Toolbox } from './Toolbox';
+import { Components } from './components/components';
 import { UserInterfaceSortable } from '../modules/utils/sortableHandler';
-
-const Elements = {
-  targetNodeLevel: '',
-  placeholderPointerID: '',
-  items: {}
-};
-
-const Toolbox = {
-  init: () => {
-    // Render Toolbox
-    const template = Toolbox.render();
-    document.getElementById('toolboxPlaceholder').insertAdjacentHTML('beforeend', template);
-
-    UserInterfaceBuilder.initEmptyStateButton();
-
-    //Bind event for adding components
-    document.querySelectorAll('[data-action="add-component"]').forEach(btn => {     
-      btn.onclick = UserInterfaceBuilder._evtAddComponent;
-    });
-  },
-  render: () => {
-    let template = `<div class="toolbox" id="toolbox"><ul class="toolbox-toolbar" id="toolbar" tabIndex="-1">`;
-    
-    for (const key in ComponentTypes) {   
-      template += `<li class="toolbar-item" data-action="add-component" data-ui-label="${key}">
-				<small>${ ComponentTypes[key] }</small>
-			</li>`;
-    }
-
-    return template + `</ul></div>`;
-  },
-  display: function () {
-    const toolbox = document.getElementById('toolbox');
-    const container = this.parentElement;
-    toolbox.parentNode.removeChild(toolbox);
-    container.appendChild(toolbox);
-
-    toolbox.classList.remove('in');
-    toolbox.style.display = 'block';
-    toolbox.style.left = 'calc(50% - ' + (toolbox.offsetWidth / 2 + 4) + 'px)';
-    toolbox.classList.contains('in') ? toolbox.classList.remove('in') : toolbox.classList.add('in');
-    toolbox.focus();
-    
-    // Record which add component button the user is clicking. If yes, append after this button
-    UserInterfaceBuilder.targetNodeLevel = parseInt(this.getAttribute('data-node-level'));
-    UserInterfaceBuilder.placeholderPointerID = this.getAttribute('data-target');
-  },
-  hide: () => {
-    document.getElementById('toolboxPlaceholder').appendChild(document.getElementById('toolbox'));
-  }
-};
+import { EmptyStateTemplate } from '../modules/utils/interfaceTemplates';
 
 const UserInterfaceBuilder = {
   container: null,
@@ -72,11 +22,23 @@ const UserInterfaceBuilder = {
       UserInterfaceBuilder.renderEmptyState() :
       UserInterfaceBuilder.renderExistingData(params.data);
 
-    Toolbox.init();
+    Toolbox.init(UserInterfaceBuilder);
+
+    document.getElementById('toolbox').querySelectorAll('[data-action="add-component"]').forEach((action) => {
+      action.onclick = UserInterfaceBuilder._evtAddComponent;
+    });
+
+    UserInterfaceBuilder.initEmptyStateButton();
+  },
+  toolboxDisplay: function () {    
+    UserInterfaceBuilder.targetNodeLevel = parseInt(this.getAttribute('data-node-level'));
+    UserInterfaceBuilder.placeholderPointerID = this.getAttribute('data-target');
+    Toolbox.display(this);
   },
   subscriber: (mutations) => {
     const emptyStateContainer = document.querySelector('[data-content="empty"]');
     const canvasContainer = document.getElementById('canvasContainer');
+    const displayToolboxButtons = document.querySelectorAll('[data-action="select-component"]');
 
     if (mutations.length !== 0) {
       if (mutations[0].addedNodes.length !== 0) {
@@ -87,26 +49,21 @@ const UserInterfaceBuilder = {
 
             if (element.getAttribute('data-content') !== 'empty' && element.classList.contains('canvas-content-block')) {
               element.querySelector('[data-action="remove-component"]').onclick = UserInterfaceBuilder._evtRemoveComponent;
-              
-              if (element.querySelector('.content-action-hotspot [data-action="select-component"]') !== null) {
-                element.querySelector('.content-action-hotspot [data-action="select-component"]').onclick = Toolbox.display;
-              }
-              
-              if (element.querySelector('.subcontent-action-hotspot') !== null) {
-                element.querySelectorAll('.subcontent-action-hotspot [data-action="select-component"]').forEach(btn => {
-                  btn.onclick = Toolbox.display;
-                });
-              }
-            } 
+            }
           }
         }
       }
 
-      // Toolbox.hide();
-
       if (emptyStateContainer !== null && emptyStateContainer.nextElementSibling !== null) {
         emptyStateContainer.remove();
       }
+
+      displayToolboxButtons.forEach((button) => {
+        if (!button.classList.value.includes('displayInit')) {
+          button.onclick = UserInterfaceBuilder.toolboxDisplay;
+          button.classList.add('displayInit');
+        }
+      });
     }
     
     if (emptyStateContainer === null && canvasContainer.firstElementChild === null) {
@@ -115,7 +72,7 @@ const UserInterfaceBuilder = {
 
     if (emptyStateContainer !== null) {
       UserInterfaceBuilder.initEmptyStateButton();
-    }
+    }    
   },
   observe: (containerID,nodeLevel) => {
     // instantiating observer
@@ -128,8 +85,6 @@ const UserInterfaceBuilder = {
       subtree: true,
       childList: true
     });
-
-    // TODO: DC if sorting
   },
   renderEmptyState: () => {
     UserInterfaceBuilder.container.insertAdjacentHTML('afterbegin', EmptyStateTemplate('canvasContainer'));
@@ -205,8 +160,7 @@ const UserInterfaceBuilder = {
   },
   initEmptyStateButton: () => {
     // Init first add component button
-    const selectComponentBtn = document.querySelector('[data-action="select-component"]');
-    selectComponentBtn.onclick = Toolbox.display;
+    document.querySelector('[data-action="select-component"]').onclick = UserInterfaceBuilder.toolboxDisplay;
   }
 };
 

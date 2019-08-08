@@ -31,7 +31,6 @@
 }
 
 .canvas-container {
-	background-color: white;
 	min-height: 10vh;
   display: flex;
   align-items: center;
@@ -39,10 +38,6 @@
   justify-content: center;
   flex-direction: column;
   width: 100%;
-  // overflow: hidden;
-
-	@include border-radius();
-	@include box-shadow(0, 2px, 3px, 0, rgba(0,0,0,0.1));
 
 	@media (min-width: 1400px) {
 		width: $min-container-width;
@@ -83,10 +78,11 @@
   background: #fbfbfb;
   display: flex;
   justify-content: flex-end;
-  opacity: 0.6;
+
   position: relative;
   overflow: hidden;
-  @include box-shadow(0,0,0,1px,lighten($canvas-gui-color,36%));
+  border-top-left-radius: $canvas-gui-border-radius;
+  border-top-right-radius: $canvas-gui-border-radius;
 
   > button {
     margin-left: 0.2rem;
@@ -95,7 +91,11 @@
 
 .canvas-content-snippet {
   padding: 1rem;
+  padding-bottom: 1.4rem;
   position: relative;
+  background-color: white;
+  border-bottom-left-radius: $canvas-gui-border-radius;
+  border-bottom-right-radius: $canvas-gui-border-radius;
 
   &.cke_editable_inline {
     ol,ul {
@@ -129,16 +129,15 @@
   display: block;
   position: absolute;
   top: -1px;
-  left: -2px;
+  left: 0;
   bottom: -1px;
   z-index: 1;
   width: 2.6rem;
-  @include box-shadow(0,0,0,1px,$light-grey,inset);
-  // border-right: 1px solid $light-grey;
+  border-top-left-radius: $canvas-gui-border-radius;
 
   &:hover {
-    background-color: $light-grey;
-    @include box-shadow(0,0,0,1px,darken($light-grey, 15%),true);
+    background-color: lighten($light-grey,2%);
+    
     &:before, &:after {
       border-color: darken($drb-color,15%);
     }  
@@ -162,7 +161,7 @@
 
 .canvas-content-ghost {
   position: relative;
-  opacity: 0.5;
+  opacity: 0.8;
   @include no-select();
   overflow: hidden;
 
@@ -181,19 +180,19 @@
 .canvas-content-dragging {
   background-color: white;
   @include box-shadow(0,2px,10px,$box-shadow-color);
+
+  .canvas-add-component {
+    display: none;
+  }
 }
 
 .canvas-content-action {
   padding: 0;
   margin: 0;
-  margin: 1em 0;
+  margin: 0.2rem 0;
   position: relative;
 
   .content-action-hotspot {
-    padding: 2px 0;
-    border: 1px dashed $canvas-content-action-gray;
-    border-left: none;
-    border-right: none;
     position: relative;
     margin: 0;
   }
@@ -213,28 +212,24 @@
     left: calc(50% - 1rem);
     top: calc(50% - 0.8rem);
     transform: translateZ(0);
+    background-color: $body-bg;
     z-index: 1;
-    @include box-shadow(0,1px,4px,rgba(0, 0, 0, 0.6));
 		@include hardware();
 
 		&:active {
-			background-color: darken($canvas-gui-color,30%) !important;
+      @include button-config-color($blue);
+			// background-color: darken($canvas-gui-color,30%) !important;
 		}
   }
 
   .icon-plus {
-  	font-weight: 500;
+  	font-weight: 400;
   	font-size: 1.5rem;
   	-webkit-text-stroke: transparent;
   	@include no-select();
   }
 
   &:hover {
-  	.content-action-hotspot {
-  		background-color: #efefef;
-  		border-color: darken($canvas-content-action-gray,10%);
-  	}
-
   	button {
   		background-color: $canvas-gui-color;
   		color: white;
@@ -283,7 +278,7 @@
 
 .canvas-form-control {
   display: inline-block;
-  height: 1.625rem;
+  height: auto;
   padding: 0.2rem 0.5rem;
   line-height: 1.2;
   color: $canvas-text-color;
@@ -302,6 +297,17 @@
 select.canvas-form-control {
   line-height: 1;
   padding: 1px;
+  padding-right: 0.9375rem;
+  @include appearance(none);
+
+  &:before, &:after {
+    position: absolute;
+    display: block;
+    width: 2px;
+    height: 15px;
+    content: '';
+    background-color: $canvas-gui-color;
+  }
 }
 
 .canvas-btn-primary {
@@ -366,9 +372,23 @@ select.canvas-form-control {
 .canvas-content-edit-overlay {
   padding: $canvas-gui-padding;
 
-  ol {
+  .canvas-content-edit-list {
     margin: 0;
-    padding-left: 0.9375rem;
+    padding-left: 0;
+    counter-reset: editList;
+
+    > li {
+      margin-bottom: 0.625rem;
+      display: flex;
+      counter-increment: editList;
+
+      &:before {
+        content: counter(editList);
+        font-weight: 400;
+        padding: 0.4rem 0.5rem 0 0;
+        color: $canvas-gui-color;
+      }
+    }
   }
 
   h4 {
@@ -376,8 +396,6 @@ select.canvas-form-control {
   }
 
   ol > li {
-    margin-bottom: 0.625rem;
-
     > input {
       width: calc(100% - 6.25rem);
     }
@@ -400,16 +418,9 @@ select.canvas-form-control {
   }
 }
 
-[data-component-type="genericTabs"] {
-  .canvas-content-block {
-    &:hover {
-      .canvas-content-snippet {
-        @include box-shadow(0,0,0,2px, $blue, inset);
-      }
-    }
-
-    .canvas-content-config {
-      border-radius: 0 !important;
-    }
+.canvas-subcontainer {
+  .canvas-content-config {
+    border-radius: 0 !important;
+    @include box-shadow(0,0,0,1px,rgba(0,0,0,0.1));
   }
 }
