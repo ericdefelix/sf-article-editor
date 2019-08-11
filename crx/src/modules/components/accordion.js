@@ -36,37 +36,45 @@ export default class Accordion {
   }
 
   accordionSectionTemplate(accordionID, accordionTitle) {
-    const template = `
-      <div class="sf-accordion-item">
-        <div class="sf-accordion-toggle" id="pane-${accordionID}">
-          <h4 class="sf-accordion-text">${accordionTitle == '' ? 'Accordion Display Text' : accordionTitle }</h4>
-          <i class="sf-accordion-icon"></i>	
-        </div>
-        <div class="sf-accordion-content">
-          <div class="canvas-subcontainer" id="canvasSubContainer_${accordionID}"></div>
-          ${AddSubContentBlockBtnTemplate(accordionID)}
-        </div>
-      </div>`;
+    const template = `<div class="sf-accordion-item">
+                        <div class="sf-accordion-toggle" id="pane-${accordionID}">
+                          <h4 class="sf-accordion-text">${accordionTitle == '' ? 'Accordion Display Text' : accordionTitle }</h4>
+                          <i class="sf-accordion-icon"></i>	
+                        </div>
+                        <div class="sf-accordion-content">
+                          <div class="canvas-subcontainer" id="canvasSubContainer_${accordionID}"></div>
+                          ${AddSubContentBlockBtnTemplate(accordionID)}
+                        </div>
+                      </div>`;
     return template;
   }
 
   editFieldTemplate(textContent, id) {
-    return `
-      <li><input id="editInput-${id}" type="text" class="canvas-form-control" value="${textContent == '' ? 'Accordion Display Text' : textContent}"/>
-      <button class="canvas-btn canvas-btn-xs" data-action="delete-accordion-item" data-target="${id}">
-        <i class="icon-delete"></i>
-      </button></li>`;
+    return `<li><input id="editInput-${id}" type="text" class="canvas-form-control" value="${textContent == '' ? 'Accordion Display Text' : textContent}"/>
+              <button class="canvas-btn canvas-btn-xs" data-action="delete-accordion-item" data-target="${id}">
+                <i class="icon-delete"></i>
+              </button>
+            </li>`;
   }
 
   editComponentSectionTemplate() {
-    return `
-      <div class="canvas-content-edit-overlay" id="editFields-${this.id}" style="display: none;" data-min-count="${this.accordionCountMin}">
-        <h4>Update Accordion</h4>
-        <ol class="canvas-content-edit-list"></ol>
-        <button class="canvas-btn canvas-btn-xs" data-action="add-accordion-item" data-target="${this.id}">
-          <i class="icon-plus">&#43;</i> New Accordion Section
-        </button>
-      </div>`;
+    return `<div class="canvas-content-edit-overlay" id="editFields-${this.id}" style="display: none;" data-min-count="${this.accordionCountMin}">
+              <h4>Update Accordion</h4>
+              <ol class="canvas-content-edit-list"></ol>
+              <button class="canvas-btn canvas-btn-xs" data-action="add-accordion-item" data-target="${this.id}">
+                <i class="icon-plus">&#43;</i> New Accordion Section
+              </button>
+            </div>`;
+  }
+
+  template(existingHTML) {
+    let accordionSections = ``;
+
+    for (let i = 0; i < this.accordionCountMin; i++) {
+      const accordionID = GenerateTabID();
+      accordionSections += this.accordionSectionTemplate(accordionID, '');
+    }
+    return `${this.editComponentSectionTemplate()}<div class="sf-accordion">${accordionSections}</div>`;
   }
 
   updateAccordionList(editFields, accordionSectionTemplateFxn) {
@@ -78,6 +86,10 @@ export default class Accordion {
 
       if (toggle === null) {
         accordionList.insertAdjacentHTML('beforeend', accordionSectionTemplateFxn(toggleID, input.value));
+        UserInterfaceSortable({
+          container: document.getElementById(`canvasSubContainer_${toggleID}`),
+          contentDraggableClass: `.canvasDraggableSub_${toggleID}`
+        });
       }
       else {
         if (input.classList.value.includes('deselected')) {
@@ -92,39 +104,54 @@ export default class Accordion {
     });
   }
 
-  template(existingHTML) {
-    let accordionSections = ``;
-
-    for (let i = 0; i < this.accordionCountMin; i++) {
-      const accordionID = GenerateTabID();
-      accordionSections += this.accordionSectionTemplate(accordionID, '');
-    }
-    return `${this.editComponentSectionTemplate()}<div class="sf-accordion">${accordionSections}</div>`;
-  }
-
   updateDOM(HTMLObject) {
     try {
-      let editFields, editFieldsInput, isEditOpen = false, accordionCurrentCount = this.accordionCurrentCount;
+      let
+        editFields,
+        editFieldsInput = ``,
+        isEditOpen = false,
+        accordionCurrentCount = this.accordionCurrentCount,
+        accordionCountMin = this.accordionCountMin;
+
       const
         contentEditList = HTMLObject.querySelector('.canvas-content-edit-list'),
         editFieldTemplateFxn = this.editFieldTemplate,
         accordionSectionTemplateFxn = this.accordionSectionTemplate,
         updateAccordionListFxn = this.updateAccordionList;
       
-      const deleteAccordionItem = () => {
+      function deleteAccordionItem(){
         const targetInput = document.getElementById(`editInput-${this.getAttribute('data-target')}`);
 
         if (!targetInput.classList.value.includes('deselected')) {
           targetInput.classList.add('deselected');
+          accordionCurrentCount -= 1;
           this.innerHTML = 'Undo';
         }
         else {
           targetInput.classList.remove('deselected');
+          accordionCurrentCount += 1;
           this.innerHTML = '<i class="icon-delete"></i>';
         }
       };
 
-      // Mutations
+      function addAccordionItem() {
+        const newBtnTabID = `pane-${GenerateTabID()}`;
+        accordionCurrentCount += 1;
+        console.log(accordionCurrentCount);
+        contentEditList.insertAdjacentHTML('beforeend', editFieldTemplateFxn('', newBtnTabID));
+      }
+
+      const observer = new MutationObserver(mutations => {
+        if (mutations.length !== 0 && mutations[0].addedNodes.length !== 0) {
+          for (let index = 0; index < mutations.length; index++) {
+            mutations[0].addedNodes.forEach(li => {
+              li.querySelector('[data-action="delete-accordion-item"]').onclick = deleteAccordionItem;
+            });
+          }
+        }
+      });
+
+      // Mutations`
       HTMLObject.querySelectorAll('.sf-accordion-toggle').forEach((toggle) => {
         const toggleID = toggle.id.split('pane-')[1];
         UserInterfaceSortable({
@@ -133,32 +160,20 @@ export default class Accordion {
         });
       });
 
-      const observer = new MutationObserver(mutations => {
-        console.log(mutations);
-        
-        if (mutations.length !== 0 && mutations[0].addedNodes.length !== 0) {
-          for (let index = 0; index < mutations.length; index++) {
-            console.log(mutations[0].addedNodes);
-            
-          }
-        }
-      });
-
-      observer.observe(contentEditList, {
-        attributes: false,
-        subtree: false,
-        childList: true,
-      });
-
       // Update Component
       HTMLObject.querySelector('[data-action="edit-component"]').onclick = function (event) {
         editFields = document.getElementById(`editFields-${HTMLObject.id}`);
-        editFieldsInput = ``;
         isEditOpen = isEditOpen == false ? true : false;
         event.target.textContent = isEditOpen ? 'Update Accordion' : 'Edit Accordion';
         editFields.style.display = isEditOpen ? 'block' : 'none';
         
         if (isEditOpen) { // If Update field is active
+          observer.observe(contentEditList, {
+            attributes: false,
+            subtree: false,
+            childList: true,
+          });
+
           document
             .getElementById(this.getAttribute('data-target'))
             .querySelectorAll('.sf-accordion-toggle')
@@ -166,23 +181,22 @@ export default class Accordion {
               const accordionTitle = accordionToggle.querySelector('.sf-accordion-text');
               editFieldsInput += editFieldTemplateFxn(accordionTitle.textContent, accordionToggle.id);
             });
-
+          
+          contentEditList.innerHTML = editFieldsInput;
           editFields.nextElementSibling.style.display = 'none';
-          editFields.querySelector('.canvas-content-edit-list').insertAdjacentHTML('beforeend', editFieldsInput);
           accordionCurrentCount = contentEditList.children.length;
         }
         else { // Goes back to Accordion List
           updateAccordionListFxn(editFields, accordionSectionTemplateFxn);
           editFields.nextElementSibling.removeAttribute('style');
           observer.disconnect();
+          editFieldsInput = '';
         }
       };
 
       // Add New Line - DOM Display Only
-      HTMLObject.querySelector('[data-action="add-accordion-item"]').onclick = function (event) {
-        const newBtnTabID = `pane-${GenerateTabID()}`;
-        contentEditList.insertAdjacentHTML('beforeend', editFieldTemplateFxn('', newBtnTabID));
-      };
+      HTMLObject.querySelector('[data-action="add-accordion-item"]').onclick = addAccordionItem;
+
     } catch (error) {
       console.log(error);
       console.log('NO HTML Object to attached to');
