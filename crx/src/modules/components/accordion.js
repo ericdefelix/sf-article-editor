@@ -58,7 +58,7 @@ export default class Accordion {
   }
 
   editComponentSectionTemplate() {
-    return `<div class="canvas-content-edit-overlay" id="editFields-${this.id}" style="display: none;" data-min-count="${this.accordionCountMin}">
+    return `<div class="canvas-content-edit-overlay" id="editFields-${this.id}" style="display: none;">
               <h4>Update Accordion</h4>
               <ol class="canvas-content-edit-list"></ol>
               <button class="canvas-btn canvas-btn-xs" data-action="add-accordion-item" data-target="${this.id}">
@@ -125,13 +125,17 @@ export default class Accordion {
         if (!targetInput.classList.value.includes('deselected')) {
           targetInput.classList.add('deselected');
           accordionCurrentCount -= 1;
+          this.classList.add('disabled');
           this.innerHTML = 'Undo';
         }
         else {
           targetInput.classList.remove('deselected');
           accordionCurrentCount += 1;
+          this.classList.remove('disabled');
           this.innerHTML = '<i class="icon-delete"></i>';
         }
+
+        setButtonStates(this);
       };
 
       function addAccordionItem() {
@@ -141,6 +145,15 @@ export default class Accordion {
         contentEditList.insertAdjacentHTML('beforeend', editFieldTemplateFxn('', newBtnTabID));
       }
 
+      function setButtonStates(clickedBtn) {
+        const deleteBtns = [...contentEditList.querySelectorAll('[data-action="delete-accordion-item"]')];
+        
+        deleteBtns.forEach(btn => {          
+          btn.disabled = accordionCurrentCount > accordionCountMin
+            ? false : (btn.classList.value.includes('disabled') ? false : true);
+        });
+      }
+
       const observer = new MutationObserver(mutations => {
         if (mutations.length !== 0 && mutations[0].addedNodes.length !== 0) {
           for (let index = 0; index < mutations.length; index++) {
@@ -148,6 +161,7 @@ export default class Accordion {
               li.querySelector('[data-action="delete-accordion-item"]').onclick = deleteAccordionItem;
             });
           }
+          setButtonStates();
         }
       });
 
