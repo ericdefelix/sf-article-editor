@@ -2,8 +2,20 @@ import TextContent, { TextContentLabel, ParseHTML as TextContentParser } from '.
 import Info, { InfoLabel, ParseHTML as InfoParser } from './info';
 import Tips, { TipsLabel, ParseHTML as TipsParser } from './tips';
 import StyledLists, { StyledListsLabel, ParseHTML as StyledListsParser } from './styled-lists';
-import Tabs, { TabsLabel, ParseHTML as TabsParser } from './tabs';
-import Accordion, { AccordionLabel, ParseHTML as AccordionParser } from './accordion';
+
+import
+  Tabs, {
+  TabsLabel,
+  ParseHTML as TabsParser,
+  ParseChildrenHTML as TabsChildParser
+} from './tabs';
+
+import
+  Accordion, {
+  AccordionLabel,
+  ParseHTML as AccordionParser,
+  ParseChildrenHTML as AccordionChildParser
+} from './accordion';
 
 const ComponentTypes = {
   [TextContent.name]: TextContentLabel,
@@ -30,4 +42,6 @@ const ComponentParser = {
   AccordionParser
 };
 
-export { ComponentTypes, Components, ComponentParser };
+const ComponentChildrenParser = { TabsChildParser, AccordionChildParser };
+
+export { ComponentTypes, Components, ComponentParser, ComponentChildrenParser };

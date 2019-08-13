@@ -8,6 +8,20 @@ export function ParseHTML(str) {
   return str.includes('sf-accordion') ? 'Accordion' : '';
 }
 
+export function ParseChildrenHTML(parentComponent) {
+  if (parentComponent.classList.value.includes('sf-accordion')) {
+    const childrenNodes = [];
+    parentComponent.querySelectorAll('.sf-accordion-content').forEach(node => {
+      console.log(node.children);
+      
+    });
+    return childrenNodes;
+  }
+  else {
+    return null;
+  }
+}
+
 export default class Accordion {
   constructor() {
     this.id = GenerateID();

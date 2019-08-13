@@ -48,7 +48,7 @@ const editor = {
         
         if (ih !== '' || typeof ih !== 'undefined') {
           editor.htmlSection.insertAdjacentHTML('afterbegin', ih);
-          editor.existing_data = dataParser(editor.htmlSection.childNodes);
+          editor.existing_data = dataParser(editor.htmlSection.childNNodes);
           editor.start_app();
         }
       });

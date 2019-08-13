@@ -90,7 +90,7 @@ const UserInterfaceBuilder = {
     UserInterfaceBuilder.container.insertAdjacentHTML('afterbegin', EmptyStateTemplate('canvasContainer'));
   },
   renderExistingData: (data) => {
-    UserInterfaceBuilder.elementCount = data.length;
+    UserInterfaceBuilder.elementCount = data.length;    
 
     const canvasContainer = 'canvasContainer', canvasDraggableMain = 'canvasDraggableMain';
 
@@ -107,6 +107,8 @@ const UserInterfaceBuilder = {
 
       // Apply Events and Behavior
       const appendedChild = document.getElementById(canvasContainer).lastElementChild;
+      console.log(appendedChild);
+      
       component.updateDOM(appendedChild);      
 
       UserInterfaceBuilder.elements[component.id] = component;

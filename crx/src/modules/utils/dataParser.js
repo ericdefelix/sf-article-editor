@@ -1,15 +1,24 @@
-import { ComponentParser } from '../components/components';
+import { ComponentParser, ComponentChildrenParser } from '../components/components';
+
+console.log(ComponentChildrenParser);
 
 export function dataParser(childNodes) {
   const
     temp = [],
 
     data = (html) => {
-      return { html: html, type: '' };
+      return { html: html, type: '', nodeLevel: null };
     };
+  
+  console.log(ComponentChildrenParser['TabsChildParser']);
+  
   
   // Iterate each child element
   [...childNodes].forEach(currentNode => {
+    // if (ComponentChildrenParser.TabsChildParser.ParseChildrenHTML(currentNode)) {
+      
+    // }
+
     if (isNaN(currentNode.length)) {
       temp.push(new data(currentNode.outerHTML));
     }
@@ -18,6 +27,8 @@ export function dataParser(childNodes) {
         temp.push(new data(currentNode.textContent));
       }
     }
+
+    
   });
   
   let obj = null;
@@ -60,6 +71,4 @@ export function dataParser(childNodes) {
 
     return item.html !== '';
   });
-
-  // return [];
 }

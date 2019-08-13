@@ -8,6 +8,20 @@ export function ParseHTML(str) {
   return str.includes('sf-tabs') ? 'Tabs' : '';
 }
 
+export function ParseChildrenHTML(parentComponent) {
+  if (parentComponent.classList.value.includes('sf-tabs')) {
+    const childrenNodes = [];
+    parentComponent.querySelectorAll('.sf-tab-content').forEach(node => {
+      console.log(node.children);
+
+    });
+    return childrenNodes;
+  }
+  else {
+    return null;
+  }
+}
+
 export default class Tabs {
   constructor() {
     this.id = GenerateID();
@@ -191,6 +205,8 @@ export default class Tabs {
       });
 
       // Update Component
+      console.log(HTMLObject);
+      
       HTMLObject.querySelector('[data-action="edit-component"]').onclick = function (event) {
         editFields = document.getElementById(`editFields-${HTMLObject.id}`);
         isEditOpen = isEditOpen == false ? true : false;
