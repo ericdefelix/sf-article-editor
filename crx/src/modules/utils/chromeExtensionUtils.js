@@ -131,17 +131,28 @@ export function TinyMCEHelper(contentEditorAppConfig) {
 	return tinymceConfig;
 }
 
-export function ExtractSubnodes(params) {
-	const data = { titles: [] };
+export function IsNullOrWhiteSpace(str) {
+	return (!str || str.length === 0 || /^\s*$/.test(str));
+}
+
+export function ExtractSubnodes(params, ComponentParser) {
+	const data = { titles: [], containers: [], elements: [] };
 
 	params.htmlNode.querySelectorAll(params.titleSelector).forEach(title => data.titles.push(title.textContent));
-	params.htmlNode.querySelectorAll(params.containerSelector).forEach((container, index) => {
-		// const elements = [];
-		// if (container.children.length !== 0) {
-		// 	[...container.children].forEach(child => {
-		// 		if (child.nodeType === 1) elements.push(child);
-		// 	});
-		// }
+	params.htmlNode.querySelectorAll(params.containerSelector).forEach(container => {
+		const elements = [];
+		if (container.children.length !== 0) {
+			[...container.children].forEach(child => {
+				const subData = ComponentParser(child);
+				subData.nodeLevel = 2;
+				if (child.nodeType === 1) elements.push(subData);
+			});
+		}
+
+		data.elements.push(elements);
+
+		container.innerHTML = '';
+		data.containers.push({ dom: container });
 	});
 
 	return data;

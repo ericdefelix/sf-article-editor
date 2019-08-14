@@ -112,9 +112,28 @@ const UserInterfaceBuilder = {
 
       // If component has child nodes
       if (item.hasSubnodes) {
-        // appendedChild.querySelectorAll(component.selectorDOMSections).forEach(domNode => {
-        //   domNode.querySelector('.canvas-subcontainer').insertAdjacentHTML('beforeend', 'test');
-        // });
+        item.subnodes.containers.forEach((container, index) => {
+          // Attach to DOM
+          item.subnodes.elements[index].forEach(element => {            
+            const subComponent = new Components[element.type];            
+            const subComponentTemplate = subComponent.render(element.html, {
+              nodeLevel: 2,
+              draggableClass: `canvasDraggableSub_${container.id}`
+            });
+
+            console.log(container.dom);
+            
+            console.log(document.getElementById(`canvasSubContainer_${container.id}`));
+            
+
+            // document
+            //   .getElementById(`canvasSubContainer_${container.id}`)
+            //   .insertAdjacentHTML('beforeend', subComponentTemplate);
+
+            // // Apply Events and Behavior            
+            // subComponent.updateDOM(container.dom.lastElementChild);
+          });
+        });
       }
 
     });

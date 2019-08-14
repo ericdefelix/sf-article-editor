@@ -63,6 +63,11 @@ export const imageGalleryMockData = [
 
 
 export const htmlMockData = `   
+
+I'm text
+<p>im paragraph</p>
+
+<span>test</span>
 <div class="sf-tabs">
       <div class="sf-tabs-bar"><ul class="sf-tab-nav">
       <li class="sf-tab-item active">
@@ -75,14 +80,14 @@ export const htmlMockData = `
         <span class="sf-tab-item-link" id="target_tab-83620">Text 3</span>
       </li></ul></div>
     <div class="sf-tab-content in" id="tab-87779">
-<div class="sf-blockquote sf-blockquote-tip">
-  <div class="sf-blockquote-addon">&nbsp;</div>
+      <div class="sf-blockquote sf-blockquote-tip">
+        <div class="sf-blockquote-addon">&nbsp;</div>
 
-  <div class="sf-blockquote-content">
-    <h5 class="sf-blockquote-content-header">asdfasdfasd</h5>
-    <div class="sf-blockquote-content-body"><p>asdfsdfasdfadsf</p></div>
-  </div>
-</div>
+        <div class="sf-blockquote-content">
+          <h5 class="sf-blockquote-content-header">asdfasdfasd</h5>
+          <div class="sf-blockquote-content-body"><p>asdfsdfasdfadsf</p></div>
+        </div>
+      </div>
     </div>
     <div class="sf-tab-content" id="tab-52536">
     </div>

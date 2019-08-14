@@ -49,6 +49,7 @@ const editor = {
         if (ih !== '' || typeof ih !== 'undefined') {
           editor.htmlSection.insertAdjacentHTML('afterbegin', ih);
           editor.existing_data = dataParser(editor.htmlSection.childNNodes);
+          editor.htmlSection.innerHTML = '';
           editor.start_app();
         }
       });
@@ -59,6 +60,7 @@ const editor = {
       editor.image_gallery = imageGalleryMockData;
       editor.htmlSection.insertAdjacentHTML('afterbegin', htmlMockData);
       editor.existing_data = dataParser(editor.htmlSection.childNodes);
+      editor.htmlSection.innerHTML = '';
       console.log(editor.existing_data);
       
       editor.start_app();

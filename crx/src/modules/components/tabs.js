@@ -16,6 +16,10 @@ export const ParseHTML = {
       htmlNode: htmlNode,
       titleSelector: '.sf-tab-item-link',
       containerSelector: '.sf-tab-content'
+    }, ComponentParser);
+
+    data.subnodes.containers.forEach(container => {
+      container['id'] = container.dom.id.split('tab-')[1];
     });
 
     data.hasSubnodes = true;
