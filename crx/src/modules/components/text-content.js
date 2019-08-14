@@ -1,11 +1,19 @@
-import { GenerateID, TinyMCEHelper } from '../utils/chromeExtensionUtils';
+import { GenerateID, TinyMCEHelper, DataTemplate } from '../utils/chromeExtensionUtils';
 import { ContentBlockTemplate, AddContentBlockBtnTemplate } from '../utils/interfaceTemplates';
 
 export const TextContentLabel = 'Text';
 
-export function ParseHTML(str) {
-  return str.includes('sf-editor-content') ? 'TextContent' : '';
-}
+export const ParseHTML = {
+  isTrue: (htmlNode) => {
+    return htmlNode.classList.value.includes('sf-editor-content') ? true : false;
+  },
+  parse: (node) => {
+    const data = new DataTemplate();
+    data['type'] = 'TextContent';
+    data['html'] = node.outerHTML;
+    return data;
+  }
+};
 
 export default class TextContent {
   constructor() {

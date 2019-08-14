@@ -91,6 +91,10 @@ export function SanitiseSubContentBlock(content) {
 	return NormaliseHTMLString(content.innerHTML);
 }
 
+export function DataTemplate () {
+	return { html: '', type: '', nodeLevel: 1, hasSubnodes: false, subnodes: [] };
+};
+
 export function UnwrapElement(wrapper) {
 	// place childNodes in document fragment
 	const docFrag = document.createDocumentFragment();
@@ -125,4 +129,20 @@ export function TinyMCEHelper(contentEditorAppConfig) {
 	}
 
 	return tinymceConfig;
+}
+
+export function ExtractSubnodes(params) {
+	const data = { titles: [] };
+
+	params.htmlNode.querySelectorAll(params.titleSelector).forEach(title => data.titles.push(title.textContent));
+	params.htmlNode.querySelectorAll(params.containerSelector).forEach((container, index) => {
+		// const elements = [];
+		// if (container.children.length !== 0) {
+		// 	[...container.children].forEach(child => {
+		// 		if (child.nodeType === 1) elements.push(child);
+		// 	});
+		// }
+	});
+
+	return data;
 }

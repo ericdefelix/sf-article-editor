@@ -7,14 +7,12 @@ import
   Tabs, {
   TabsLabel,
   ParseHTML as TabsParser,
-  ParseChildrenHTML as TabsChildParser
 } from './tabs';
 
 import
   Accordion, {
   AccordionLabel,
   ParseHTML as AccordionParser,
-  ParseChildrenHTML as AccordionChildParser
 } from './accordion';
 
 const ComponentTypes = {
@@ -33,15 +31,33 @@ const Components = {
   Tabs,
   Accordion
 };
-const ComponentParser = {
-  TextContentParser,
-  InfoParser,
-  TipsParser,
-  StyledListsParser,
-  TabsParser,
-  AccordionParser
+
+const ComponentParser = function (currentNode) {
+  let data = {};
+  if (AccordionParser.isTrue(currentNode)) {
+    data = AccordionParser.parse(currentNode);
+  } else if (TabsParser.isTrue(currentNode)) {
+    data = TabsParser.parse(currentNode);
+  } else if (StyledListsParser.isTrue(currentNode)) {
+    data = StyledListsParser.parse(currentNode);
+  } else if (TipsParser.isTrue(currentNode)) {
+    data = TipsParser.parse(currentNode);
+  } else if (InfoParser.isTrue(currentNode)) {
+    data = InfoParser.parse(currentNode);
+  } else {
+    data = TextContentParser.parse(currentNode);
+  }
+  return data;
 };
 
-const ComponentChildrenParser = { TabsChildParser, AccordionChildParser };
-
-export { ComponentTypes, Components, ComponentParser, ComponentChildrenParser };
+export {
+  ComponentTypes,
+  Components,
+  ComponentParser,
+  TextContentParser,
+  // InfoParser,
+  // TipsParser,
+  // StyledListsParser,
+  // TabsParser,
+  // AccordionParser
+};

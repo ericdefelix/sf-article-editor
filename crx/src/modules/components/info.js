@@ -1,11 +1,20 @@
-import { GenerateID, TinyMCEHelper } from '../utils/chromeExtensionUtils';
+import { GenerateID, TinyMCEHelper, DataTemplate } from '../utils/chromeExtensionUtils';
 import { ContentBlockTemplate, AddContentBlockBtnTemplate } from '../utils/interfaceTemplates';
 
 export const InfoLabel = 'Info';
 
-export function ParseHTML(str) {
-  return str.includes('sf-info') ? 'Info' : '';
-}
+export const ParseHTML = {
+  isTrue: (htmlNode) => {    
+    return htmlNode.classList.value.includes('sf-info') ? true : false;
+  },
+  parse: (node) => {
+    const data = new DataTemplate();
+    data['type'] = 'Info';
+    data['html'] = node.outerHTML;
+    return data;
+  }
+};
+
 export default class Info {
   constructor() {
     this.id = GenerateID();

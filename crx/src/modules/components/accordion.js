@@ -1,26 +1,35 @@
-import { GenerateID, GenerateTabID } from '../utils/chromeExtensionUtils';
+import { GenerateID, GenerateTabID, DataTemplate } from '../utils/chromeExtensionUtils';
 import { ContentBlockTemplate, AddContentBlockBtnTemplate, AddSubContentBlockBtnTemplate } from '../utils/interfaceTemplates';
 import { UserInterfaceSortable } from '../utils/sortableHandler';
 
 export const AccordionLabel = 'Accordion';
 
-export function ParseHTML(str) {
-  return str.includes('sf-accordion') ? 'Accordion' : '';
-}
+export const ParseHTML = {
+  isTrue: (htmlNode) => {
+    return htmlNode.classList.value.includes('sf-accordion') ? true : false;
+  },
+  parse: (parentComponent) => {
+    const accordionSections = [], accordionData = [], data = new DataTemplate();
+    parentComponent.querySelectorAll('.sf-accordion-text').forEach(text => tabsData.push(text.textContent));
+    parentComponent.querySelectorAll('.sf-accordion-content').forEach((accordionContent, index) => {
+      const elements = [];
+      if (accordionContent.children.length !== 0) {
+        [...accordionContent.children].forEach(child => {
+          if (child.nodeType === 1) elements.push(child);
+        });
+      }
 
-export function ParseChildrenHTML(parentComponent) {
-  if (parentComponent.classList.value.includes('sf-accordion')) {
-    const childrenNodes = [];
-    parentComponent.querySelectorAll('.sf-accordion-content').forEach(node => {
-      console.log(node.children);
-      
+      accordionSections.push({ domIndex: index, elements: elements });
+      accordionContent.innerHTML = '';
     });
-    return childrenNodes;
+
+    data['hasSubnodes'] = true;
+    data['type'] = 'Accordion';
+    data['html'] = parentComponent.outerHTML;
+
+    return data;
   }
-  else {
-    return null;
-  }
-}
+};
 
 export default class Accordion {
   constructor() {

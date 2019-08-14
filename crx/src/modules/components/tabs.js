@@ -1,26 +1,30 @@
-import { GenerateID, GenerateTabID } from '../utils/chromeExtensionUtils';
+import { GenerateID, GenerateTabID, DataTemplate, ExtractSubnodes } from '../utils/chromeExtensionUtils';
 import { ContentBlockTemplate, AddContentBlockBtnTemplate, AddSubContentBlockBtnTemplate } from '../utils/interfaceTemplates';
 import { UserInterfaceSortable } from '../utils/sortableHandler';
+import { ComponentParser } from '../components/components';
 
 export const TabsLabel = 'Tabs';
 
-export function ParseHTML(str) {
-  return str.includes('sf-tabs') ? 'Tabs' : '';
-}
+export const ParseHTML = {
+  isTrue: (htmlNode) => {
+    return htmlNode.classList.value.includes('sf-tabs') ? true : false;
+  },
+  parse: (htmlNode) => {
+    const data = new DataTemplate();
 
-export function ParseChildrenHTML(parentComponent) {
-  if (parentComponent.classList.value.includes('sf-tabs')) {
-    const childrenNodes = [];
-    parentComponent.querySelectorAll('.sf-tab-content').forEach(node => {
-      console.log(node.children);
-
+    data.subnodes = ExtractSubnodes({
+      htmlNode: htmlNode,
+      titleSelector: '.sf-tab-item-link',
+      containerSelector: '.sf-tab-content'
     });
-    return childrenNodes;
+
+    data.hasSubnodes = true;
+    data.type = 'Tabs';
+    data.html = htmlNode.outerHTML;
+
+    return data;
   }
-  else {
-    return null;
-  }
-}
+};
 
 export default class Tabs {
   constructor() {
@@ -29,6 +33,7 @@ export default class Tabs {
     this.tabNamePrefix = 'Tab ';
     this.tabsCountMin = 3;
     this.tabsCurrentCount = this.tabsCountMin;
+    this.selectorDOMSections = '.sf-tab-content';
   }
 
   render(html, options) {
@@ -37,7 +42,7 @@ export default class Tabs {
       type: this.name,
       controlsTemplate: this.controlsTemplate(this.id),
       draggableClass: options.draggableClass,
-      componentTemplate: html === '' ? this.template() : html,
+      componentTemplate: this.template(html),
       addTemplate: AddContentBlockBtnTemplate(this.id)
     };
 
@@ -83,12 +88,16 @@ export default class Tabs {
             </div>`;
   }
 
-  template(existingHTML) {
-    let navTabItems = ``, navTabSections = ``;
+  template(existingData) {
 
-    for (let i = 0; i < this.tabsCountMin; i++) {
-      const tabID = GenerateTabID();
-      navTabItems += this.tabLinkTemplate(tabID, `Tab ${i + 1}`, i + 1);
+    let navTabItems = ``, navTabSections = ``;
+    const tabsCountMin = typeof existingData === 'object' ? existingData.length : this.tabsCountMin;
+
+    for (let i = 0; i < tabsCountMin; i++) {
+      const
+        tabID = GenerateTabID(),
+        tabTitle = typeof existingData === 'object' ? existingData[i] : `Tab ${i + 1}`;
+      navTabItems += this.tabLinkTemplate(tabID, tabTitle, i + 1);
       navTabSections += this.tabBodyTemplate(tabID, i + 1);
     }
 
@@ -204,9 +213,7 @@ export default class Tabs {
         });
       });
 
-      // Update Component
-      console.log(HTMLObject);
-      
+      // Update Component      
       HTMLObject.querySelector('[data-action="edit-component"]').onclick = function (event) {
         editFields = document.getElementById(`editFields-${HTMLObject.id}`);
         isEditOpen = isEditOpen == false ? true : false;

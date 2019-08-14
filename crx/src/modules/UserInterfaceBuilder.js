@@ -93,11 +93,11 @@ const UserInterfaceBuilder = {
     UserInterfaceBuilder.elementCount = data.length;    
 
     const canvasContainer = 'canvasContainer', canvasDraggableMain = 'canvasDraggableMain';
-
+    
     data.forEach((item) => {
       // Create a component instance
       const component = new Components[item.type];
-      const componentTemplate = component.render(item.html, {
+      const componentTemplate = component.render(item.hasSubnodes ? item.subnodes.titles : item.html, {
         nodeLevel: 1,
         draggableClass: canvasDraggableMain
       });
@@ -107,11 +107,16 @@ const UserInterfaceBuilder = {
 
       // Apply Events and Behavior
       const appendedChild = document.getElementById(canvasContainer).lastElementChild;
-      console.log(appendedChild);
       
-      component.updateDOM(appendedChild);      
+      component.updateDOM(appendedChild);
 
-      UserInterfaceBuilder.elements[component.id] = component;
+      // If component has child nodes
+      if (item.hasSubnodes) {
+        // appendedChild.querySelectorAll(component.selectorDOMSections).forEach(domNode => {
+        //   domNode.querySelector('.canvas-subcontainer').insertAdjacentHTML('beforeend', 'test');
+        // });
+      }
+
     });
 
     UserInterfaceSortable({
