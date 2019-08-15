@@ -49,12 +49,15 @@ const UserInterfaceBuilder = {
 
             if (element.getAttribute('data-content') !== 'empty' && element.classList.contains('canvas-content-block')) {
               element.querySelector('[data-action="remove-component"]').onclick = UserInterfaceBuilder._evtRemoveComponent;
+              element.querySelector('[data-action="toggle-view-component"]').onclick = UserInterfaceBuilder._evtToggleViewComponent;
             }
           }
         }
       }
 
       if (emptyStateContainer !== null && emptyStateContainer.nextElementSibling !== null) {
+        document.getElementById('btnPreview').disabled = false;
+        document.getElementById('btnSave').disabled = false;
         emptyStateContainer.remove();
       }
 
@@ -87,6 +90,8 @@ const UserInterfaceBuilder = {
     });
   },
   renderEmptyState: () => {
+    document.getElementById('btnPreview').disabled = true;
+    document.getElementById('btnSave').disabled = true;
     UserInterfaceBuilder.container.insertAdjacentHTML('afterbegin', EmptyStateTemplate('canvasContainer'));
   },
   renderExistingData: (data) => {
@@ -97,7 +102,7 @@ const UserInterfaceBuilder = {
     data.forEach((item) => {
       // Create a component instance
       const component = new Components[item.type];
-      const componentTemplate = component.render(item.hasSubnodes ? item.subnodes.titles : item.html, {
+      const componentTemplate = component.render(item.hasSubnodes ? item.subnodes.containers : item.html, {
         nodeLevel: 1,
         draggableClass: canvasDraggableMain
       });
@@ -114,24 +119,19 @@ const UserInterfaceBuilder = {
       if (item.hasSubnodes) {
         item.subnodes.containers.forEach((container, index) => {
           // Attach to DOM
-          item.subnodes.elements[index].forEach(element => {            
-            const subComponent = new Components[element.type];            
-            const subComponentTemplate = subComponent.render(element.html, {
-              nodeLevel: 2,
-              draggableClass: `canvasDraggableSub_${container.id}`
-            });
-
-            console.log(container.dom);
+          item.subnodes.elements[index].forEach(element => {
+            const
+              subComponent = new Components[element.type],
+              subComponentTemplate = subComponent.render(element.html, {
+                nodeLevel: 2,
+                draggableClass: `canvasDraggableSub_${container.id}`
+              }),
+              subContainer = document.getElementById(`canvasSubContainer_${container.id}`);
             
-            console.log(document.getElementById(`canvasSubContainer_${container.id}`));
-            
+            subContainer.insertAdjacentHTML('beforeend', subComponentTemplate);
 
-            // document
-            //   .getElementById(`canvasSubContainer_${container.id}`)
-            //   .insertAdjacentHTML('beforeend', subComponentTemplate);
-
-            // // Apply Events and Behavior            
-            // subComponent.updateDOM(container.dom.lastElementChild);
+            // Apply Events and Behavior            
+            subComponent.updateDOM(subContainer.lastElementChild);
           });
         });
       }
@@ -163,6 +163,9 @@ const UserInterfaceBuilder = {
     
     targetPreviousElementSibling = document.getElementById(containerID);
 
+    console.log(targetPreviousElementSibling);
+    
+
     if (UserInterfaceBuilder.targetNodeLevel === 1) {
       targetPreviousElementSibling.insertAdjacentHTML('afterend', componentTemplate);
       appendedChild = targetPreviousElementSibling.nextElementSibling;
@@ -183,6 +186,17 @@ const UserInterfaceBuilder = {
     Toolbox.hide();
     const targetContainerID = this.getAttribute('data-target');
     document.getElementById(targetContainerID).remove();
+  },
+  _evtToggleViewComponent: function () {
+    const
+      targetID = this.getAttribute('data-target'),
+      contentBlock = document.getElementById(targetID),
+      icon = this.querySelector('i');
+    
+    contentBlock.classList.value.includes('collapsed') ?
+      contentBlock.classList.remove('collapsed') : contentBlock.classList.add('collapsed');
+    
+    icon.classList.value = icon.classList.value === 'icon-collapse' ? 'icon-expand' : 'icon-collapse';
   },
   initEmptyStateButton: () => {
     // Init first add component button

@@ -88,12 +88,53 @@ I'm text
           <div class="sf-blockquote-content-body"><p>asdfsdfasdfadsf</p></div>
         </div>
       </div>
+
+      <div class="sf-blockquote sf-blockquote-info">
+        <div class="sf-blockquote-addon">&nbsp;</div>
+
+        <div class="sf-blockquote-content">
+          <h5 class="sf-blockquote-content-header">asdfasdfasd</h5>
+          <div class="sf-blockquote-content-body"><p>asdfsdfasdfadsf</p></div>
+        </div>
+      </div>
     </div>
     <div class="sf-tab-content" id="tab-52536">
     </div>
     <div class="sf-tab-content" id="tab-83620">
     </div>
-  </div>      
+  </div>
+<div class="sf-accordion">
+<div class="sf-accordion-item">
+<div class="sf-accordion-toggle" id="pane-12353">
+<h4 class="sf-accordion-text">Accordion Display Text</h4>
+<i class="sf-accordion-icon"></i>	
+</div>
+<div class="sf-accordion-content">
+  <div class="sf-blockquote sf-blockquote-alert">
+    <div class="sf-blockquote-addon">&nbsp;</div>
+  
+    <div class="sf-blockquote-content">
+      <h5 class="sf-blockquote-content-header">asdfasdfasd</h5>
+      <div class="sf-blockquote-content-body">
+        <p>Sample Text</p>
+      </div>
+    </div>
+  </div>
+</div>
+</div><div class="sf-accordion-item">
+<div class="sf-accordion-toggle" id="pane-25468">
+<h4 class="sf-accordion-text">Updated Text Data</h4>
+<i class="sf-accordion-icon"></i>	
+</div>
+<div class="sf-accordion-content"></div>
+</div><div class="sf-accordion-item">
+<div class="sf-accordion-toggle" id="pane-27083">
+<h4 class="sf-accordion-text">Accordion Display Text</h4>
+<i class="sf-accordion-icon"></i>	
+</div>
+<div class="sf-accordion-content"></div>
+</div>
+</div>    
     <div class="sf-editor-content">
       <p>This is a test. The quick brown fox</p>
     </div>

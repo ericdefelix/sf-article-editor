@@ -18,7 +18,6 @@ export const ParseHTML = {
 export default class StyledLists {
   constructor() {
     this.id = GenerateID();
-    this.name = this.name;
     this.cssClass = 'sf-list-bullet-circular';
     this.contentEditorConfig = {
       plugins: 'lists link image table imagetools',
@@ -29,7 +28,7 @@ export default class StyledLists {
   render(html, options) {
     const params = {
       id: this.id,
-      type: this.name,
+      type: this.constructor.name,
       controlsTemplate: '',
       draggableClass: options.draggableClass,
       componentTemplate: html === '' ? this.template() : html,

@@ -1,6 +1,7 @@
-import { GenerateID, GenerateTabID, DataTemplate } from '../utils/chromeExtensionUtils';
+import { GenerateID, GenerateTabID, DataTemplate, ExtractSubnodes } from '../utils/chromeExtensionUtils';
 import { ContentBlockTemplate, AddContentBlockBtnTemplate, AddSubContentBlockBtnTemplate } from '../utils/interfaceTemplates';
 import { UserInterfaceSortable } from '../utils/sortableHandler';
+import { ComponentParser } from '../components/components';
 
 export const AccordionLabel = 'Accordion';
 
@@ -8,25 +9,22 @@ export const ParseHTML = {
   isTrue: (htmlNode) => {
     return htmlNode.classList.value.includes('sf-accordion') ? true : false;
   },
-  parse: (parentComponent) => {
-    const accordionSections = [], accordionData = [], data = new DataTemplate();
-    parentComponent.querySelectorAll('.sf-accordion-text').forEach(text => tabsData.push(text.textContent));
-    parentComponent.querySelectorAll('.sf-accordion-content').forEach((accordionContent, index) => {
-      const elements = [];
-      if (accordionContent.children.length !== 0) {
-        [...accordionContent.children].forEach(child => {
-          if (child.nodeType === 1) elements.push(child);
-        });
-      }
+  parse: (htmlNode) => {
+    const data = new DataTemplate();
 
-      accordionSections.push({ domIndex: index, elements: elements });
-      accordionContent.innerHTML = '';
+    data.subnodes = ExtractSubnodes({
+      htmlNode: htmlNode,
+      titleSelector: '.sf-accordion-text',
+      containerSelector: '.sf-accordion-item .sf-accordion-content'
+    }, ComponentParser);
+    
+    document.querySelectorAll('.sf-accordion-toggle').forEach((toggle, index) => {
+      data.subnodes.containers[index]['id'] = toggle.id.split('pane-')[1];
     });
 
-    data['hasSubnodes'] = true;
-    data['type'] = 'Accordion';
-    data['html'] = parentComponent.outerHTML;
-
+    data.hasSubnodes = true;
+    data.type = 'Accordion';
+    data.html = htmlNode.outerHTML;
     return data;
   }
 };
@@ -34,20 +32,19 @@ export const ParseHTML = {
 export default class Accordion {
   constructor() {
     this.id = GenerateID();
-    this.name = this.name;
     this.cssClass = 'sf-accordion';
     this.accordionNamePrefix = 'Accordion Pane ';
     this.accordionCountMin = 3;
     this.accordionCurrentCount = this.accordionCountMin;
   }
 
-  render(html,options) {
+  render(html, options) {    
     const params = {
       id: this.id,
-      type: this.name,
+      type: this.constructor.name,
       controlsTemplate: this.controlsTemplate(this.id),
       draggableClass: options.draggableClass,
-      componentTemplate: html === '' ? this.template() : html,
+      componentTemplate: this.template(html),
       addTemplate: AddContentBlockBtnTemplate(this.id)
     };
 
@@ -61,7 +58,7 @@ export default class Accordion {
   accordionSectionTemplate(accordionID, accordionTitle) {
     const template = `<div class="sf-accordion-item">
                         <div class="sf-accordion-toggle" id="pane-${accordionID}">
-                          <h4 class="sf-accordion-text">${accordionTitle == '' ? 'Accordion Display Text' : accordionTitle }</h4>
+                          <h4 class="sf-accordion-text">${accordionTitle}</h4>
                           <i class="sf-accordion-icon"></i>	
                         </div>
                         <div class="sf-accordion-content">
@@ -90,12 +87,16 @@ export default class Accordion {
             </div>`;
   }
 
-  template(existingHTML) {
+  template(existingData) {
     let accordionSections = ``;
+    const accordionCountMin = typeof existingData === 'object' ? existingData.length : this.accordionCountMin;
+    
+    for (let i = 0; i < accordionCountMin; i++) {
+      const
+        accordionID = typeof existingData === 'object' ? existingData[i].id : GenerateTabID(),
+        accordionTitle = typeof existingData === 'object' ? existingData[i].title : 'Accordion Display Text';
 
-    for (let i = 0; i < this.accordionCountMin; i++) {
-      const accordionID = GenerateTabID();
-      accordionSections += this.accordionSectionTemplate(accordionID, '');
+      accordionSections += this.accordionSectionTemplate(accordionID, accordionTitle);
     }
     return `${this.editComponentSectionTemplate()}<div class="sf-accordion">${accordionSections}</div>`;
   }
@@ -164,7 +165,6 @@ export default class Accordion {
       function addAccordionItem() {
         const newBtnTabID = `pane-${GenerateTabID()}`;
         accordionCurrentCount += 1;
-        console.log(accordionCurrentCount);
         contentEditList.insertAdjacentHTML('beforeend', editFieldTemplateFxn('', newBtnTabID));
       }
 

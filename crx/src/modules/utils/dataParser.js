@@ -23,7 +23,6 @@ export function dataParser(childNodes) {
         const p = document.createElement('p');
         p.textContent = textContentConcatenate;
         combinedTextContentData = TextContentParser.parse(p);
-        
         nodesData.push(combinedTextContentData);
         textContentConcatenate = '';
       }

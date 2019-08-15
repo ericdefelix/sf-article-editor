@@ -136,10 +136,9 @@ export function IsNullOrWhiteSpace(str) {
 }
 
 export function ExtractSubnodes(params, ComponentParser) {
-	const data = { titles: [], containers: [], elements: [] };
-
-	params.htmlNode.querySelectorAll(params.titleSelector).forEach(title => data.titles.push(title.textContent));
-	params.htmlNode.querySelectorAll(params.containerSelector).forEach(container => {
+	const data = { containers: [], elements: [] };
+	const titles = [...params.htmlNode.querySelectorAll(params.titleSelector)];
+	params.htmlNode.querySelectorAll(params.containerSelector).forEach((container, index) => {
 		const elements = [];
 		if (container.children.length !== 0) {
 			[...container.children].forEach(child => {
@@ -152,7 +151,7 @@ export function ExtractSubnodes(params, ComponentParser) {
 		data.elements.push(elements);
 
 		container.innerHTML = '';
-		data.containers.push({ dom: container });
+		data.containers.push({ dom: container, title: titles[index].textContent });
 	});
 
 	return data;

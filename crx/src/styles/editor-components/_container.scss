@@ -17,17 +17,23 @@
   background-color: white;
   border-radius: $canvas-gui-border-radius;
   @include box-shadow(0, 6px, 30px, 0, rgba(0,0,0,0.2));
+
+  > select {
+    font-size: 0.8rem;
+    height: 1.75rem;
+    margin: -0.5625rem 0 0.4375rem -0.5625rem;
+    display: block;
+  }
 }
 
 .scroll-container {
   overflow-y: auto;
   height: calc(100% - 3.4rem);
   height: -webkit-calc(100% - 3.4rem);
-  margin-top: 1em;
   border-top: 1px solid #e3e3e3;
   margin: 0 -1rem;
-  margin-top: 1em;
-  padding: 1em;
+  margin-top: 0.2rem;
+  padding: 1rem;
 }
 
 .canvas-container {
@@ -69,6 +75,17 @@
       border-radius: $canvas-gui-border-radius !important;
     }
   }
+
+  &.collapsed {
+    .canvas-content-config {
+      border-bottom-left-radius: $canvas-gui-border-radius;
+      border-bottom-right-radius: $canvas-gui-border-radius;
+    }
+
+    .canvas-content-snippet {
+      display: none;
+    }
+  }
 }
 
 .canvas-content-config {
@@ -91,8 +108,7 @@
 }
 
 .canvas-content-snippet {
-  padding: 1rem;
-  padding-bottom: 1.4rem;
+  padding: 0.5rem;
   position: relative;
   background-color: white;
   border-bottom-left-radius: $canvas-gui-border-radius;
@@ -129,9 +145,9 @@
   cursor: move;
   display: block;
   position: absolute;
-  top: -1px;
+  top: 0;
   left: 0;
-  bottom: -1px;
+  bottom: 0;
   z-index: 1;
   width: 2.6rem;
   border-top-left-radius: $canvas-gui-border-radius;
@@ -160,10 +176,14 @@
   &:after { right: calc(50% - 10px); }
 }
 
+.canvas-content-chosen:not(.collapsed) {
+  @include box-shadow(0,0,0,2px,$box-shadow-color, inset);
+  outline: 2px solid $blue;
+}
 .canvas-content-ghost {
+  @include no-select();
   position: relative;
   opacity: 0.8;
-  @include no-select();
   overflow: hidden;
   border-radius: $canvas-gui-border-radius;
 
@@ -180,9 +200,6 @@
 }
 
 .canvas-content-dragging {
-  // background-color: white;
-  @include box-shadow(0,2px,10px,$box-shadow-color);
-
   .canvas-add-component {
     display: none;
   }
@@ -246,7 +263,19 @@
   }
 }
 
+.canvas-content-label {
+  display: block;
+  position: absolute;
+  left: 3.125rem;
+  top: 0.75rem;
+  font-weight: 500;
+  font-size: 0.7rem;
+  color: $canvas-gui-color;
+  text-transform: uppercase;
+}
+
 .subcontent-action-hotspot {
+  margin-top: 0.5rem;
   width: 20rem;
   position: relative;
 
@@ -298,10 +327,17 @@
 }
 
 select.canvas-form-control {
-  line-height: 1;
-  padding: 1px;
-  padding-right: 0.9375rem;
+  line-height: 1.2;
+  font-size: 0.7rem;
+  padding: 0.125rem 1.5rem 0.125rem 0.25rem;
   @include appearance(none);
+
+  background-image: linear-gradient(45deg, transparent 50%, gray 50%), linear-gradient(135deg, gray 50%, transparent 50%);
+  background-position: 
+    calc(100% - 12px) calc(1em + 2px), 
+    calc(100% - 7px) calc(1em + 2px);
+  background-size: 5px 5px, 5px 5px;
+  background-repeat: no-repeat;
 
   &:before, &:after {
     position: absolute;
@@ -309,6 +345,7 @@ select.canvas-form-control {
     width: 2px;
     height: 15px;
     content: '';
+    z-index: 1;
     background-color: $canvas-gui-color;
   }
 }
@@ -340,8 +377,8 @@ select.canvas-form-control {
 #btnCloseOutputContainer {
   padding: 8px 14px;
   position: absolute;
-  top: 5px;
-  right: 5px;
+  top: 7px;
+  right: 7px;
 }
 
 .edit-mode {

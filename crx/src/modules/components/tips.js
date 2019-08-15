@@ -21,7 +21,6 @@ export const ParseHTML = {
 export default class Tips {
   constructor() {
     this.id = GenerateID();
-    this.name = this.name;
     this.cssClass = 'sf-blockquote';
     this.nodeObject = null;
     this.contentEditorConfig = {
@@ -57,7 +56,7 @@ export default class Tips {
   render(html,options) {    
     const params = {
       id: this.id,
-      type: this.name,
+      type: this.constructor.name,
       controlsTemplate: this.renderControlsTemplate(html === '' ? this.template() : html),
       draggableClass: options.draggableClass,
       componentTemplate: html === '' ? this.template() : html,

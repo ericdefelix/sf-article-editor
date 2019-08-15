@@ -16,11 +16,15 @@ export function NewBtnTemplateCKEDITOR(id) {
 					</span>`;
 }
 
-export function ContentBlockTemplate(params) {
+export function ContentBlockTemplate(params) {	
   return `<section class="canvas-content-block" id="${params.id}">
 		<div class="canvas-content-config">
 			<div class="canvas-content-draggable ${params.draggableClass}"></div>
+			<span class="canvas-content-label">${params.type}</span>
 			${ params.controlsTemplate}
+			<button class="canvas-btn canvas-btn-xs" data-action="toggle-view-component" data-target="${params.id}">
+				<i class="icon-collapse"></i>
+			</button>
 			<button class="canvas-btn canvas-btn-xs" data-action="remove-component" data-target="${params.id}">
 				<i class="icon-delete"></i>
 			</button>

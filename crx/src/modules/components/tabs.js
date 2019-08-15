@@ -43,7 +43,7 @@ export default class Tabs {
   render(html, options) {
     const params = {
       id: this.id,
-      type: this.name,
+      type: this.constructor.name,
       controlsTemplate: this.controlsTemplate(this.id),
       draggableClass: options.draggableClass,
       componentTemplate: this.template(html),
@@ -93,14 +93,13 @@ export default class Tabs {
   }
 
   template(existingData) {
-
     let navTabItems = ``, navTabSections = ``;
     const tabsCountMin = typeof existingData === 'object' ? existingData.length : this.tabsCountMin;
 
-    for (let i = 0; i < tabsCountMin; i++) {
+    for (let i = 0; i < tabsCountMin; i++) {      
       const
-        tabID = GenerateTabID(),
-        tabTitle = typeof existingData === 'object' ? existingData[i] : `Tab ${i + 1}`;
+        tabID = typeof existingData === 'object' ? existingData[i].id : GenerateTabID(),
+        tabTitle = typeof existingData === 'object' ? existingData[i].title : `Tab ${i + 1}`;
       navTabItems += this.tabLinkTemplate(tabID, tabTitle, i + 1);
       navTabSections += this.tabBodyTemplate(tabID, i + 1);
     }

@@ -18,7 +18,6 @@ export const ParseHTML = {
 export default class TextContent {
   constructor() {
     this.id = GenerateID();
-    this.type = this.name;
     this.cssClass = 'sf-editor-content';
     this.contentEditorConfig = {
       plugins: 'lists link image table imagetools',
@@ -29,6 +28,7 @@ export default class TextContent {
   render(html, options) {
     const params = {
       id: this.id,
+      type: this.constructor.name,
       controlsTemplate: '',
       draggableClass: options.draggableClass,
       componentTemplate: html === '' ? this.template() : html,

@@ -18,7 +18,6 @@ export const ParseHTML = {
 export default class Info {
   constructor() {
     this.id = GenerateID();
-    this.name = this.name;
     this.cssClass = 'sf-well';
     this.contentEditorConfig = {
       plugins: 'link image table',
@@ -29,7 +28,7 @@ export default class Info {
   render(html, options) {
     const params = {
       id: this.id,
-      type: this.name,
+      type: this.constructor.name,
       controlsTemplate: '',
       draggableClass: options.draggableClass,
       componentTemplate: html === '' ? this.template() : html,

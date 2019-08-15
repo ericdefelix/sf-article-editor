@@ -9,7 +9,7 @@
 	left: 0;
 	right: 0;
 	min-height: 1vh;
-	padding: $canvas-gui-padding;
+	padding: $canvas-gui-padding/2;
 	border-bottom: 1px solid rgb(206, 206, 206);
   z-index: 50;
 	@include box-shadow(0, 0, 2px, 0, rgba(0,0,0,0.1));
