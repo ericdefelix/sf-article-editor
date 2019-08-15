@@ -10,9 +10,11 @@ const UserInterfaceBuilder = {
   elementCount: 0,
   targetNodeLevel: '',
   placeholderPointerID: '',
+  images: [],
   elements: {},
   init: (container, params) => {
     UserInterfaceBuilder.container = container;
+    UserInterfaceBuilder.images = params.images;
 
     // Attach mutation observer
     UserInterfaceBuilder.observe('canvasContainer',1);
@@ -28,7 +30,7 @@ const UserInterfaceBuilder = {
       action.onclick = UserInterfaceBuilder._evtAddComponent;
     });
 
-    UserInterfaceBuilder.initEmptyStateButton();
+    UserInterfaceBuilder.initEmptyStateButton();    
   },
   toolboxDisplay: function () {    
     UserInterfaceBuilder.targetNodeLevel = parseInt(this.getAttribute('data-node-level'));
@@ -95,8 +97,7 @@ const UserInterfaceBuilder = {
     UserInterfaceBuilder.container.insertAdjacentHTML('afterbegin', EmptyStateTemplate('canvasContainer'));
   },
   renderExistingData: (data) => {
-    UserInterfaceBuilder.elementCount = data.length;    
-
+    UserInterfaceBuilder.elementCount = data.length;
     const canvasContainer = 'canvasContainer', canvasDraggableMain = 'canvasDraggableMain';
     
     data.forEach((item) => {
@@ -113,7 +114,7 @@ const UserInterfaceBuilder = {
       // Apply Events and Behavior
       const appendedChild = document.getElementById(canvasContainer).lastElementChild;
       
-      component.updateDOM(appendedChild);
+      component.updateDOM(appendedChild, UserInterfaceBuilder.images);
 
       // If component has child nodes
       if (item.hasSubnodes) {
@@ -131,7 +132,7 @@ const UserInterfaceBuilder = {
             subContainer.insertAdjacentHTML('beforeend', subComponentTemplate);
 
             // Apply Events and Behavior            
-            subComponent.updateDOM(subContainer.lastElementChild);
+            subComponent.updateDOM(subContainer.lastElementChild, UserInterfaceBuilder.images);
           });
         });
       }
@@ -177,7 +178,7 @@ const UserInterfaceBuilder = {
     }
 
     // Apply Events and Behavior
-    component.updateDOM(appendedChild);
+    component.updateDOM(appendedChild, UserInterfaceBuilder.images);
 
     // Hide toolbox popup
     Toolbox.hide();

@@ -38,7 +38,7 @@ export default class Info {
     return ContentBlockTemplate(params);
   }
 
-  updateDOM(HTMLObject) {
+  updateDOM(HTMLObject, imagesData) {
     try {
       let
         contentEditorAppConfig,
@@ -46,10 +46,12 @@ export default class Info {
 
       contentEditorAppConfig = {
         container: `#snippet-${HTMLObject.id} .sf-well-body`,
-        config: this.contentEditorConfig
+        config: this.contentEditorConfig, 
+        images: imagesData
       };
 
-      tinymce.init(TinyMCEHelper(contentEditorAppConfig));
+      const config = TinyMCEHelper(contentEditorAppConfig);
+      tinymce.init(config);
 
       heading = HTMLObject.querySelector('.sf-well-heading');
       heading.contentEditable = true;

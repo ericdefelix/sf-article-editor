@@ -3,6 +3,7 @@ import { dataParser } from './modules/utils/dataParser';
 import UserInterfaceBuilder from './modules/UserInterfaceBuilder';
 import { GenerateSanitisedHTML } from './modules/utils/GenerateSanitisedHTML';
 import { imageGalleryMockData, htmlMockData } from './modules/utils/mockData';
+import { ImageGallery } from './modules/ImageGallery';
 
 const editor = {
   crxID: '',
@@ -61,15 +62,15 @@ const editor = {
       editor.htmlSection.insertAdjacentHTML('afterbegin', htmlMockData);
       editor.existing_data = dataParser(editor.htmlSection.childNodes);
       editor.htmlSection.innerHTML = '';
-      // console.log(editor.existing_data);
       
       editor.start_app();
-      console.log('Attempting to do a chrome api method. You are in stand-alone mode');
+      console.log('Chrome API not available. You are in stand-alone mode');
     }
   },
   start_app: () => {
     UserInterfaceBuilder.init(editor.canvasContainer, {
-      data: editor.existing_data
+      data: editor.existing_data,
+      images: editor.image_gallery
     });
 
     editor.btnPreview.onclick = editor.generate_html;
@@ -98,34 +99,14 @@ const editor = {
     document.querySelector('body').classList.add('sf-' + themeValue);
   },
   generate_html: function() {
-    editor.outputPane.style.display = 'block';
     let data = GenerateSanitisedHTML(editor.canvasContainer, editor.htmlSection, editor.sourceSection);
 
-    console.log(data);
-    
-
-    // editor.existing_data.forEach(function (elem) {
-    //   html += elem.metadata.html;
-    // });
-
-    editor.htmlSection.innerHTML = editor.existing_data.length > 0 ? data.preview.innerHTML : '<strong>Nothing to display here.</strong>';
-
-    // Always set first tab to be active on save
-    // editor.htmlSection.querySelectorAll('.sf-tab-nav').forEach(function (elem, i) {
-    //   elem.firstElementChild.querySelector('.sf-tab-item-link').click();
-    // });
+    editor.htmlSection.innerHTML = editor.existing_data.length > 0 ?
+      data.preview.innerHTML : '<strong>Nothing to display here.</strong>';
 
     editor.sourceSection.value = data.raw;
 
-    // // Modify IDS just for preview
-    // editor.htmlSection.querySelectorAll('.sf-tabs').forEach(function(elem, i){
-    //   elem.querySelectorAll('.sf-tab-item-link').forEach(function(tabLink,_i){
-    //     const dataTarget = tabLink.getAttribute('id').split('target_')[1];
-    //     tabLink.setAttribute('id', 'target_preview_' + dataTarget);
-    //     elem.querySelector('#' + dataTarget).id = 'preview_' + dataTarget;
-    //   });
-    // });
-
+    editor.outputPane.style.display = 'block';
     document.querySelector('body').style.overflow = 'hidden';
   },
   save_html: function() {
@@ -148,7 +129,7 @@ const editor = {
       chrome.runtime.sendMessage(editor.crxID, request);
     } catch (e) {
       // statements
-      console.log('Attempting to do a chrome api method. Page origin is not via chrome extension');
+      console.log('Chrome API not available. Page origin is not via chrome extension');
     }
   },
   run: function() {

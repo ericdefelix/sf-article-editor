@@ -38,14 +38,16 @@ export default class StyledLists {
     return ContentBlockTemplate(params);
   }
 
-  updateDOM(HTMLObject) {
+  updateDOM(HTMLObject, imagesData) {
     try {
       const contentEditorAppConfig = {
         container: `#snippet-${HTMLObject.id}`,
-        config: this.contentEditorConfig
+        config: this.contentEditorConfig,
+        images: imagesData
       };
 
-      tinymce.init(TinyMCEHelper(contentEditorAppConfig));
+      const config = TinyMCEHelper(contentEditorAppConfig);
+      tinymce.init(config);
     } catch (error) {
       console.log('NO HTML Object to attached to');
     }

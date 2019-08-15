@@ -1,3 +1,5 @@
+import ImageGallery from '../ImageGallery';
+
 export function RequestIsValid(request) {
   let flag = false;
 
@@ -71,26 +73,6 @@ export function GetComponentType(HTMLNode) {
 	return HTMLNode.getAttribute('data-component-type');
 }
 
-export function SanitiseSubContentBlock(content) {	
-	const
-		children = content.children,
-		attrsToRemove = ['id', 'spellcheck', 'style', 'contentEditable'],
-		classesToRemove = ['mce-content-body'];
-	
-	[...children].forEach(child => {	
-		child.querySelectorAll('[contenteditable="true"]').forEach(el => {
-			attrsToRemove.forEach(attr => {
-				if (el.hasAttribute(attr)) el.removeAttribute(attr);
-			});
-			classesToRemove.forEach(cssClass => {
-				if (el.classList.contains(cssClass)) el.classList.remove(cssClass);
-			});
-		});	
-	});
-
-	return NormaliseHTMLString(content.innerHTML);
-}
-
 export function DataTemplate () {
 	return { html: '', type: '', nodeLevel: 1, hasSubnodes: false, subnodes: [] };
 };
@@ -112,19 +94,20 @@ export function TinyMCEHelper(contentEditorAppConfig) {
 		selector: contentEditorAppConfig.container,  // change this value according to your HTML
 		inline: true,
 		menubar: false,
-		default_link_target: "_blank"
+		default_link_target: "_blank",
+		toolbar: contentEditorAppConfig.config.toolbar,
+		plugins: contentEditorAppConfig.config.plugins
 	};
-
-	tinymceConfig['toolbar'] = contentEditorAppConfig.config.toolbar;
-	tinymceConfig['plugins'] = contentEditorAppConfig.config.plugins;
+	
 	
 	if (contentEditorAppConfig.config.toolbar.indexOf('image') !== -1) {
+		// cb, value, meta
 		tinymceConfig['image_title'] = true;
 		tinymceConfig['automatic_uploads'] = true;
-		tinymceConfig['paste_data_images '] = true;
+		tinymceConfig['paste_data_images'] = true;
 		tinymceConfig['file_picker_types'] = 'image';
-		tinymceConfig['file_picker_callback'] = function (cb, value, meta) {
-			ImageGallery.run(editor.image_gallery);
+		tinymceConfig['file_picker_callback'] = function (cb, value, meta) {			
+			ImageGallery.run(contentEditorAppConfig.images);			
 		};
 	}
 
