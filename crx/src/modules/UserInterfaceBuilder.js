@@ -1,7 +1,22 @@
 import { Toolbox } from './Toolbox';
-import { Components } from './components/components';
+import TextContent from './components/text-content';
+import Info from './components/info';
+import Tips from './components/tips';
+import StyledLists from './components/styled-lists';
+import Tabs from './components/tabs';
+import Accordion from './components/accordion';
+
 import { UserInterfaceSortable } from '../modules/utils/sortableHandler';
 import { EmptyStateTemplate } from '../modules/utils/interfaceTemplates';
+
+const Components = {
+  TextContent,
+  Info,
+  Tips,
+  StyledLists,
+  Tabs,
+  Accordion
+};
 
 const UserInterfaceBuilder = {
   container: null,

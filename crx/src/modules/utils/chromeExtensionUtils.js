@@ -1,5 +1,3 @@
-import ImageGallery from '../ImageGallery';
-
 export function RequestIsValid(request) {
   let flag = false;
 
@@ -99,7 +97,6 @@ export function TinyMCEHelper(contentEditorAppConfig) {
 		plugins: contentEditorAppConfig.config.plugins
 	};
 	
-	
 	if (contentEditorAppConfig.config.toolbar.indexOf('image') !== -1) {
 		// cb, value, meta
 		tinymceConfig['image_title'] = true;
@@ -107,7 +104,7 @@ export function TinyMCEHelper(contentEditorAppConfig) {
 		tinymceConfig['paste_data_images'] = true;
 		tinymceConfig['file_picker_types'] = 'image';
 		tinymceConfig['file_picker_callback'] = function (cb, value, meta) {			
-			ImageGallery.run(contentEditorAppConfig.images);			
+			// ImageGallery.run(contentEditorAppConfig.images);		
 		};
 	}
 

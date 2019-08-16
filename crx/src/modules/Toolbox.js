@@ -1,4 +1,4 @@
-import { ComponentTypes } from './components/components';
+import { ComponentTypes } from './components/componentHelpers';
 
 export const Toolbox = {
   targetNodeLevel: undefined,

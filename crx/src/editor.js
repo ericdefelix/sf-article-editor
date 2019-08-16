@@ -1,9 +1,9 @@
 import './editor.scss';
-import { dataParser } from './modules/utils/dataParser';
 import UserInterfaceBuilder from './modules/UserInterfaceBuilder';
+import ImageGallery from './modules/utils/ImageGallery';
+import { dataParser } from './modules/utils/dataParser';
 import { GenerateSanitisedHTML } from './modules/utils/GenerateSanitisedHTML';
 import { imageGalleryMockData, htmlMockData } from './modules/utils/mockData';
-import { ImageGallery } from './modules/ImageGallery';
 
 const editor = {
   crxID: '',
@@ -49,7 +49,7 @@ const editor = {
         
         if (ih !== '' || typeof ih !== 'undefined') {
           editor.htmlSection.insertAdjacentHTML('afterbegin', ih);
-          editor.existing_data = dataParser(editor.htmlSection.childNNodes);
+          editor.existing_data = dataParser(editor.htmlSection.childNodes);
           editor.htmlSection.innerHTML = '';
           editor.start_app();
         }

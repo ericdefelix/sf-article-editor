@@ -45,10 +45,7 @@ export default class TextContent {
         config: this.contentEditorConfig,
         images: imagesData
       };
-      
-      console.log(imagesData);
-      
-      
+
       const config = TinyMCEHelper(contentEditorAppConfig);
 
       tinymce.init(config);

@@ -28,7 +28,7 @@ module.exports = {
       { from: Path.resolve(__dirname, '../src/webpage.js'), to: 'webpage.js' },
       { from: Path.resolve(__dirname, '../src/sf-leap.js'), to: 'sf-leap.js' },
       { from: Path.resolve(__dirname, '../src/manifest.json'), to: 'manifest.json' },
-      { from: Path.resolve(__dirname, '../src/modules/utils'), to: 'modules/utils' },
+      { from: Path.resolve(__dirname, '../src/modules'), to: 'modules' },
       {
         from: Path.resolve(__dirname, '../src/editor-themes-insert.scss'),
         to: 'editor-themes-insert.css',
