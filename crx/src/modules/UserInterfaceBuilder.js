@@ -6,8 +6,9 @@ import StyledLists from './components/styled-lists';
 import Tabs from './components/tabs';
 import Accordion from './components/accordion';
 
+import ImageGallery from './ImageGallery';
 import { UserInterfaceSortable } from '../modules/utils/sortableHandler';
-import { EmptyStateTemplate } from '../modules/utils/interfaceTemplates';
+import { EmptyStateTemplate, ImageGalleryTemplate } from '../modules/utils/interfaceTemplates';
 
 const Components = {
   TextContent,
@@ -25,11 +26,9 @@ const UserInterfaceBuilder = {
   elementCount: 0,
   targetNodeLevel: '',
   placeholderPointerID: '',
-  images: [],
   elements: {},
   init: (container, params) => {
     UserInterfaceBuilder.container = container;
-    UserInterfaceBuilder.images = params.images;
 
     // Attach mutation observer
     UserInterfaceBuilder.observe('canvasContainer',1);
@@ -41,11 +40,16 @@ const UserInterfaceBuilder = {
 
     Toolbox.init(UserInterfaceBuilder);
 
-    document.getElementById('toolbox').querySelectorAll('[data-action="add-component"]').forEach((action) => {
+    document.getElementById('toolbox').querySelectorAll('[data-action="add-component"]').forEach(action => {
       action.onclick = UserInterfaceBuilder._evtAddComponent;
     });
 
-    UserInterfaceBuilder.initEmptyStateButton();    
+    UserInterfaceBuilder.initEmptyStateButton();
+
+    ImageGallery.init({
+      data: typeof params.images === 'undefined' ? [] : params.images,
+      template: ImageGalleryTemplate,
+    });
   },
   toolboxDisplay: function () {    
     UserInterfaceBuilder.targetNodeLevel = parseInt(this.getAttribute('data-node-level'));
@@ -129,7 +133,7 @@ const UserInterfaceBuilder = {
       // Apply Events and Behavior
       const appendedChild = document.getElementById(canvasContainer).lastElementChild;
       
-      component.updateDOM(appendedChild, UserInterfaceBuilder.images);
+      component.updateDOM(appendedChild);
 
       // If component has child nodes
       if (item.hasSubnodes) {
@@ -178,10 +182,7 @@ const UserInterfaceBuilder = {
     const componentTemplate = component.render('', options);
     
     targetPreviousElementSibling = document.getElementById(containerID);
-
-    console.log(targetPreviousElementSibling);
     
-
     if (UserInterfaceBuilder.targetNodeLevel === 1) {
       targetPreviousElementSibling.insertAdjacentHTML('afterend', componentTemplate);
       appendedChild = targetPreviousElementSibling.nextElementSibling;
@@ -193,7 +194,7 @@ const UserInterfaceBuilder = {
     }
 
     // Apply Events and Behavior
-    component.updateDOM(appendedChild, UserInterfaceBuilder.images);
+    component.updateDOM(appendedChild);
 
     // Hide toolbox popup
     Toolbox.hide();

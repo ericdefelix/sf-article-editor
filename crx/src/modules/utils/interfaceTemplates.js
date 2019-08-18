@@ -70,3 +70,13 @@ export function AddSubContentBlockBtnTemplate(containerID) {
 		</div>`;
 	return template;
 }
+
+export function ImageGalleryTemplate() {
+	return `<div class="modal-editor-image-gallery" id="modalImageGallery" style="display: none;">
+			<div class="img-gallery-list">
+				<label>Select Image</label>
+				<button type="button" id="btnCloseImgGallery" class="canvas-btn canvas-btn-xs"><i class="icon-delete"></i></button>
+				<div class="img-gallery-scroll"></div>
+			</div>
+		</div>`;
+}

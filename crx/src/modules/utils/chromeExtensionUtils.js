@@ -88,27 +88,21 @@ export function UnwrapElement(wrapper) {
 }
 
 export function TinyMCEHelper(contentEditorAppConfig) {
-	let tinymceConfig = {
+	return {
 		selector: contentEditorAppConfig.container,  // change this value according to your HTML
 		inline: true,
 		menubar: false,
 		default_link_target: "_blank",
+		image_title: true,
+		automatic_uploads: true,
+		paste_data_images: true,
+		file_picker_types: 'image',
 		toolbar: contentEditorAppConfig.config.toolbar,
-		plugins: contentEditorAppConfig.config.plugins
-	};
-	
-	if (contentEditorAppConfig.config.toolbar.indexOf('image') !== -1) {
-		// cb, value, meta
-		tinymceConfig['image_title'] = true;
-		tinymceConfig['automatic_uploads'] = true;
-		tinymceConfig['paste_data_images'] = true;
-		tinymceConfig['file_picker_types'] = 'image';
-		tinymceConfig['file_picker_callback'] = function (cb, value, meta) {			
+		plugins: contentEditorAppConfig.config.plugins,
+		file_picker_callback: function (cb, value) {
 			// ImageGallery.run(contentEditorAppConfig.images);		
-		};
-	}
-
-	return tinymceConfig;
+		}
+	};
 }
 
 export function IsNullOrWhiteSpace(str) {

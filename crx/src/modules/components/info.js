@@ -38,7 +38,7 @@ export default class Info {
     return ContentBlockTemplate(params);
   }
 
-  updateDOM(HTMLObject, imagesData) {
+  updateDOM(HTMLObject) {
     try {
       let
         contentEditorAppConfig,
@@ -46,8 +46,7 @@ export default class Info {
 
       contentEditorAppConfig = {
         container: `#snippet-${HTMLObject.id} .sf-well-body`,
-        config: this.contentEditorConfig, 
-        images: imagesData
+        config: this.contentEditorConfig
       };
 
       const config = TinyMCEHelper(contentEditorAppConfig);

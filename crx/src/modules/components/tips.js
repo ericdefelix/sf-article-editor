@@ -66,7 +66,7 @@ export default class Tips {
     return ContentBlockTemplate(params);
   }
 
-  updateDOM(HTMLObject, imagesData) {
+  updateDOM(HTMLObject) {
     try {
       let
         contentEditorAppConfig,
@@ -76,8 +76,7 @@ export default class Tips {
         
       contentEditorAppConfig = {
         container: `#snippet-${HTMLObject.id} .sf-blockquote-content-body`,
-        config: this.contentEditorConfig,
-        images: imagesData
+        config: this.contentEditorConfig
       };
 
       const config = TinyMCEHelper(contentEditorAppConfig);

@@ -38,12 +38,11 @@ export default class StyledLists {
     return ContentBlockTemplate(params);
   }
 
-  updateDOM(HTMLObject, imagesData) {
+  updateDOM(HTMLObject) {
     try {
       const contentEditorAppConfig = {
         container: `#snippet-${HTMLObject.id}`,
-        config: this.contentEditorConfig,
-        images: imagesData
+        config: this.contentEditorConfig
       };
 
       const config = TinyMCEHelper(contentEditorAppConfig);

@@ -1,53 +1,64 @@
 const ImageGallery = {
   container: null,
-  data: [],
-  listeners: () => {
-    document.getElementById('btnCloseImgGallery').onclick = function () {
-      ImageGallery.toggle_view('hide');
-    };
-
-    const imgs = document.querySelectorAll('.img-gallery-item');
-    for (let index = 0; index < imgs.length; index++) {
-      const img = imgs[index];
-      img.onclick = ImageGallery.select_value;
-    }
+  init: (params) => {
+    document.body.insertAdjacentHTML('beforeend', params.template()); 
+    ImageGallery.container = document.getElementById('modalImageGallery');
+    ImageGallery.listeners();
+    ImageGallery.render(params.data);
   },
-  template: (imgArray) => {
-    const renderList = (imgArray) => {
-      let tmpl = `
-        <div class="img-gallery-list">
-          <label>Select Image</label>
-          <button type="button" id="btnCloseImgGallery" class="canvas-btn canvas-btn-xs">
-          <span style="font-size: 2em;">×</span></button>
-          <div class="img-gallery-scroll">`;
-      
-      if (imgArray.length) {
-        for (let index = 0; index < imgArray.length; index++) {
-          const element = imgArray[index];
-          tmpl += `<div class="img-gallery-item" data-value="${element.src}">
-          <div class="img-gallery-thumbnail" style="background-image: url(${element.src});"></div>
-          <span class="img-gallery-label">${element.alt}</span>
-          </div>`;
-        } 
-      }
-      else {
-        tmpl += `<p class="text-center img-gallery-info">Your Article Image Gallery is currently empty.</p>`;
-      }
+  listeners: () => {
+    document.getElementById('btnCloseImgGallery').onclick = ImageGallery.toggle_view;
 
-      return tmpl + '</div></div>';
-    };
+    const imageGalleryListObserver = new MutationObserver(mutations => {
+      if (mutations.length > 0 && mutations[0].addedNodes.length > 0) {        
+        [...mutations[0].addedNodes].forEach(img => {
+            img.onclick = ImageGallery.select_value;
+        }); 
+      }
+    });
 
-    return renderList(imgArray);
+    console.log(ImageGallery.container.querySelector('.img-gallery-scroll'));
+    
+    imageGalleryListObserver.observe(ImageGallery.container.querySelector('.img-gallery-scroll'), {
+      attributes: false,
+      subtree: false,
+      childList: true
+    });
+
+    document.addEventListener('click', (event) => {
+      const t = event.target;
+      if (t.classList.value.includes('mce-i-browse') ||
+        (t.parentNode.nodeName === 'BUTTON' && t.id.includes('-action') ||
+          t.classList.value.includes('mce-open'))
+      ) {
+        ImageGallery.toggle_view();
+      }
+    });
+
+  },
+  render: (data) => {
+    let list = '';
+
+    data.forEach(img => {
+      list += `<div class="img-gallery-item" data-value="${img.src}">
+        <div class="img-gallery-thumbnail" style="background-image: url(${img.src});"></div>
+        <span class="img-gallery-label">${img.alt}</span>
+        </div>`;
+    });
+
+    const emptyList = `<p class="text-center img-gallery-info">Your Article Image Gallery is currently empty.</p>`;
+
+    ImageGallery.container.querySelector('.img-gallery-scroll').innerHTML = '';
+    ImageGallery.container
+      .querySelector('.img-gallery-scroll')
+      .insertAdjacentHTML('afterbegin', data.length ? list : emptyList);
   },
   select_value: function () {
     const filepickerInput = document.querySelector('.mce-filepicker .mce-textbox');
     filepickerInput.value = this.getAttribute('data-value');
-    ImageGallery.toggle_view('hide');
+    ImageGallery.toggle_view();
   },
-  toggle_view: (state) => {
-    ImageGallery.container.style.display = state == 'show' ? 'block' : 'none';
-
-    // Get highest z-index
+  toggle_view: () => {
     const getZindex = (elem) => {
       let highestZindex = 0;
       let sibling = elem.parentNode.firstChild;
@@ -60,25 +71,10 @@ const ImageGallery = {
       return highestZindex;
     };
 
-    if (state == 'show' && ImageGallery.container !== null) {
-      ImageGallery.container.style.zIndex = getZindex(ImageGallery.container);
-    }
-  },
-  render: () => {
-    document.body.getElementById('modalImageGallery').innerHTML = ImageGallery.template(ImageGallery.data);
-  },
-  run: (imgArray) => {
-    ImageGallery.data = imgArray;
+    ImageGallery.container.style.display = ImageGallery.container.style.display === 'none' ? 'block' : 'none';
 
-    if (ImageGallery.container === null) {
-      const tmpl = `<div class="modal-editor-image-gallery" id="modalImageGallery">${ImageGallery.template(imgArray)}</div>`;
-      document.body.insertAdjacentHTML('beforeend', tmpl); 
-      ImageGallery.listeners();
-      ImageGallery.container = document.getElementById('modalImageGallery');
-      ImageGallery.toggle_view('hide');
-    }
-    else {
-      ImageGallery.toggle_view('show');
+    if (ImageGallery.container.style.display === 'block') {
+      ImageGallery.container.style.zIndex = getZindex(ImageGallery.container);
     }
   }
 };
