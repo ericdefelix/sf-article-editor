@@ -1,6 +1,6 @@
 import './editor.scss';
 import UserInterfaceBuilder from './modules/UserInterfaceBuilder';
-import ImageGallery from './modules/utils/ImageGallery';
+import ImageGallery from './modules/ImageGallery';
 import { dataParser } from './modules/utils/dataParser';
 import { GenerateSanitisedHTML } from './modules/utils/GenerateSanitisedHTML';
 import { imageGalleryMockData, htmlMockData } from './modules/utils/mockData';
@@ -41,6 +41,7 @@ const editor = {
 
       chrome.storage.local.get(['image_gallery'], (objLocalStorage) => {
         editor.image_gallery = JSON.parse(objLocalStorage.image_gallery);
+        console.log(editor.image_gallery);
         ImageGallery.run(editor.image_gallery); 
       });
 

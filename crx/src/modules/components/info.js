@@ -25,12 +25,7 @@ export default class Info {
     };
   }
 
-  render(html, options) {
-    const type = this.constructor.name;
-    console.log(this.constructor.name);
-    console.log(this.name);
-    
-    
+  render(html, options) {    
     const params = {
       id: this.id,
       type: 'Info',

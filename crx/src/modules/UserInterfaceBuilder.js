@@ -166,6 +166,9 @@ const UserInterfaceBuilder = {
   _evtAddComponent: function () {
     let targetPreviousElementSibling, appendedChild;
 
+    const emptyStateContainer = document.querySelector('[data-content="empty"]');
+    const canvasContainer = document.getElementById('canvasContainer');
+
     const containerID = UserInterfaceBuilder.targetNodeLevel == 2 ?
       `canvasSubContainer_${UserInterfaceBuilder.placeholderPointerID}` : UserInterfaceBuilder.placeholderPointerID;
 
@@ -184,8 +187,14 @@ const UserInterfaceBuilder = {
     targetPreviousElementSibling = document.getElementById(containerID);
     
     if (UserInterfaceBuilder.targetNodeLevel === 1) {
-      targetPreviousElementSibling.insertAdjacentHTML('afterend', componentTemplate);
-      appendedChild = targetPreviousElementSibling.nextElementSibling;
+      if (emptyStateContainer !== null) {
+        canvasContainer.insertAdjacentHTML('beforeend', componentTemplate);
+        appendedChild = canvasContainer.lastElementChild;
+      }
+      else {
+        targetPreviousElementSibling.insertAdjacentHTML('afterend', componentTemplate);
+        appendedChild = targetPreviousElementSibling.nextElementSibling;
+      }
     }
 
     if (UserInterfaceBuilder.targetNodeLevel === 2) {
