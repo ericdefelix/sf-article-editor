@@ -1,0 +1,66 @@
+// Namespace
+$prefix: 'sf-';
+
+// Iteration
+$vendors: '-moz-', '-webkit-', '-ms-', '';
+$btn-sizes: 'lg', 'xs';
+
+$theme-font-family: '';
+$theme-border-radius: 2px;
+$theme-padding: 1rem;
+
+// Theme colors
+$theme-lightgray: #dbe7f1;
+$theme-orange: #f69139;
+$theme-text-color: #333;
+$theme-text-muted: #696969;
+
+//============================================================
+// Blockquotes
+//============================================================
+$blockquote-padding: 1.25rem;
+$blockquote-addon-dimensions: 4rem;
+$blockquote-addon-offset: $blockquote-padding;
+$blockquote-content-offset: $blockquote-addon-dimensions + ($blockquote-addon-offset * 2) + .5rem;
+
+// This should vary per theme
+$blockquote-default-bg-color: #f3f3f3;
+$blockquote-blue: #0060AC;
+$blockquote-green: #43AE33;
+$blockquote-red: #BE332A;
+
+$blockquote-info-color: $blockquote-blue;
+$blockquote-info-bgcolor: lighten($blockquote-blue,59%);
+$blockquote-info-border-color: lighten($blockquote-blue,38%);
+
+$blockquote-tip-color: $blockquote-green;
+$blockquote-tip-bgcolor: lighten($blockquote-green,50%);
+$blockquote-tip-border-color: lighten($blockquote-green,30%);
+
+$blockquote-alert-color: $blockquote-red;
+$blockquote-alert-bgcolor: lighten($blockquote-red,50%);
+$blockquote-alert-border-color: lighten($blockquote-red,38%);
+
+$bq-sh-x: 0px;
+$bq-sh-y: 2px;
+$bq-sh-blur: 4px;
+$bq-sh-spread: 0px;
+$bq-sh-color: rgba(0, 0, 0, 0.3);
+
+//============================================================
+// SF Tabs
+//============================================================
+$comp_tab-link-transform: none;
+$comp_tab-link-color-active: $theme-text-color;
+$comp_tab-link-color: $theme-text-muted;
+$comp_tab-font-weight: 700;
+$comp_tab-nav-border-color: $theme-lightgray;
+$comp_tab-nav-border-color-active: $theme-orange;
+$comp_tab-nav-border-thickness: 4px;
+$comp_tab-content-padding: 1rem;
+$comp_tab-link-padding: 1.5rem 1.5rem .5rem;
+
+//============================================================
+// Well
+//============================================================
+$well-bg: #F3F3F3;

@@ -1,0 +1,34 @@
+
+@import 'styles/variables';
+@import 'styles/mixins';
+@import 'styles/reset';
+@import 'styles/helpers';
+
+.heading-text > *, .toolbox-toolbar, .empty-text,
+.sf-blockquote-content-header, .sf-well-heading, .sf-blockquote-content-body p,
+.sf-well-body p  {
+	@include reset-spacing();
+}
+
+i[class^="icon-"] {
+	font-style: normal;
+}
+
+body {
+	background-color: $body-bg;
+	font-family: $font-family;
+	font-size: 14px;
+	line-height: 1.4;
+	padding: 2rem;
+	padding-top: 6rem;
+}
+
+#htmlOutputContainer { 
+	p {
+		margin-bottom: inherit;
+		margin-top: inherit;
+	}
+}
+
+@import 'styles/editor-components';
+@import 'styles/editor-themes';

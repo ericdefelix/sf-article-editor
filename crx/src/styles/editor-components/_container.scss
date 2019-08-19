@@ -1,0 +1,470 @@
+.container {
+	width: 100%;
+	height: 100%;
+	position: relative;
+	justify-content: center;
+	display: flex;
+}
+
+.output-container {
+  position: fixed;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  z-index: 100;
+  padding: $canvas-gui-padding;
+  background-color: white;
+  border-radius: $canvas-gui-border-radius;
+  @include box-shadow(0, 6px, 30px, 0, rgba(0,0,0,0.2));
+
+  > select {
+    font-size: 0.8rem;
+    height: 1.75rem;
+    margin: -0.5625rem 0 0.4375rem -0.5625rem;
+    display: block;
+  }
+}
+
+.scroll-container {
+  overflow-y: auto;
+  height: calc(100% - 3.4rem);
+  height: -webkit-calc(100% - 3.4rem);
+  border-top: 1px solid #e3e3e3;
+  margin: 0 -1rem;
+  margin-top: 0.2rem;
+  padding: 1rem;
+}
+
+.canvas-container {
+	min-height: 10vh;
+  display: flex;
+  align-items: center;
+  align-content: stretch;
+  justify-content: center;
+  flex-direction: column;
+  width: 100%;
+
+	@media (min-width: 1400px) {
+		width: $min-container-width;
+	}
+}
+
+.canvas-content-block {
+	width: 100%;
+  // overflow: hidden;
+  &:first-of-type {
+    > .canvas-content-config {
+      margin-top: 0;
+    }
+  }
+
+  &:hover {
+    > .canvas-content-config {
+      opacity: 1;
+    }
+  }
+
+  &:first-of-type {
+    .canvas-content-config {
+      border-top-left-radius: $canvas-gui-border-radius;
+      border-top-right-radius: $canvas-gui-border-radius;
+    }
+
+    .tab-content .canvas-content-config {
+      border-radius: $canvas-gui-border-radius !important;
+    }
+  }
+
+  &.collapsed {
+    .canvas-content-config {
+      border-bottom-left-radius: $canvas-gui-border-radius;
+      border-bottom-right-radius: $canvas-gui-border-radius;
+    }
+
+    .canvas-content-snippet {
+      display: none;
+    }
+  }
+}
+
+.canvas-content-config {
+  padding: 0.3rem;
+  margin: 0.2rem 0 0 0;
+  background: #fbfbfb;
+  display: flex;
+  justify-content: flex-end;
+  position: relative;
+  overflow: hidden;
+  border-top-left-radius: $canvas-gui-border-radius;
+  border-top-right-radius: $canvas-gui-border-radius;
+  border-bottom: 1px solid #dededee3;
+  @include box-shadow(0,3px,3px,-2px, rgba(0,0,0,0.1));
+  z-index: 1;
+
+  > button {
+    margin-left: 0.2rem;
+  }
+}
+
+.canvas-content-snippet {
+  padding: 0.5rem;
+  position: relative;
+  background-color: white;
+  border-bottom-left-radius: $canvas-gui-border-radius;
+  border-bottom-right-radius: $canvas-gui-border-radius;
+
+  &.cke_editable_inline {
+    ol,ul {
+      &:not(.list-bullet-circular) {
+        margin: 1rem; 
+      }
+    }
+  }
+}
+
+.canvas-add-subcontent {
+  padding: 0 1rem;
+  margin-top: -1rem;
+  position: relative;
+
+  // override
+  .toolbox.in:after {
+    left: calc(30% - 8px) !important;
+    left: -webkit-calc(30% - 8px) !important;
+  }
+
+  [data-ui-label="genericTabs"] {
+    display: none !important;
+  }
+}
+
+.canvas-content-draggable {
+  $h: 18px;
+  $drb-color: #969696;
+  cursor: move;
+  display: block;
+  position: absolute;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  z-index: 1;
+  width: 2.6rem;
+  border-top-left-radius: $canvas-gui-border-radius;
+
+  &:hover {
+    background-color: lighten($light-grey,2%);
+    
+    &:before, &:after {
+      border-color: darken($drb-color,15%);
+    }  
+  }
+
+  &:before, &:after {
+    content: '';
+    width: 4px;
+    height: $h;
+    display: block;
+    border: 2px dotted $drb-color;
+    border-bottom: none;
+    border-top: none;
+    position: absolute;
+    top: calc(50% - #{$h / 2});
+  }
+
+  &:before { left: calc(50% - 10px); }
+  &:after { right: calc(50% - 10px); }
+}
+
+.canvas-content-chosen:not(.collapsed) {
+  @include box-shadow(0,0,0,2px,$box-shadow-color, inset);
+  outline: 2px solid $blue;
+}
+.canvas-content-ghost {
+  @include no-select();
+  position: relative;
+  opacity: 0.8;
+  overflow: hidden;
+  border-radius: $canvas-gui-border-radius;
+
+  &:before {
+    position: absolute;
+    background-color: rgba(255,255,255,0);
+    content: '';
+    top: -0.125rem;
+    left: 0;
+    bottom: 0;
+    right: 0;
+    z-index: 100;
+  }
+}
+
+.canvas-content-dragging {
+  .canvas-add-component {
+    display: none;
+  }
+}
+
+.canvas-content-action {
+  padding: 0;
+  margin: 0;
+  margin: 0.2rem 0;
+  position: relative;
+  z-index: 2;
+
+  .content-action-hotspot {
+    position: relative;
+    margin: 0;
+  }
+
+  &.subcontent-action > .content-action-hotspot {
+    margin-left: 0 !important;
+    margin-right: 0 !important;
+  }
+
+ 	button {
+    padding: 0;
+    position: absolute;
+    width: 1.5rem;
+    height: 1.5rem;
+    color: $blue;
+    border-radius: 2rem;
+    left: calc(50% - 1rem);
+    top: calc(50% - 0.8rem);
+    transform: translateZ(0);
+    background-color: $body-bg;
+    z-index: 1;
+		@include hardware();
+
+		&:active {
+      @include button-config-color($blue);
+			// background-color: darken($canvas-gui-color,30%) !important;
+		}
+  }
+
+  .icon-plus {
+  	font-weight: 400;
+  	font-size: 1.5rem;
+  	-webkit-text-stroke: transparent;
+  	@include no-select();
+  }
+
+  &:hover {
+  	button {
+  		background-color: $canvas-gui-color;
+  		color: white;
+  		transform: translateZ(0);
+  		@include hardware();
+
+      &:hover {
+        background-color: darken($canvas-gui-color,10%);
+      }
+  	}
+  }
+}
+
+.canvas-content-label {
+  display: block;
+  position: absolute;
+  left: 3.125rem;
+  top: 0.75rem;
+  font-weight: 500;
+  font-size: 0.7rem;
+  color: $canvas-gui-color;
+  text-transform: uppercase;
+}
+
+.subcontent-action-hotspot {
+  margin-top: 0.5rem;
+  width: 20rem;
+  position: relative;
+
+  .toolbox.in:after {
+    left: 10% !important;
+  }
+}
+
+.canvas-btn {
+	@include button();
+	@include button-config-color($light-grey);
+
+  &[disabled] {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+}
+
+.canvas-btn-delete {
+  position: absolute;
+  right: -3px;
+  top: 2px;
+  z-index: 1;
+  padding: 0px 4px;
+  border: 2px solid white;
+  line-height: 1;
+  > span {
+    font-weight: bold;
+    font-size: 1.4em;
+  }
+}
+
+.canvas-form-control {
+  display: inline-block;
+  height: auto;
+  padding: 0.2rem 0.5rem;
+  line-height: 1.2;
+  color: $canvas-text-color;
+  background-color: white;
+  background-image: none;
+  border: none;
+  border-radius: $canvas-gui-border-radius;
+  outline: none;
+  @include box-shadow(0,0,0,1px,rgba(171, 171, 171, 0.2));
+
+  &:hover {
+    @include box-shadow(0,0,0,2px, $blue,inset);
+  }
+}
+
+select.canvas-form-control {
+  line-height: 1.2;
+  font-size: 0.7rem;
+  padding: 0.125rem 1.5rem 0.125rem 0.25rem;
+  @include appearance(none);
+
+  background-image: linear-gradient(45deg, transparent 50%, gray 50%), linear-gradient(135deg, gray 50%, transparent 50%);
+  background-position: 
+    calc(100% - 12px) calc(1em + 2px), 
+    calc(100% - 7px) calc(1em + 2px);
+  background-size: 5px 5px, 5px 5px;
+  background-repeat: no-repeat;
+
+  &:before, &:after {
+    position: absolute;
+    display: block;
+    width: 2px;
+    height: 15px;
+    content: '';
+    z-index: 1;
+    background-color: $canvas-gui-color;
+  }
+}
+
+.canvas-btn-primary {
+	@include button-config-color($blue);
+	color: white;
+}
+
+.canvas-btn-xs {
+	@include button-config-size('xs');
+}
+
+#htmlOutputContainer,
+#viewSourcePreview {
+  margin-top: $canvas-gui-padding;
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+
+#viewSourcePreview {
+  width: 100%;
+  height: calc(100% - 2.5rem);
+  padding: 0;
+  overflow: hidden auto;
+  resize: none;
+}
+
+#btnCloseOutputContainer {
+  padding: 8px 14px;
+  position: absolute;
+  top: 7px;
+  right: 7px;
+}
+
+.edit-mode {
+  position: relative;
+  &:before {
+    display: block;
+    content: '';
+    background-color: #f3f3f3;
+    z-index: 0;
+    position: absolute;
+    top: 15px;
+    bottom: 2px;
+    right: 5px;
+    left: 5px;
+    border: 1px solid #e3e3e3;
+    border-radius: 3px;
+  }
+
+  &:hover {
+    &:before {
+      border: 1px solid $blue;
+      @include box-shadow(0,0,0,1px, $blue);
+    }
+  }
+}
+
+.text-muted {
+  color: gray;
+}
+
+.canvas-content-edit-overlay {
+  padding: $canvas-gui-padding;
+
+  .canvas-content-edit-list {
+    margin: 0;
+    padding-left: 0;
+    counter-reset: editList;
+
+    > li {
+      margin-bottom: 0.625rem;
+      display: flex;
+      counter-increment: editList;
+
+      &:before {
+        content: counter(editList);
+        font-weight: 400;
+        padding: 0.4rem 0.5rem 0 0;
+        color: $canvas-gui-color;
+      }
+    }
+  }
+
+  h4 {
+    margin-top: 0;
+  }
+
+  ol > li {
+    > input {
+      width: calc(100% - 6.25rem);
+    }
+
+    > button {
+     margin-left: 0.2rem;
+    }
+  }
+
+  > .canvas-btn {
+    margin-left: 0.9375rem;
+  }
+
+  .deselected {
+    text-decoration: line-through;
+    pointer-events: none;
+    border-color: transparent !important;
+    color: $canvas-content-action-gray;
+    @include box-shadow(0,0,0,0);
+  }
+}
+
+.canvas-subcontainer {
+  .canvas-content-config {
+    border-radius: 0 !important;
+    border: 1px solid #dededee3;
+  }
+}
+
+.mce-open:active {
+  background-color: $canvas-content-action-gray !important;
+}
