@@ -28,7 +28,7 @@ export default class StyledLists {
   render(html, options) {
     const params = {
       id: this.id,
-      type: this.constructor.name,
+      type: 'Styled Lists',
       controlsTemplate: '',
       draggableClass: options.draggableClass,
       componentTemplate: html === '' ? this.template() : html,

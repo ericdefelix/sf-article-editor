@@ -5,7 +5,7 @@ export const InfoLabel = 'Info';
 
 export const ParseHTML = {
   isTrue: (htmlNode) => {    
-    return htmlNode.classList.value.includes('sf-info') ? true : false;
+    return htmlNode.classList.value.includes('sf-well') ? true : false;
   },
   parse: (node) => {
     const data = new DataTemplate();
@@ -26,9 +26,14 @@ export default class Info {
   }
 
   render(html, options) {
+    const type = this.constructor.name;
+    console.log(this.constructor.name);
+    console.log(this.name);
+    
+    
     const params = {
       id: this.id,
-      type: this.constructor.name,
+      type: 'Info',
       controlsTemplate: '',
       draggableClass: options.draggableClass,
       componentTemplate: html === '' ? this.template() : html,

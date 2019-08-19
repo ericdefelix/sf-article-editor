@@ -41,7 +41,7 @@ export default class Accordion {
   render(html, options) {    
     const params = {
       id: this.id,
-      type: this.constructor.name,
+      type: 'Accordion',
       controlsTemplate: this.controlsTemplate(this.id),
       draggableClass: options.draggableClass,
       componentTemplate: this.template(html),

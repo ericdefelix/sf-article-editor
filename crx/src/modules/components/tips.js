@@ -56,7 +56,7 @@ export default class Tips {
   render(html,options) {    
     const params = {
       id: this.id,
-      type: this.constructor.name,
+      type: 'Tips',
       controlsTemplate: this.renderControlsTemplate(html === '' ? this.template() : html),
       draggableClass: options.draggableClass,
       componentTemplate: html === '' ? this.template() : html,

@@ -28,7 +28,7 @@ export default class TextContent {
   render(html, options) {
     const params = {
       id: this.id,
-      type: this.constructor.name,
+      type: 'Text Content',
       controlsTemplate: '',
       draggableClass: options.draggableClass,
       componentTemplate: html === '' ? this.template() : html,

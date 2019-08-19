@@ -43,7 +43,7 @@ export default class Tabs {
   render(html, options) {
     const params = {
       id: this.id,
-      type: this.constructor.name,
+      type: 'Tabs',
       controlsTemplate: this.controlsTemplate(this.id),
       draggableClass: options.draggableClass,
       componentTemplate: this.template(html),
