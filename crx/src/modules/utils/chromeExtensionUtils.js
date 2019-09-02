@@ -111,7 +111,7 @@ export function IsNullOrWhiteSpace(str) {
 
 export function ExtractSubnodes(params, ComponentParser) {
 	const data = { containers: [], elements: [] };
-	const titles = [...params.htmlNode.querySelectorAll(params.titleSelector)];
+	const titles = params.titleSelector === '' ? null : [...params.htmlNode.querySelectorAll(params.titleSelector)];
 	params.htmlNode.querySelectorAll(params.containerSelector).forEach((container, index) => {
 		const elements = [];
 		if (container.children.length !== 0) {
@@ -125,7 +125,7 @@ export function ExtractSubnodes(params, ComponentParser) {
 		data.elements.push(elements);
 
 		container.innerHTML = '';
-		data.containers.push({ dom: container, title: titles[index].textContent });
+		data.containers.push({ dom: container, title: titles === null ? null : titles[index].textContent });
 	});
 
 	return data;
