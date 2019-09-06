@@ -5,42 +5,64 @@ export function dataParser(childNodes) {
   const nodesData = [];
 
   let textContentConcatenate = '';
+
+  let textContentData = null;
   
   // Iterate each child element  
   [...childNodes].forEach(currentNode => {
-    let data = {};    
-    if (currentNode.nodeName === '#text' || typeof currentNode.classList === 'undefined' || currentNode.classList.value === '') {
-      if (!IsNullOrWhiteSpace(currentNode.textContent)) {
-        textContentConcatenate += currentNode.textContent;
+    if (typeof currentNode.classList === 'undefined') {
+      console.log(currentNode.textContent);
+      if (textContentData === null) {
+        textContentData = document.createElement('DIV');
+        textContentData.classList.value.add('sf-editor-content');
+      }
+
+      // TODO
+    }
+    else {
+      if (typeof currentNode.classList !== 'undefined' && currentNode.classList.value.includes('sf-',0)) {
+        console.log(currentNode);
+      }
+      else {
+
       }
     }
+    // let data = {};
+    // if (currentNode.nodeName === '#text' || typeof currentNode.classList === 'undefined' || currentNode.classList.value === '') {
+    //   if (!IsNullOrWhiteSpace(currentNode.textContent)) {
+    //     textContentConcatenate += currentNode.textContent;
+    //   }
+    // }
 
-    if (currentNode.nodeName !== '#text' && typeof currentNode.classList !== 'undefined' && currentNode.classList.value !== '') {
-      let combinedTextContentData = {};
-      data = ComponentParser(currentNode);
+    // if (currentNode.nodeName !== '#text' && typeof currentNode.classList !== 'undefined' && currentNode.classList.value !== '') {
+    //   let combinedTextContentData = {};
+    //   data = ComponentParser(currentNode);
+    //   console.log(data.type);
+      
 
-      if (data.type !== 'TextContent' && textContentConcatenate !== '') {
-        const p = document.createElement('p');
-        p.textContent = textContentConcatenate;
-        combinedTextContentData = TextContentParser.parse(p);
-        nodesData.push(combinedTextContentData);
-        textContentConcatenate = '';
-      }
-      if (nodesData.length >= 2 && textContentConcatenate !== '' && nodesData[nodesData.length-1].type === 'TextContent') {
-        currentNode.insertAdjacentHTML('beforeend', textContentConcatenate);
-        combinedTextContentData = TextContentParser.parse(currentNode);
-        textContentConcatenate = '';
-      }
-      if (data.type === 'TextContent' && textContentConcatenate !== '') {
-        currentNode.insertAdjacentHTML('afterbegin', textContentConcatenate);
-        combinedTextContentData = TextContentParser.parse(currentNode);
-        nodesData.push(combinedTextContentData);
-        textContentConcatenate = '';
-      }
-
-      if (textContentConcatenate === '') nodesData.push(data);
-    }
+    //   if (data.type !== 'TextContent' && textContentConcatenate !== '') {
+    //     const div = document.createElement('div');
+    //     div.textContent = textContentConcatenate;
+    //     combinedTextContentData = TextContentParser.parse(div);
+    //     nodesData.push(combinedTextContentData);
+    //     textContentConcatenate = '';
+    //   }
+    //   if (nodesData.length >= 2 && textContentConcatenate !== '' && nodesData[nodesData.length-1].type === 'TextContent') {
+    //     currentNode.insertAdjacentHTML('beforeend', textContentConcatenate);
+    //     combinedTextContentData = TextContentParser.parse(currentNode);
+    //     textContentConcatenate = '';
+    //   }
+    //   if (data.type === 'TextContent' && textContentConcatenate !== '') {
+    //     currentNode.insertAdjacentHTML('afterbegin', textContentConcatenate);
+    //     combinedTextContentData = TextContentParser.parse(currentNode);
+    //     nodesData.push(combinedTextContentData);
+    //     textContentConcatenate = '';
+    //   }
+    // }
   });
+
+  console.log(nodesData);
+  
 
   return nodesData;
 }

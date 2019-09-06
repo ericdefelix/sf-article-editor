@@ -185,7 +185,7 @@ const webpage = {
 			const
 				images = body.children,
 				arr = [...images];
-			
+
 			for (let index = 0; index < arr.length; index++) {
 				const
 					el = arr[index],

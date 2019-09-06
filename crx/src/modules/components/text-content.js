@@ -20,7 +20,7 @@ export default class TextContent {
     this.id = GenerateID();
     this.cssClass = 'sf-editor-content';
     this.contentEditorConfig = {
-      plugins: 'lists link image table imagetools',
+      plugins: 'lists advlist link image table imagetools',
       toolbar: 'undo redo | formatselect | bold italic strikethrough | alignleft aligncenter alignright alignjustify | link image table | numlist bullist'
     };
   }

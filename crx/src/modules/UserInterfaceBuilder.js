@@ -46,10 +46,12 @@ const UserInterfaceBuilder = {
 
     UserInterfaceBuilder.initEmptyStateButton();
 
-    ImageGallery.init({
-      data: typeof params.images === 'undefined' ? [] : params.images,
-      template: ImageGalleryTemplate,
-    });
+    if (typeof params.images !== 'undefined') {
+      ImageGallery.init({
+        data: typeof params.images === 'undefined' ? [] : params.images,
+        template: ImageGalleryTemplate,
+      }); 
+    }
   },
   toolboxDisplay: function () {    
     UserInterfaceBuilder.targetNodeLevel = parseInt(this.getAttribute('data-node-level'));

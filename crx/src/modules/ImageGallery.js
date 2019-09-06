@@ -16,8 +16,6 @@ const ImageGallery = {
         }); 
       }
     });
-
-    console.log(ImageGallery.container.querySelector('.img-gallery-scroll'));
     
     imageGalleryListObserver.observe(ImageGallery.container.querySelector('.img-gallery-scroll'), {
       attributes: false,
