@@ -1,3 +1,17 @@
+const extractSubcontainerElements = (subcontainer) => {
+  subcontainer.forEach(container => {
+    const subcontainerParent = container.parentElement;
+    const subcontainerChildren = container.querySelectorAll('.canvas-content-snippet');
+    const tempDiv = document.createElement('div');
+    subcontainerChildren.forEach(subElement => {
+      tempDiv.appendChild(subElement.lastElementChild);
+    });
+
+    subcontainerParent.innerHTML = '';
+    subcontainerParent.innerHTML = tempDiv.innerHTML;
+  });
+};
+
 export function GenerateSanitisedHTML(sourceNode) {
   const previewClone = sourceNode.cloneNode(true);
   const data = { preview: '', raw: '' };
@@ -5,21 +19,11 @@ export function GenerateSanitisedHTML(sourceNode) {
   const div = document.createElement('div');
   
   [...nodeLevel1Children].forEach(child => {
-    const subcontainer = child.querySelectorAll('.canvas-subcontainer');
+    console.log(child);
+    
+    const subcontainer = child.querySelectorAll('.canvas-content-snippet > .canvas-subcontainer');
 
-    if (subcontainer.length > 0) {
-      subcontainer.forEach(container => {
-        const subcontainerParent = container.parentElement;
-        const subcontainerChildren = container.querySelectorAll('.canvas-content-snippet');
-        const tempDiv = document.createElement('div');
-        subcontainerChildren.forEach(subElement => {
-          tempDiv.appendChild(subElement.lastElementChild);
-        });
-        
-        subcontainerParent.innerHTML = '';
-        subcontainerParent.innerHTML = tempDiv.innerHTML;
-      });
-    }
+    if (subcontainer.length > 0) extractSubcontainerElements(subcontainer);
     
     child.querySelectorAll('[contenteditable="true"]').forEach(element => {
       const attrs = ['contentEditable', 'id', 'style', 'spellCheck'];

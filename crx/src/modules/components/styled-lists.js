@@ -109,9 +109,9 @@ export default class StyledLists {
           numberingList.removeChild(toggle.parentElement);
         }
         else {
-          if (toggle.querySelector('.sf-accordion-text').textContent !== input.value) {
-            toggle.querySelector('.sf-accordion-text').textContent = input.value;
-          }
+          // if (toggle.querySelector('.sf-accordion-text').textContent !== input.value) {
+          //   toggle.querySelector('.sf-accordion-text').textContent = input.value;
+          // }
         }
       }
     });
