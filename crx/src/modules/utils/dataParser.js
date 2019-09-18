@@ -6,24 +6,31 @@ export function dataParser(childNodes) {
 
   let textContentConcatenate = '';
   let textContentData = null;
+
+  const appendToTextContentData = () => {
+
+  };
   
   // Iterate each child element  
   [...childNodes].forEach(currentNode => {
     if (typeof currentNode.classList === 'undefined') {
-      console.log(currentNode.textContent);
       if (textContentData === null) {
         textContentData = document.createElement('DIV');
-        textContentData.classList.value.add('sf-editor-content');
+        textContentData.setAttribute('class', 'sf-editor-content');
+        textContentData.appendChild(currentNode);
       }
 
       // TODO
     }
     else {
-      if (typeof currentNode.classList !== 'undefined' && currentNode.classList.value.includes('sf-',0)) {
-        console.log(currentNode);
+      //typeof currentNode.classList !== 'undefined' && 
+      if (currentNode.classList.value.includes('sf-', 0)) {
+        textContentData = null;
       }
       else {
-
+        if (textContentData !== null) {
+          textContentData.appendChild(currentNode);
+        }
       }
     }
     // let data = {};
