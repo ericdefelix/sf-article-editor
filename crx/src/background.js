@@ -4,7 +4,7 @@
 // =================================================================================
 import { UrlContainsArticleEdit, RequestIsValid, SetPosition } from '/modules/utils/chromeExtensionUtils.js';
 
-let background = {
+const background = {
   crxID: '',
   currentTabID: '',
   crxUpdating: false,

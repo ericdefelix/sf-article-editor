@@ -5,7 +5,6 @@ export function dataParser(childNodes) {
   const nodesData = [];
 
   let textContentConcatenate = '';
-
   let textContentData = null;
   
   // Iterate each child element  
