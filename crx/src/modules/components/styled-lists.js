@@ -55,8 +55,14 @@ export default class StyledLists {
   }
 
   numberingSectionTemplate(numberingID) {
+    const deleteBtnMarkup = `<button type="button" class="canvas-btn canvas-btn-xs" data-action="delete-list-item" data-node-level="2" data-target="number-${numberingID}">Delete List Item</button>`;
+    const subContentTemplate = AddSubContentBlockBtnTemplate(numberingID);
+
+    console.log(AddSubContentBlockBtnTemplate(numberingID).slice(254));
+    
+
     const template = `<li id="number-${numberingID}">
-                        <div class="canvas-subcontainer" id="canvasSubContainer_${numberingID}"></div>${AddSubContentBlockBtnTemplate(numberingID)}
+                        <div class="canvas-subcontainer" id="canvasSubContainer_${numberingID}"></div>${subContentTemplate}
                       </li>`;
     return template;
   }
@@ -71,11 +77,7 @@ export default class StyledLists {
 
   editComponentSectionTemplate() {
     return `<div class="canvas-content-edit-overlay" id="editFields-${this.id}" style="display: none;">
-              <h4>Update Numbered List</h4>
-              <ol class="canvas-content-edit-list"></ol>
-              <button class="canvas-btn canvas-btn-xs" data-action="add-list-item" data-target="${this.id}">
-                <i class="icon-plus">&#43;</i> New Numbered List Item
-              </button>
+              <button class="canvas-btn canvas-btn-xs" data-action="add-list-item" data-target="${this.id}">New List Item</button>
             </div>`;
   }
 
@@ -87,35 +89,35 @@ export default class StyledLists {
       const numberingID = typeof existingData === 'object' ? existingData[i].id : GenerateTabID();
       numberingSections += this.numberingSectionTemplate(numberingID);
     }
-    return `${this.editComponentSectionTemplate()}<ol class="${this.cssClass}">${numberingSections}</ol>`;
+    return `<ol class="${this.cssClass}">${numberingSections}</ol>${this.editComponentSectionTemplate()}`;
   }
 
-  updateNumberingList(editFields, numberingSectionTemplateFxn) {
-    const numberingList = editFields.nextElementSibling;
-    editFields.querySelectorAll('input').forEach((input) => {
-      const
-        toggleID = input.id.split('editInput-')[1],
-        toggle = document.getElementById(toggleID);
+  // updateNumberingList(editFields, numberingSectionTemplateFxn) {
+  //   const numberingList = editFields.nextElementSibling;
+  //   editFields.querySelectorAll('input').forEach((input) => {
+  //     const
+  //       toggleID = input.id.split('editInput-')[1],
+  //       toggle = document.getElementById(toggleID);
 
-      if (toggle === null) {
-        numberingList.insertAdjacentHTML('beforeend', numberingSectionTemplateFxn(toggleID, input.value));
-        UserInterfaceSortable({
-          container: document.getElementById(`canvasSubContainer_${toggleID}`),
-          contentDraggableClass: `.canvasDraggableSub_${toggleID}`
-        });
-      }
-      else {
-        if (input.classList.value.includes('deselected')) {
-          numberingList.removeChild(toggle.parentElement);
-        }
-        else {
-          // if (toggle.querySelector('.sf-accordion-text').textContent !== input.value) {
-          //   toggle.querySelector('.sf-accordion-text').textContent = input.value;
-          // }
-        }
-      }
-    });
-  }
+  //     if (toggle === null) {
+  //       numberingList.insertAdjacentHTML('beforeend', numberingSectionTemplateFxn(toggleID, input.value));
+  //       UserInterfaceSortable({
+  //         container: document.getElementById(`canvasSubContainer_${toggleID}`),
+  //         contentDraggableClass: `.canvasDraggableSub_${toggleID}`
+  //       });
+  //     }
+  //     else {
+  //       if (input.classList.value.includes('deselected')) {
+  //         numberingList.removeChild(toggle.parentElement);
+  //       }
+  //       else {
+  //         // if (toggle.querySelector('.sf-accordion-text').textContent !== input.value) {
+  //         //   toggle.querySelector('.sf-accordion-text').textContent = input.value;
+  //         // }
+  //       }
+  //     }
+  //   });
+  // }
 
   updateDOM(HTMLObject) {
     try {
@@ -129,8 +131,8 @@ export default class StyledLists {
       const
         contentEditList = HTMLObject.querySelector('.canvas-content-edit-list'),
         editFieldTemplateFxn = this.editFieldTemplate,
-        numberingSectionTemplateFxn = this.numberingSectionTemplate,
-        updateNumberingListFxn = this.updateNumberingList;
+        numberingSectionTemplateFxn = this.numberingSectionTemplate;
+        // updateNumberingListFxn = this.updateNumberingList;
 
       function deleteNumberingItem() {
         const targetInput = document.getElementById(`editInput-${this.getAttribute('data-target')}`);
@@ -193,23 +195,23 @@ export default class StyledLists {
         event.target.textContent = isEditOpen ? 'Update Numbered List' : 'Edit Numbered List';
         editFields.style.display = isEditOpen ? 'block' : 'none';
 
-        if (isEditOpen) { // If Update field is active
-          observer.observe(contentEditList, {
-            attributes: false,
-            subtree: false,
-            childList: true,
-          });
+        // if (isEditOpen) { // If Update field is active
+        //   observer.observe(contentEditList, {
+        //     attributes: false,
+        //     subtree: false,
+        //     childList: true,
+        //   });
 
-          contentEditList.innerHTML = editFieldsInput;
-          editFields.nextElementSibling.style.display = 'none';
-          numberingCurrentCount = contentEditList.children.length;
-        }
-        else { // Goes back to Accordion List
-          updateNumberingListFxn(editFields, numberingSectionTemplateFxn);
-          editFields.nextElementSibling.removeAttribute('style');
-          observer.disconnect();
-          editFieldsInput = '';
-        }
+        //   contentEditList.innerHTML = editFieldsInput;
+        //   editFields.nextElementSibling.style.display = 'none';
+        //   numberingCurrentCount = contentEditList.children.length;
+        // }
+        // else { // Goes back to Accordion List
+        //   updateNumberingListFxn(editFields, numberingSectionTemplateFxn);
+        //   editFields.nextElementSibling.removeAttribute('style');
+        //   observer.disconnect();
+        //   editFieldsInput = '';
+        // }
       };
 
       // Add New Line - DOM Display Only

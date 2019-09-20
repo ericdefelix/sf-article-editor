@@ -1,71 +1,59 @@
-import { TextContentParser, ComponentParser } from '../components/componentHelpers';
+import { ComponentParser } from '../components/componentHelpers';
 import { IsNullOrWhiteSpace } from './chromeExtensionUtils';
 
-export function dataParser(childNodes) {
-  const nodesData = [];
 
-  // Iterate each child element  
-  [...childNodes].forEach(currentNode => {
+export function dataParser(htmlSection) {
+  const nodesData = [];
+  const dataFormatter = (element, nodeList) => {
+    let lastIgnoreIndex = -1;
+    const newList = [];
+
+    nodeList.forEach((item, index) => {
+      // if ignore at index
+      const ignore = item.className && item.className.match("sf-");
+
+      if (ignore) {
+        // push straight
+        newList.push(item);
+        lastIgnoreIndex = index;
+      } else {
+        const isPrevArray = Array.isArray(newList[index - 1]);
+        // either 1ts item is note ignore or first of non-ignore slice
+        if (
+          (lastIgnoreIndex < 0 || lastIgnoreIndex === index - 1) &&
+          !isPrevArray
+        ) {
+          lastIgnoreIndex = 0;
+          const newArr = [item];
+          newList.push(newArr);
+          return;
+        }
+        newList[newList.length - 1].push(item);
+      }
+    });
+
+    // transformation retuns array
+    return newList.map((item, index) => {
+      if (Array.isArray(item)) {
+        // do transform as item is an array\
+        const newDiv = document.createElement("div");
+        newDiv.setAttribute("class", "sf-editor-content");
+        element.insertBefore(newDiv, item[0]);
+        item.map(i => newDiv.appendChild(i));
+      }
+    });
+  };
+
+  dataFormatter(htmlSection, htmlSection.childNodes);
+
+  // Iterate each child element 
+  [...htmlSection.childNodes].forEach(currentNode => {
     let data = {};
     data = ComponentParser(currentNode);
     nodesData.push(data);
-    
-    // if (typeof currentNode.classList === 'undefined') {
-    //   if (textContentData === null) {
-    //     textContentData = document.createElement('DIV');
-    //     textContentData.setAttribute('class', 'sf-editor-content');
-    //     textContentData.appendChild(currentNode);
-    //   }
-
-    //   // TODO
-    // }
-    // else {
-    //   //typeof currentNode.classList !== 'undefined' && 
-    //   if (currentNode.classList.value.includes('sf-', 0)) {
-    //     textContentData = null;
-    //   }
-    //   else {
-    //     if (textContentData !== null) {
-    //       textContentData.appendChild(currentNode);
-    //     }
-    //   }
-    // }
-    // let data = {};
-    // if (currentNode.nodeName === '#text' || typeof currentNode.classList === 'undefined' || currentNode.classList.value === '') {
-    //   if (!IsNullOrWhiteSpace(currentNode.textContent)) {
-    //     textContentConcatenate += currentNode.textContent;
-    //   }
-    // }
-
-    // if (currentNode.nodeName !== '#text' && typeof currentNode.classList !== 'undefined' && currentNode.classList.value !== '') {
-    //   let combinedTextContentData = {};
-    //   data = ComponentParser(currentNode);
-    //   console.log(data.type);
-      
-
-    //   if (data.type !== 'TextContent' && textContentConcatenate !== '') {
-    //     const div = document.createElement('div');
-    //     div.textContent = textContentConcatenate;
-    //     combinedTextContentData = TextContentParser.parse(div);
-    //     nodesData.push(combinedTextContentData);
-    //     textContentConcatenate = '';
-    //   }
-    //   if (nodesData.length >= 2 && textContentConcatenate !== '' && nodesData[nodesData.length-1].type === 'TextContent') {
-    //     currentNode.insertAdjacentHTML('beforeend', textContentConcatenate);
-    //     combinedTextContentData = TextContentParser.parse(currentNode);
-    //     textContentConcatenate = '';
-    //   }
-    //   if (data.type === 'TextContent' && textContentConcatenate !== '') {
-    //     currentNode.insertAdjacentHTML('afterbegin', textContentConcatenate);
-    //     combinedTextContentData = TextContentParser.parse(currentNode);
-    //     nodesData.push(combinedTextContentData);
-    //     textContentConcatenate = '';
-    //   }
-    // }
   });
 
   console.log(nodesData);
-  
   
 
   return nodesData;

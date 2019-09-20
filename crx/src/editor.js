@@ -9,18 +9,18 @@ const editor = {
   crxID: '',
   contentEditorInstanceId: '',
   instanceHTML: '',
-  canvasContainer:  document.getElementById('canvasContainer'),
-  outputPane:       document.getElementById('outputContainer'),
-  htmlSection:      document.getElementById('htmlOutputContainer'),
-  sourceSection:    document.getElementById('viewSourcePreview'),
-  btnPreview:       document.getElementById('btnPreview'),
-  btnSave:          document.getElementById('btnSave'),
-  btnClose:         document.getElementById('btnCloseOutputContainer'),
+  canvasContainer: document.getElementById('canvasContainer'),
+  outputPane: document.getElementById('outputContainer'),
+  htmlSection: document.getElementById('htmlOutputContainer'),
+  sourceSection: document.getElementById('viewSourcePreview'),
+  btnPreview: document.getElementById('btnPreview'),
+  btnSave: document.getElementById('btnSave'),
+  btnClose: document.getElementById('btnCloseOutputContainer'),
   btnThemeSelector: document.getElementById('btnThemeSelector'),
-  toggleView:       document.getElementById('outputContainerToggleView'),
-  existing_data:    [],
-  image_gallery:    [],
-  toolbox:          undefined,
+  toggleView: document.getElementById('outputContainerToggleView'),
+  existing_data: [],
+  image_gallery: [],
+  toolbox: undefined,
   init: () => {
     try {
       chrome.storage.local.get(['contentEditorInstanceId'], (objLocalStorage) => {
@@ -41,15 +41,15 @@ const editor = {
 
       chrome.storage.local.get(['image_gallery'], (objLocalStorage) => {
         editor.image_gallery = JSON.parse(objLocalStorage.image_gallery);
-        ImageGallery.render(editor.image_gallery); 
+        ImageGallery.render(editor.image_gallery);
       });
 
       chrome.storage.local.get(['instanceHTML'], (objLocalStorage) => {
         const ih = objLocalStorage.instanceHTML;
-        
+
         if (ih !== '' || typeof ih !== 'undefined') {
           editor.htmlSection.insertAdjacentHTML('afterbegin', ih);
-          editor.existing_data = dataParser(editor.htmlSection.childNodes);
+          editor.existing_data = dataParser(editor.htmlSection);
           editor.htmlSection.innerHTML = '';
           editor.start_app();
         }
@@ -60,9 +60,9 @@ const editor = {
     } catch (e) {
       editor.image_gallery = imageGalleryMockData;
       editor.htmlSection.insertAdjacentHTML('afterbegin', htmlMockData);
-      editor.existing_data = dataParser(editor.htmlSection.childNodes);
+      editor.existing_data = dataParser(editor.htmlSection);
       editor.htmlSection.innerHTML = '';
-      
+
       editor.start_app();
       console.log('Chrome API not available. You are in stand-alone mode');
     }
@@ -83,7 +83,7 @@ const editor = {
     editor.btnPreview.style.display = editor.existing_data.length == 0 ? 'none' : 'initial';
     editor.btnSave.style.display = editor.existing_data.length == 0 ? 'none' : 'initial';
   },
-  html_view: function() {
+  html_view: function () {
     const view = this.value;
     editor.sourceSection.style.display = view == 'source' ? 'block' : 'none';
     editor.htmlSection.style.display = view == 'html' ? 'block' : 'none';
@@ -98,7 +98,7 @@ const editor = {
     document.querySelector('body').classList.value = '';
     document.querySelector('body').classList.add('sf-' + themeValue);
   },
-  generate_html: function() {
+  generate_html: function () {
     let data = GenerateSanitisedHTML(editor.canvasContainer, editor.htmlSection, editor.sourceSection);
 
     editor.htmlSection.innerHTML = editor.existing_data.length > 0 ?
@@ -109,7 +109,7 @@ const editor = {
     editor.outputPane.style.display = 'block';
     document.querySelector('body').style.overflow = 'hidden';
   },
-  save_html: function() {
+  save_html: function () {
     editor.generate_html();
 
     const request = {
@@ -132,7 +132,7 @@ const editor = {
       console.log('Chrome API not available. Page origin is not via chrome extension');
     }
   },
-  run: function() {
+  run: function () {
     this.init();
   }
 };
