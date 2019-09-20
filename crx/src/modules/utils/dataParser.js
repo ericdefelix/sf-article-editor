@@ -4,35 +4,32 @@ import { IsNullOrWhiteSpace } from './chromeExtensionUtils';
 export function dataParser(childNodes) {
   const nodesData = [];
 
-  let textContentConcatenate = '';
-  let textContentData = null;
-
-  const appendToTextContentData = () => {
-
-  };
-  
   // Iterate each child element  
   [...childNodes].forEach(currentNode => {
-    if (typeof currentNode.classList === 'undefined') {
-      if (textContentData === null) {
-        textContentData = document.createElement('DIV');
-        textContentData.setAttribute('class', 'sf-editor-content');
-        textContentData.appendChild(currentNode);
-      }
+    let data = {};
+    data = ComponentParser(currentNode);
+    nodesData.push(data);
+    
+    // if (typeof currentNode.classList === 'undefined') {
+    //   if (textContentData === null) {
+    //     textContentData = document.createElement('DIV');
+    //     textContentData.setAttribute('class', 'sf-editor-content');
+    //     textContentData.appendChild(currentNode);
+    //   }
 
-      // TODO
-    }
-    else {
-      //typeof currentNode.classList !== 'undefined' && 
-      if (currentNode.classList.value.includes('sf-', 0)) {
-        textContentData = null;
-      }
-      else {
-        if (textContentData !== null) {
-          textContentData.appendChild(currentNode);
-        }
-      }
-    }
+    //   // TODO
+    // }
+    // else {
+    //   //typeof currentNode.classList !== 'undefined' && 
+    //   if (currentNode.classList.value.includes('sf-', 0)) {
+    //     textContentData = null;
+    //   }
+    //   else {
+    //     if (textContentData !== null) {
+    //       textContentData.appendChild(currentNode);
+    //     }
+    //   }
+    // }
     // let data = {};
     // if (currentNode.nodeName === '#text' || typeof currentNode.classList === 'undefined' || currentNode.classList.value === '') {
     //   if (!IsNullOrWhiteSpace(currentNode.textContent)) {
@@ -68,6 +65,7 @@ export function dataParser(childNodes) {
   });
 
   console.log(nodesData);
+  
   
 
   return nodesData;

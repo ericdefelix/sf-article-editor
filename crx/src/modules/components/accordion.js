@@ -6,7 +6,7 @@ import { ComponentParser } from './componentHelpers';
 export const AccordionLabel = 'Accordion';
 
 export const ParseHTML = {
-  isTrue: (htmlNode) => {
+  isTrue: (htmlNode) => {    
     return htmlNode.classList.value.includes('sf-accordion') ? true : false;
   },
   parse: (htmlNode) => {
