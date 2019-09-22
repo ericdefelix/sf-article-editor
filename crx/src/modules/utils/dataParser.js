@@ -1,6 +1,4 @@
 import { ComponentParser } from '../components/componentHelpers';
-import { IsNullOrWhiteSpace } from './chromeExtensionUtils';
-
 
 export function dataParser(htmlSection) {
   const nodesData = [];

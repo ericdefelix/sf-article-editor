@@ -49,26 +49,30 @@ export function EmptyStateTemplate(containerID) {
 }
 
 export function AddContentBlockBtnTemplate(containerID) {
-  const template = `
-		<div class="canvas-content-action canvas-add-component">
+	return `<div class="canvas-content-action canvas-add-component">
 			<div class="content-action-hotspot">
 				<button type="button" class="canvas-btn canvas-btn-xs" data-action="select-component" data-node-level="1" data-target="${containerID}">
 					<i class="icon-plus">&#43;</i>
 				</button>
 			</div>
-		</div>
-	`;
-  return template;
+		</div>`;
 }
 
 export function AddSubContentBlockBtnTemplate(containerID) {
-	const template = `
-		<div class="canvas-add-component" >
+	return `<div class="canvas-add-component">
 			<div class="subcontent-action-hotspot">
 				<button type="button" class="canvas-btn canvas-btn-xs" data-action="select-component" data-node-level="2" data-target="${containerID}"><i class="icon-plus">&#43;</i> Add Content</button>
 			</div>
 		</div>`;
-	return template;
+}
+
+export function AddDeleteSubContentBlockBtnTemplate(containerID) {
+	return `<div class="canvas-add-component" >
+			<div class="subcontent-action-hotspot">
+				<button type="button" class="canvas-btn canvas-btn-xs" data-action="select-component" data-node-level="2" data-target="${containerID}"><i class="icon-plus">&#43;</i> Add Content</button>
+				<button type="button" class="canvas-btn canvas-btn-xs" data-action="remove-bullet" data-target="list-${containerID}">Remove Bullet Point</button>
+			</div>
+		</div>`;
 }
 
 export function ImageGalleryTemplate() {

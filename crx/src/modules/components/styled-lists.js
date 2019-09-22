@@ -1,5 +1,5 @@
 import { GenerateID, GenerateTabID, DataTemplate, ExtractSubnodes } from '../utils/chromeExtensionUtils';
-import { ContentBlockTemplate, AddContentBlockBtnTemplate, AddSubContentBlockBtnTemplate } from '../utils/interfaceTemplates';
+import { ContentBlockTemplate, AddContentBlockBtnTemplate, AddDeleteSubContentBlockBtnTemplate } from '../utils/interfaceTemplates';
 import { UserInterfaceSortable } from '../utils/sortableHandler';
 import { ComponentParser } from './componentHelpers';
 
@@ -50,29 +50,13 @@ export default class StyledLists {
     return ContentBlockTemplate(params);
   }
 
-  controlsTemplate(componentID) {
-    return `<button class="canvas-btn canvas-btn-xs" data-action="edit-component" data-target="${componentID}">Edit Numbering</button>`;
+  controlsTemplate() {
+    return `<select class="canvas-form-control" name="s-${this.id}" data-target="snippet-${this.id}"><option value="ol">Ordered List</option><option value="ul">Unordered List</option></select>
+    <button class="canvas-btn canvas-btn-xs" data-action="add-bullet-point" data-target="${this.id}">Add Bullet Point</button>`;
   }
 
   numberingSectionTemplate(numberingID) {
-    const deleteBtnMarkup = `<button type="button" class="canvas-btn canvas-btn-xs" data-action="delete-list-item" data-node-level="2" data-target="number-${numberingID}">Delete List Item</button>`;
-    const subContentTemplate = AddSubContentBlockBtnTemplate(numberingID);
-
-    console.log(AddSubContentBlockBtnTemplate(numberingID).slice(254));
-    
-
-    const template = `<li id="number-${numberingID}">
-                        <div class="canvas-subcontainer" id="canvasSubContainer_${numberingID}"></div>${subContentTemplate}
-                      </li>`;
-    return template;
-  }
-
-  editFieldTemplate(id) {
-    return `<li><label>List Item</label>
-              <button class="canvas-btn canvas-btn-xs" data-action="delete-list-item" data-target="${id}">
-                <i class="icon-delete"></i>
-              </button>
-            </li>`;
+    return `<li id="list-${numberingID}"><div class="canvas-subcontainer" id="canvasSubContainer_${numberingID}"></div>${AddDeleteSubContentBlockBtnTemplate(numberingID)}</li>`;
   }
 
   editComponentSectionTemplate() {
@@ -92,130 +76,79 @@ export default class StyledLists {
     return `<ol class="${this.cssClass}">${numberingSections}</ol>${this.editComponentSectionTemplate()}`;
   }
 
-  // updateNumberingList(editFields, numberingSectionTemplateFxn) {
-  //   const numberingList = editFields.nextElementSibling;
-  //   editFields.querySelectorAll('input').forEach((input) => {
-  //     const
-  //       toggleID = input.id.split('editInput-')[1],
-  //       toggle = document.getElementById(toggleID);
-
-  //     if (toggle === null) {
-  //       numberingList.insertAdjacentHTML('beforeend', numberingSectionTemplateFxn(toggleID, input.value));
-  //       UserInterfaceSortable({
-  //         container: document.getElementById(`canvasSubContainer_${toggleID}`),
-  //         contentDraggableClass: `.canvasDraggableSub_${toggleID}`
-  //       });
-  //     }
-  //     else {
-  //       if (input.classList.value.includes('deselected')) {
-  //         numberingList.removeChild(toggle.parentElement);
-  //       }
-  //       else {
-  //         // if (toggle.querySelector('.sf-accordion-text').textContent !== input.value) {
-  //         //   toggle.querySelector('.sf-accordion-text').textContent = input.value;
-  //         // }
-  //       }
-  //     }
-  //   });
-  // }
+  deleteNumberingItem() {
+    const targetListItem = this.getAttribute('data-target');
+    document.getElementById(targetListItem).remove();
+  }
 
   updateDOM(HTMLObject) {
     try {
-      let
-        editFields,
-        editFieldsInput = ``,
-        isEditOpen = false,
-        numberingCurrentCount = this.numberingCurrentCount,
-        numberingCountMin = this.numberingCountMin;
+      let numberingCurrentCount = this.numberingCurrentCount;
 
       const
-        contentEditList = HTMLObject.querySelector('.canvas-content-edit-list'),
-        editFieldTemplateFxn = this.editFieldTemplate,
-        numberingSectionTemplateFxn = this.numberingSectionTemplate;
-        // updateNumberingListFxn = this.updateNumberingList;
-
-      function deleteNumberingItem() {
-        const targetInput = document.getElementById(`editInput-${this.getAttribute('data-target')}`);
-
-        if (!targetInput.classList.value.includes('deselected')) {
-          targetInput.classList.add('deselected');
-          numberingCurrentCount -= 1;
-          this.classList.add('disabled');
-          this.innerHTML = 'Undo';
-        }
-        else {
-          targetInput.classList.remove('deselected');
-          numberingCurrentCount += 1;
-          this.classList.remove('disabled');
-          this.innerHTML = '<i class="icon-delete"></i>';
-        }
-
-        setButtonStates(this);
-      };
-
-      function addNumberingItem() {
-        const newBtnTabID = `pane-${GenerateTabID()}`;
-        numberingCurrentCount += 1;
-        contentEditList.insertAdjacentHTML('beforeend', editFieldTemplateFxn('', newBtnTabID));
-      }
-
-      function setButtonStates(clickedBtn) {
-        const deleteBtns = [...contentEditList.querySelectorAll('[data-action="delete-list-item"]')];
-
+        numberingCountMin = this.numberingCountMin,
+        numberingSectionTemplateFxn = this.numberingSectionTemplate,
+        deleteNumberingItemFxn = this.deleteNumberingItem;
+      
+      const setButtonStates = function () {
+        const deleteBtns = [...HTMLObject.querySelectorAll('[data-action="remove-bullet"]')];
         deleteBtns.forEach(btn => {
           btn.disabled = numberingCurrentCount > numberingCountMin
             ? false : (btn.classList.value.includes('disabled') ? false : true);
         });
-      }
+      };
 
+      const bindControls = function (numberList) {
+        const numberListID = numberList.id.split('list-')[1];
+        UserInterfaceSortable({
+          container: document.getElementById(`canvasSubContainer_${numberListID}`),
+          contentDraggableClass: `.canvasDraggableSub_${numberListID}`
+        });
+
+        numberList.querySelector('[data-action="remove-bullet"]').onclick = deleteNumberingItemFxn;
+      };
+      
       const observer = new MutationObserver(mutations => {
-        if (mutations.length !== 0 && mutations[0].addedNodes.length !== 0) {
+        const nodes = mutations.length !== 0 && mutations[0].addedNodes.length !== 0 ?
+          mutations[0].addedNodes : mutations[0].removedNodes;
+
+        if (nodes) {
           for (let index = 0; index < mutations.length; index++) {
-            mutations[0].addedNodes.forEach(li => {
-              li.querySelector('[data-action="delete-list-item"]').onclick = deleteNumberingItem;
+            nodes.forEach(li => {
+
+              if (mutations[0].addedNodes.length !== 0) {
+                numberingCurrentCount += 1;
+                bindControls(li);
+              }
+              else {
+                numberingCurrentCount -= 1;
+              }
             });
           }
           setButtonStates();
         }
       });
 
-      // Mutations`
-      HTMLObject.querySelectorAll('li').forEach((numberList) => {
-        const numberListID = numberList.id.split('number-')[1];
-        UserInterfaceSortable({
-          container: document.getElementById(`canvasSubContainer_${numberListID}`),
-          contentDraggableClass: `.canvasDraggableSub_${numberListID}`
-        });
+
+      // Mutations
+      observer.observe(HTMLObject.querySelector(`.${this.cssClass}`), {
+        attributes: false,
+        subtree: false,
+        childList: true,
       });
 
-      // Update Component
-      HTMLObject.querySelector('[data-action="edit-component"]').onclick = function (event) {
-        editFields = document.getElementById(`editFields-${HTMLObject.id}`);
-        isEditOpen = isEditOpen == false ? true : false;
-        event.target.textContent = isEditOpen ? 'Update Numbered List' : 'Edit Numbered List';
-        editFields.style.display = isEditOpen ? 'block' : 'none';
+      HTMLObject.querySelectorAll('li').forEach((numberList) => {
+        bindControls(numberList);
+      });
 
-        // if (isEditOpen) { // If Update field is active
-        //   observer.observe(contentEditList, {
-        //     attributes: false,
-        //     subtree: false,
-        //     childList: true,
-        //   });
-
-        //   contentEditList.innerHTML = editFieldsInput;
-        //   editFields.nextElementSibling.style.display = 'none';
-        //   numberingCurrentCount = contentEditList.children.length;
-        // }
-        // else { // Goes back to Accordion List
-        //   updateNumberingListFxn(editFields, numberingSectionTemplateFxn);
-        //   editFields.nextElementSibling.removeAttribute('style');
-        //   observer.disconnect();
-        //   editFieldsInput = '';
-        // }
+      // Add New Line
+      HTMLObject.querySelector('[data-action="add-bullet-point"]').onclick = () => {
+        const listContainer = document.querySelector(`#snippet-${this.id} .${this.cssClass}`);
+        const newListItemID = GenerateTabID();
+        listContainer.insertAdjacentHTML('beforeend', numberingSectionTemplateFxn(newListItemID));
       };
 
-      // Add New Line - DOM Display Only
-      HTMLObject.querySelector('[data-action="add-list-item"]').onclick = addNumberingItem;
+      setButtonStates();
 
     } catch (error) {
       console.log(error);
