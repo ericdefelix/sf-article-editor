@@ -10,6 +10,8 @@ export const ParseHTML = {
     return htmlNode.classList.value.includes('sf-bullet-circular') ? true : false;
   },
   parse: (htmlNode) => {
+    console.log(htmlNode);
+    
     const data = new DataTemplate();
 
     data.subnodes = ExtractSubnodes({
@@ -26,6 +28,10 @@ export const ParseHTML = {
     data.type = 'Numbering';
     data.html = htmlNode.outerHTML;
     return data;
+  },
+  generate: (htmlNode) => {
+    console.log('generate');
+    
   }
 };
 
@@ -59,12 +65,6 @@ export default class StyledLists {
     return `<li id="list-${numberingID}"><div class="canvas-subcontainer" id="canvasSubContainer_${numberingID}"></div>${AddDeleteSubContentBlockBtnTemplate(numberingID)}</li>`;
   }
 
-  editComponentSectionTemplate() {
-    return `<div class="canvas-content-edit-overlay" id="editFields-${this.id}" style="display: none;">
-              <button class="canvas-btn canvas-btn-xs" data-action="add-list-item" data-target="${this.id}">New List Item</button>
-            </div>`;
-  }
-
   template(existingData) {
     let numberingSections = ``;
     const numberingCountMin = typeof existingData === 'object' ? existingData.length : this.numberingCountMin;
@@ -73,7 +73,7 @@ export default class StyledLists {
       const numberingID = typeof existingData === 'object' ? existingData[i].id : GenerateTabID();
       numberingSections += this.numberingSectionTemplate(numberingID);
     }
-    return `<ol class="${this.cssClass}">${numberingSections}</ol>${this.editComponentSectionTemplate()}`;
+    return `<ol class="${this.cssClass}">${numberingSections}</ol>`;
   }
 
   deleteNumberingItem() {
@@ -111,11 +111,12 @@ export default class StyledLists {
       const observer = new MutationObserver(mutations => {
         const nodes = mutations.length !== 0 && mutations[0].addedNodes.length !== 0 ?
           mutations[0].addedNodes : mutations[0].removedNodes;
-
+        
+        console.log(mutations);
+        
         if (nodes) {
           for (let index = 0; index < mutations.length; index++) {
             nodes.forEach(li => {
-
               if (mutations[0].addedNodes.length !== 0) {
                 numberingCurrentCount += 1;
                 bindControls(li);
@@ -131,7 +132,8 @@ export default class StyledLists {
 
 
       // Mutations
-      observer.observe(HTMLObject.querySelector(`.${this.cssClass}`), {
+      // observer.observe(HTMLObject.querySelector(`.${this.cssClass}`), {
+      observer.observe(HTMLObject.querySelector('.canvas-content-snippet'), {
         attributes: false,
         subtree: false,
         childList: true,
@@ -146,6 +148,11 @@ export default class StyledLists {
         const listContainer = document.querySelector(`#snippet-${this.id} .${this.cssClass}`);
         const newListItemID = GenerateTabID();
         listContainer.insertAdjacentHTML('beforeend', numberingSectionTemplateFxn(newListItemID));
+      };
+
+      HTMLObject.querySelector('select').onchange = function() {
+        console.log(this.value);
+        
       };
 
       setButtonStates();

@@ -15,6 +15,9 @@ export const ParseHTML = {
     data['type'] = 'Tips';
     data['html'] = node.outerHTML;
     return data;
+  },
+  generate: (htmlNode) => {
+
   }
 };
 

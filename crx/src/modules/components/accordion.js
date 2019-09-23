@@ -26,6 +26,9 @@ export const ParseHTML = {
     data.type = 'Accordion';
     data.html = htmlNode.outerHTML;
     return data;
+  },
+  generate: (htmlNode) => {
+
   }
 };
 

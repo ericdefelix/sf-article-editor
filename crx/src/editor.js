@@ -99,13 +99,7 @@ const editor = {
     document.querySelector('body').classList.add('sf-' + themeValue);
   },
   generate_html: function () {
-    let data = GenerateSanitisedHTML(editor.canvasContainer, editor.htmlSection, editor.sourceSection);
-
-    editor.htmlSection.innerHTML = editor.existing_data.length > 0 ?
-      data.preview.innerHTML : '<strong>Nothing to display here.</strong>';
-
-    editor.sourceSection.value = data.raw;
-
+    GenerateSanitisedHTML(editor.canvasContainer, editor.htmlSection, editor.sourceSection);
     editor.outputPane.style.display = 'block';
     document.querySelector('body').style.overflow = 'hidden';
   },

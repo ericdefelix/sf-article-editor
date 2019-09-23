@@ -27,6 +27,9 @@ export const ParseHTML = {
     data.html = htmlNode.outerHTML;
 
     return data;
+  },
+  generate: (htmlNode) => {
+
   }
 };
 
