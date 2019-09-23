@@ -20,13 +20,6 @@ export function GenerateSanitisedHTML(canvasContainer, htmlSection, sourceSectio
           elementHasNested.remove();
         });
       }
-
-      if (element.querySelector('.sf-tabs') !== null) {
-        element.querySelectorAll('.sf-tabs').forEach(tab => {
-          tab.querySelector('.sf-tab-nav .sf-tab-item:first-child .sf-tab-item-link').click();
-          // console.log(tab.querySelector('.sf-tab-nav .sf-tab-item:first-child .sf-tab-item-link'));
-        });
-      }
       
       if (element.querySelector('[contenteditable="true"]') !== null) {
         element.querySelectorAll('[contenteditable="true"]').forEach(editable => {
@@ -37,6 +30,10 @@ export function GenerateSanitisedHTML(canvasContainer, htmlSection, sourceSectio
       }
 
       htmlSection.appendChild(element.querySelector('.canvas-content-snippet').lastElementChild);
+
+      if (htmlSection.lastElementChild.className === 'sf-tabs') {
+        htmlSection.lastElementChild.querySelector('.sf-tab-item:first-child .sf-tab-item-link').click();
+      }
 
       sourceSection.value = htmlSection.innerHTML;
 
@@ -49,35 +46,4 @@ export function GenerateSanitisedHTML(canvasContainer, htmlSection, sourceSectio
       }
     });
   }
-
-  // const nodeLevel1Children = previewClone.children;
-  // const div = document.createElement('div');
-  
-  // [...nodeLevel1Children].forEach(child => {
-  //   console.log(child);
-    
-  //   const subcontainer = child.querySelectorAll('.canvas-content-snippet > .canvas-subcontainer');
-
-  //   if (subcontainer.length > 0) extractSubcontainerElements(subcontainer);
-    
-  //   child.querySelectorAll('[contenteditable="true"]').forEach(element => {
-  //     const attrs = ['contentEditable', 'id', 'style', 'spellCheck'];
-  //     attrs.forEach(attr => element.removeAttribute(attr));
-  //     if (element.classList.value.includes('mce-content-body')) element.classList.remove('mce-content-body');
-  //   });
-    
-  //   div.appendChild(child.querySelector('.canvas-content-snippet').lastElementChild);
-  // });
-
-  // data.preview = div;
-
-  // data.preview.querySelectorAll('.sf-tab-item-link').forEach(link => {
-  //   const targetLinkSectionID = link.id.split('target_')[1];
-    
-  //   link.id = `preview_${link.id}`;
-  //   document.getElementById(targetLinkSectionID).id = `preview_${targetLinkSectionID}`;
-  // });
-
-  // data.raw = div.innerHTML;
-  // return data;
 }

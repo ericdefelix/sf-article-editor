@@ -62,7 +62,13 @@ export const imageGalleryMockData = [
 ];
 
 
-export const htmlMockData = `test 123`;
+export const htmlMockData = `<ol class="sf-list-bullet-circular"><li id="list-54466"><div class="sf-editor-content"><p>Click to edit content</p></div></li><li id="list-48357"><div class="sf-blockquote sf-blockquote-info" role="blockquote">
+      <div class="sf-blockquote-addon"></div>
+      <div class="sf-blockquote-content">
+        <h5 class="sf-blockquote-content-header">Click to edit heading</h5>
+        <div class="sf-blockquote-content-body"><p>Click here to edit/paste content</p></div>
+      </div>
+    </div></li><li id="list-79745"><div class="sf-editor-content"><p>Click to edit content</p></div></li></ol>`;
 
 
 const test2 = `<div class="sf-editor-content">

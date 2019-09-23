@@ -7,7 +7,7 @@ export const StyledListsLabel = 'Numbering';
 
 export const ParseHTML = {
   isTrue: (htmlNode) => {
-    return htmlNode.classList.value.includes('sf-bullet-circular') ? true : false;
+    return htmlNode.classList.value.includes('sf-list-bullet-circular') ? true : false;
   },
   parse: (htmlNode) => {
     console.log(htmlNode);
@@ -20,12 +20,12 @@ export const ParseHTML = {
       containerSelector: 'li'
     }, ComponentParser);
 
-    document.querySelectorAll('li').forEach((bullet, index) => {
-      data.subnodes.containers[index]['id'] = index;
+    document.querySelectorAll('li').forEach((bullet,index) => {
+      data.subnodes.containers[index]['id'] = bullet.id.split('list-')[1];
     });
 
     data.hasSubnodes = true;
-    data.type = 'Numbering';
+    data.type = 'StyledLists';
     data.html = htmlNode.outerHTML;
     return data;
   },
@@ -57,8 +57,8 @@ export default class StyledLists {
   }
 
   controlsTemplate() {
-    return `<select class="canvas-form-control" name="s-${this.id}" data-target="snippet-${this.id}"><option value="ol">Ordered List</option><option value="ul">Unordered List</option></select>
-    <button class="canvas-btn canvas-btn-xs" data-action="add-bullet-point" data-target="${this.id}">Add Bullet Point</button>`;
+    return `<button class="canvas-btn canvas-btn-xs" data-action="add-bullet-point" data-target="${this.id}">Add Bullet Point</button>`;
+    // <select class="canvas-form-control" name="s-${this.id}" data-target="snippet-${this.id}"><option value="ol">Ordered List</option><option value="ul">Unordered List</option></select>
   }
 
   numberingSectionTemplate(numberingID) {
@@ -93,9 +93,9 @@ export default class StyledLists {
       const setButtonStates = function () {
         const deleteBtns = [...HTMLObject.querySelectorAll('[data-action="remove-bullet"]')];
         deleteBtns.forEach(btn => {
-          btn.disabled = numberingCurrentCount > numberingCountMin
+          btn.disabled = deleteBtns.length > numberingCountMin
             ? false : (btn.classList.value.includes('disabled') ? false : true);
-        });
+        });        
       };
 
       const bindControls = function (numberList) {
@@ -111,8 +111,6 @@ export default class StyledLists {
       const observer = new MutationObserver(mutations => {
         const nodes = mutations.length !== 0 && mutations[0].addedNodes.length !== 0 ?
           mutations[0].addedNodes : mutations[0].removedNodes;
-        
-        console.log(mutations);
         
         if (nodes) {
           for (let index = 0; index < mutations.length; index++) {
@@ -132,8 +130,7 @@ export default class StyledLists {
 
 
       // Mutations
-      // observer.observe(HTMLObject.querySelector(`.${this.cssClass}`), {
-      observer.observe(HTMLObject.querySelector('.canvas-content-snippet'), {
+      observer.observe(HTMLObject.querySelector(`.${this.cssClass}`), {
         attributes: false,
         subtree: false,
         childList: true,
@@ -150,10 +147,10 @@ export default class StyledLists {
         listContainer.insertAdjacentHTML('beforeend', numberingSectionTemplateFxn(newListItemID));
       };
 
-      HTMLObject.querySelector('select').onchange = function() {
-        console.log(this.value);
-        
-      };
+      // HTMLObject.querySelector('select').onchange = function () {
+      //   const listDOM = document.createElement(this.value);
+      //   HTMLObject.querySelector('.canvas-content-snippet').appendChild(listDOM);
+      // };
 
       setButtonStates();
 
