@@ -8,7 +8,7 @@ import Accordion from './components/accordion';
 
 import ImageGallery from './ImageGallery';
 import { UserInterfaceSortable } from '../modules/utils/sortableHandler';
-import { EmptyStateTemplate, ImageGalleryTemplate } from '../modules/utils/interfaceTemplates';
+import { EmptyStateTemplate } from '../modules/utils/interfaceTemplates';
 
 const Components = {
   TextContent,
@@ -31,7 +31,7 @@ const UserInterfaceBuilder = {
     UserInterfaceBuilder.container = container;
 
     // Attach mutation observer
-    UserInterfaceBuilder.observe('canvasContainer',1);
+    UserInterfaceBuilder.observe('canvasContainer');
 
     // If data is empty emptyStateTemplate, if not renderExistingData
     params.data.length === 0 ?
@@ -48,8 +48,7 @@ const UserInterfaceBuilder = {
 
     if (typeof params.images !== 'undefined') {
       ImageGallery.init({
-        data: typeof params.images === 'undefined' ? [] : params.images,
-        template: ImageGalleryTemplate,
+        data: typeof params.images === 'undefined' ? [] : params.images
       }); 
     }
   },
@@ -100,7 +99,7 @@ const UserInterfaceBuilder = {
       UserInterfaceBuilder.initEmptyStateButton();
     }    
   },
-  observe: (containerID,nodeLevel) => {
+  observe: (containerID) => {
     // instantiating observer
     const containerObserver = new MutationObserver(UserInterfaceBuilder.subscriber);
     const observedElement = document.getElementById(containerID);
@@ -159,7 +158,7 @@ const UserInterfaceBuilder = {
       }
 
     });
-
+    
     UserInterfaceSortable({
       container: document.getElementById(canvasContainer),
       contentDraggableClass: '.' + canvasDraggableMain

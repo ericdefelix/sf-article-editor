@@ -98,10 +98,11 @@ export function TinyMCEHelper(contentEditorAppConfig) {
 		paste_data_images: true,
 		file_picker_types: 'image',
 		toolbar: contentEditorAppConfig.config.toolbar,
-		plugins: contentEditorAppConfig.config.plugins
-		// file_picker_callback: function (cb, value) {
-		// 	// ImageGallery.run(contentEditorAppConfig.images);		
-		// }
+		plugins: contentEditorAppConfig.config.plugins,
+		file_picker_callback: function (cb, value) {
+			console.log(cb,value);
+			// ImageGallery.run(contentEditorAppConfig.images);		
+		}
 	};
 }
 
@@ -112,7 +113,10 @@ export function IsNullOrWhiteSpace(str) {
 export function ExtractSubnodes(params, ComponentParser) {
 	const data = { containers: [], elements: [] };
 	const titles = params.titleSelector === '' ? null : [...params.htmlNode.querySelectorAll(params.titleSelector)];
+
 	params.htmlNode.querySelectorAll(params.containerSelector).forEach((container, index) => {
+		console.log(container);
+		
 		const elements = [];
 		if (container.children.length !== 0) {
 			[...container.children].forEach(child => {

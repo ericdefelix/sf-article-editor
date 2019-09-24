@@ -10,18 +10,18 @@ export const ParseHTML = {
     return htmlNode.classList.value.includes('sf-list-bullet-circular') ? true : false;
   },
   parse: (htmlNode) => {
-    console.log(htmlNode);
-    
     const data = new DataTemplate();
 
-    data.subnodes = ExtractSubnodes({
-      htmlNode: htmlNode,
-      titleSelector: '',
-      containerSelector: 'li'
-    }, ComponentParser);
+    // data.subnodes = ExtractSubnodes({
+    //   htmlNode: htmlNode,
+    //   titleSelector: '',
+    //   containerSelector: 'li'
+    // }, ComponentParser);
 
-    document.querySelectorAll('li').forEach((bullet,index) => {
-      data.subnodes.containers[index]['id'] = bullet.id.split('list-')[1];
+    document.querySelectorAll('li').forEach((bullet, index) => {
+      console.log(bullet);
+      
+      // data.subnodes.containers[index]['id'] = bullet.id.split('list-')[1];
     });
 
     data.hasSubnodes = true;

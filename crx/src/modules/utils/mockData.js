@@ -62,13 +62,70 @@ export const imageGalleryMockData = [
 ];
 
 
-export const htmlMockData = `<ol class="sf-list-bullet-circular"><li id="list-54466"><div class="sf-editor-content"><p>Click to edit content</p></div></li><li id="list-48357"><div class="sf-blockquote sf-blockquote-info" role="blockquote">
+export const zhtmlMockData = ``;
+
+export const htmlMockData = `<div class="sf-tabs">
+      <div class="sf-tabs-bar"><ul class="sf-tab-nav">
+      <li class="sf-tab-item active">
+        <span class="sf-tab-item-link" id="target_tab-84152">Tab 1</span>
+      </li>
+      <li class="sf-tab-item">
+        <span class="sf-tab-item-link" id="target_tab-52272">Tab 2</span>
+      </li>
+      <li class="sf-tab-item">
+        <span class="sf-tab-item-link" id="target_tab-44104">Tab 3</span>
+      </li></ul></div>
+    <div class="sf-tab-content" id="tab-84152">
+      
+      
+    <div class="sf-editor-content"><p>Click to edit content</p></div><ol class="sf-list-bullet-circular"><li id="list-85291"><div class="sf-editor-content"><p>Click to edit content</p></div></li><li id="list-14209"><div class="sf-blockquote sf-blockquote-info" role="blockquote">
       <div class="sf-blockquote-addon"></div>
       <div class="sf-blockquote-content">
         <h5 class="sf-blockquote-content-header">Click to edit heading</h5>
         <div class="sf-blockquote-content-body"><p>Click here to edit/paste content</p></div>
       </div>
-    </div></li><li id="list-79745"><div class="sf-editor-content"><p>Click to edit content</p></div></li></ol>`;
+    </div></li><li id="list-11059"><div class="sf-editor-content"><p>Click to edit content</p></div></li></ol></div>
+    <div class="sf-tab-content in" id="tab-52272">
+      
+      
+    <div class="sf-accordion"><div class="sf-accordion-item">
+                        <div class="sf-accordion-toggle in" id="pane-33167">
+                          <h4 class="sf-accordion-text">Accordion Display Text</h4>
+                          <i class="sf-accordion-icon"></i>	
+                        </div>
+                        <div class="sf-accordion-content">
+                          
+                          
+                        <div class="sf-editor-content"><p>Click to edit content</p></div></div>
+                      </div><div class="sf-accordion-item">
+                        <div class="sf-accordion-toggle in" id="pane-31438">
+                          <h4 class="sf-accordion-text">Accordion Display Text</h4>
+                          <i class="sf-accordion-icon"></i>	
+                        </div>
+                        <div class="sf-accordion-content">
+                          
+                          
+                        <div class="sf-blockquote sf-blockquote-info" role="blockquote">
+      <div class="sf-blockquote-addon"></div>
+      <div class="sf-blockquote-content">
+        <h5 class="sf-blockquote-content-header">Click to edit heading</h5>
+        <div class="sf-blockquote-content-body"><p>Click here to edit/paste content</p></div>
+      </div>
+    </div></div>
+                      </div><div class="sf-accordion-item">
+                        <div class="sf-accordion-toggle in" id="pane-21843">
+                          <h4 class="sf-accordion-text">Accordion Display Text</h4>
+                          <i class="sf-accordion-icon"></i>	
+                        </div>
+                        <div class="sf-accordion-content">
+                          
+                          
+                        <div class="sf-editor-content"><p>Click to edit content</p></div></div>
+                      </div></div></div>
+    <div class="sf-tab-content" id="tab-44104">
+      
+      
+    </div></div>`;
 
 
 const test2 = `<div class="sf-editor-content">

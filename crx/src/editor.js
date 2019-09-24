@@ -41,7 +41,7 @@ const editor = {
 
       chrome.storage.local.get(['image_gallery'], (objLocalStorage) => {
         editor.image_gallery = JSON.parse(objLocalStorage.image_gallery);
-        ImageGallery.render(editor.image_gallery);
+        // ImageGallery.render(editor.image_gallery);
       });
 
       chrome.storage.local.get(['instanceHTML'], (objLocalStorage) => {
@@ -60,6 +60,8 @@ const editor = {
     } catch (e) {
       editor.image_gallery = imageGalleryMockData;
       editor.htmlSection.insertAdjacentHTML('afterbegin', htmlMockData);
+
+
       editor.existing_data = dataParser(editor.htmlSection);
       editor.htmlSection.innerHTML = '';
 
