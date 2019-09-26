@@ -114,9 +114,7 @@ export function ExtractSubnodes(params, ComponentParser) {
 	const data = { containers: [], elements: [] };
 	const titles = params.titleSelector === '' ? null : [...params.htmlNode.querySelectorAll(params.titleSelector)];
 
-	params.htmlNode.querySelectorAll(params.containerSelector).forEach((container, index) => {
-		console.log(container);
-		
+	params.htmlNode.querySelectorAll(params.containerSelector).forEach((container, index) => {		
 		const elements = [];
 		if (container.children.length !== 0) {
 			[...container.children].forEach(child => {

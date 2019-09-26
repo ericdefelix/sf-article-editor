@@ -18,14 +18,28 @@ export const ParseHTML = {
     //   containerSelector: 'li'
     // }, ComponentParser);
 
-    document.querySelectorAll('li').forEach((bullet, index) => {
-      console.log(bullet);
-      
-      // data.subnodes.containers[index]['id'] = bullet.id.split('list-')[1];
-    });
+
+
+    data.subnodes = (() => {
+      const subnodes = [];
+
+      htmlNode.querySelectorAll('li').forEach(bullet => {
+        
+        // const hasChildren = htmlNode.querySelector('li').children.length;
+        subnodes.push({
+          id: bullet.id.split('list-')[1],
+          container: bullet
+        });
+        // subnodes.containers[index]['id'] = bullet.id.split('list-')[1];
+      });
+
+      return subnodes;
+    })();
 
     data.hasSubnodes = true;
     data.type = 'StyledLists';
+    data.titleSelector = '';
+    data.containerSelector = 'li';
     data.html = htmlNode.outerHTML;
     return data;
   },

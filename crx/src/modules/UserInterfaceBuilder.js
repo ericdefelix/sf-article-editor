@@ -119,6 +119,21 @@ const UserInterfaceBuilder = {
   renderExistingData: (data) => {
     UserInterfaceBuilder.elementCount = data.length;
     const canvasContainer = 'canvasContainer', canvasDraggableMain = 'canvasDraggableMain';
+
+    // let counter = true;
+    // const iterateDOM = (parent) => {
+
+    //   if (counter) {
+    //     console.log('test');
+        
+    //     iterateDOM();
+    //   }
+    //   else {
+
+    //   }
+    // };
+
+    // iterateDOM(document.getElementById(canvasContainer));
     
     data.forEach((item) => {
       // Create a component instance
@@ -156,7 +171,6 @@ const UserInterfaceBuilder = {
           });
         });
       }
-
     });
     
     UserInterfaceSortable({
