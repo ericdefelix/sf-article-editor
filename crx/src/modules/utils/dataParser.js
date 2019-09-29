@@ -44,65 +44,36 @@ export function dataParser(htmlSection) {
 
   dataFormatter(htmlSection, htmlSection.childNodes);
   
-  const testNodesData = [];
-  // Iterate each child element 
-
-  function iterateDOM(htmlBlock) {
-
-    [...htmlBlock.children].forEach(currentNode => {
-      console.log(currentNode);
-      
-      const data = ComponentParser(currentNode);
-      
-      if (typeof data.hasSubnodes !== 'undefined' || data.hasSubnodes) {
-
-        data['subnodes'] = (() => {
-          // const subnodes = [];
-          data.subnodes.forEach(subnode => {
-            subnode['elements'] = [];
-            // if (container.children.length !== 0) {
-            //   [...container.children].forEach(child => {
-            //     const subData = ComponentParser(child);
-            //     if (child.nodeType === 1) elements.push(subData);
-            //   });
-            // }
-            // console.log(subnode.container.children);
-            
-            // iterateDOM(subnode.dom);
-            // console.log(subnode.container);
-            
-            iterateDOM(subnode.container);
-            // subnode.elements.push('test');
-
-            // container.innerHTML = '';
-
-            // subnodes.push(data);
-            // data.containers.push({ dom: container, title: titles === null ? null : titles[index].textContent });
-          });
-
-          // return subnodes;
-        })();
-
-        testNodesData.push(data);
-      }
-      else {
-        testNodesData.push(data);
-        return;
-      }
-    });
-  }
-
-  iterateDOM(htmlSection);
-  console.log(testNodesData);
-  
-
-  [...htmlSection.childNodes].forEach(currentNode => {
+  [...htmlSection.childNodes].forEach(nodeMain => {
     let data = {};
-    data = ComponentParser(currentNode);
+    data = ComponentParser(nodeMain);
+    
+    if (data.hasSubnodes) { 
+      data.subnodes.forEach(element => {
+        element.subelements = (() => {
+          const subnodesData = [];
+          if (element.container.childElementCount > 0) {
+            
+            [...element.container.children].forEach(nodeSub => {
+              let subdata = {};
+              subdata = ComponentParser(nodeSub);
+              subdata.nodeLevel = 'sub';
+              subnodesData.push(subdata);
+            });
+
+            element.container.innerHTML = '';
+          }
+          return subnodesData;
+        })();
+      });
+    }
+
+    data.nodeLevel = 'main';
     nodesData.push(data);
   });
   
 
-  // return nodesData;
+  console.log(nodesData);      
+  
   return nodesData;
 }

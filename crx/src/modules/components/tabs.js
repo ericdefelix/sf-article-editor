@@ -12,24 +12,26 @@ export const ParseHTML = {
   parse: (htmlNode) => {
     const data = new DataTemplate();
 
-    data.subnodes = ExtractSubnodes({
-      htmlNode: htmlNode,
-      titleSelector: '.sf-tab-item-link',
-      containerSelector: '.sf-tab-content'
-    }, ComponentParser);
+    data.subnodes = (() => {
+      const subnodes = [];
 
-    data.subnodes.containers.forEach(container => {
-      container['id'] = container.dom.id.split('tab-')[1];
-    });
+      htmlNode.querySelectorAll('.sf-tab-content').forEach(tab => {
+        subnodes.push({
+          id: tab.id.split('tab-')[1],
+          container: tab
+        });
+      });
 
+      return subnodes;
+    })();
+
+    data.titleSelector = '.sf-tab-item-link';
+    data.containerSelector = '.sf-tab-content';
     data.hasSubnodes = true;
     data.type = 'Tabs';
     data.html = htmlNode.outerHTML;
 
     return data;
-  },
-  generate: (htmlNode) => {
-
   }
 };
 

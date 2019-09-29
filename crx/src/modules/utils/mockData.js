@@ -62,13 +62,55 @@ export const imageGalleryMockData = [
 ];
 
 
-export const zhtmlMockData = ``;
-
 export const htmlMockData = `<ol class="sf-list-bullet-circular">
-            <li id="list-85291"><div class="sf-editor-content"><p>Click to edit content</p></div></li>
-            <li id="list-14209"><div class="sf-editor-content"><p>Click to edit content</p></div></li>
-            <li id="list-11059"><div class="sf-editor-content"><p>Click to edit content</p></div></li>
-          </ol>`;
+<li id="list-23422"><div class="sf-editor-content"><ul><li>test</li></ul></div></li>
+<li id="list-14209"><div class="sf-editor-content"><p>Click to edit content</p></div></li>
+<li id="list-11059"><div class="sf-editor-content"><p>Click to edit content</p></div></li>
+</ol>`;
+
+export const zhtmlMockData = `<ol class="sf-list-bullet-circular">
+<li id="list-85291"><ol class="sf-list-bullet-circular">
+<li id="list-23422"><div class="sf-editor-content"><ul><li>test</li></ul></div></li>
+<li id="list-14209"><div class="sf-editor-content"><p>Click to edit content</p></div></li>
+<li id="list-11059"><div class="sf-editor-content"><p>Click to edit content</p></div></li>
+</ol></li>
+<li id="list-45663"><div class="sf-editor-content"><p>Click to edit content</p></div></li>
+<li id="list-87976"><div class="sf-editor-content"><p>Click to edit content</p></div></li>
+</ol><div class="sf-tabs">
+<div class="sf-tabs-bar"><ul class="sf-tab-nav">
+<li class="sf-tab-item active">
+<span class="sf-tab-item-link" id="target_tab-87779">Yrdy</span>
+</li>
+<li class="sf-tab-item">
+<span class="sf-tab-item-link" id="target_tab-52536">Test</span>
+</li>
+<li class="sf-tab-item">
+<span class="sf-tab-item-link" id="target_tab-83620">Text 3</span>
+</li></ul></div>
+<div class="sf-tab-content in" id="tab-87779">
+<div class="sf-blockquote sf-blockquote-tip">
+<div class="sf-blockquote-addon">&nbsp;</div>
+
+<div class="sf-blockquote-content">
+<h5 class="sf-blockquote-content-header">asdfasdfasd</h5>
+<div class="sf-blockquote-content-body"><p>asdfsdfasdfadsf</p></div>
+</div>
+</div>
+
+<div class="sf-blockquote sf-blockquote-info">
+<div class="sf-blockquote-addon">&nbsp;</div>
+
+<div class="sf-blockquote-content">
+<h5 class="sf-blockquote-content-header">asdfasdfasd</h5>
+<div class="sf-blockquote-content-body"><p>asdfsdfasdfadsf</p></div>
+</div>
+</div>
+</div>
+<div class="sf-tab-content" id="tab-52536">
+</div>
+<div class="sf-tab-content" id="tab-83620">
+</div>
+</div>`;
 
 
 const test2 = `<div class="sf-editor-content">

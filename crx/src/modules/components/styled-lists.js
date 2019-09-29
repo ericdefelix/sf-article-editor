@@ -12,25 +12,14 @@ export const ParseHTML = {
   parse: (htmlNode) => {
     const data = new DataTemplate();
 
-    // data.subnodes = ExtractSubnodes({
-    //   htmlNode: htmlNode,
-    //   titleSelector: '',
-    //   containerSelector: 'li'
-    // }, ComponentParser);
-
-
-
     data.subnodes = (() => {
       const subnodes = [];
 
-      htmlNode.querySelectorAll('li').forEach(bullet => {
-        
-        // const hasChildren = htmlNode.querySelector('li').children.length;
+      htmlNode.querySelectorAll('.sf-list-bullet-circular > li').forEach(bullet => {
         subnodes.push({
           id: bullet.id.split('list-')[1],
           container: bullet
         });
-        // subnodes.containers[index]['id'] = bullet.id.split('list-')[1];
       });
 
       return subnodes;
@@ -38,14 +27,9 @@ export const ParseHTML = {
 
     data.hasSubnodes = true;
     data.type = 'StyledLists';
-    data.titleSelector = '';
     data.containerSelector = 'li';
     data.html = htmlNode.outerHTML;
     return data;
-  },
-  generate: (htmlNode) => {
-    console.log('generate');
-    
   }
 };
 
@@ -57,13 +41,13 @@ export default class StyledLists {
     this.numberingCurrentCount = this.numberingCountMin;
   }
 
-  render(html, options) {
+  render(item, options) { 
     const params = {
       id: this.id,
       type: 'Styled Lists',
       controlsTemplate: this.controlsTemplate(this.id),
       draggableClass: options.draggableClass,
-      componentTemplate: this.template(html),
+      componentTemplate: this.template(item),
       addTemplate: AddContentBlockBtnTemplate(this.id)
     };
 
@@ -80,11 +64,13 @@ export default class StyledLists {
   }
 
   template(existingData) {
+    console.log(existingData);
+    
     let numberingSections = ``;
-    const numberingCountMin = typeof existingData === 'object' ? existingData.length : this.numberingCountMin;
+    const numberingCountMin = existingData.subnodes.length > 0 ? existingData.subnodes.length : this.numberingCountMin;
 
     for (let i = 0; i < numberingCountMin; i++) {
-      const numberingID = typeof existingData === 'object' ? existingData[i].id : GenerateTabID();
+      const numberingID = existingData.subnodes.length > 0 ? existingData.subnodes[i].id : GenerateTabID();
       numberingSections += this.numberingSectionTemplate(numberingID);
     }
     return `<ol class="${this.cssClass}">${numberingSections}</ol>`;

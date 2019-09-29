@@ -72,7 +72,7 @@ export function GetComponentType(HTMLNode) {
 }
 
 export function DataTemplate () {
-	return { html: '', type: '', nodeLevel: 1, hasSubnodes: false, subnodes: [] };
+	return { html: '', type: '', nodeLevel: '', hasSubnodes: false, subnodes: [] };
 };
 
 export function UnwrapElement(wrapper) {

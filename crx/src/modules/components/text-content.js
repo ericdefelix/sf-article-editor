@@ -12,9 +12,6 @@ export const ParseHTML = {
     data['type'] = 'TextContent';
     data['html'] = node.outerHTML;
     return data;
-  },
-  generate: (htmlNode) => {
-
   }
 };
 
