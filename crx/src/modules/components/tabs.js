@@ -45,13 +45,13 @@ export default class Tabs {
     this.selectorDOMSections = '.sf-tab-content';
   }
 
-  render(html, options) {
+  render(item, options) {
     const params = {
       id: this.id,
       type: 'Tabs',
       controlsTemplate: this.controlsTemplate(this.id),
       draggableClass: options.draggableClass,
-      componentTemplate: html === '' ? this.template() : html,
+      componentTemplate: item.html === '' ? this.template() : item.html,
       addTemplate: options.nodeLevel == 'main' ? AddContentBlockBtnTemplate(this.id) : ''
     };
 

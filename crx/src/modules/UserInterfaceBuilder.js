@@ -142,19 +142,20 @@ const UserInterfaceBuilder = {
           const canvasDraggableSubID = `canvasDraggableSub_${subnode.id}`;
           
           // Attach to DOM
-          console.log(subnode.subelements);
+          console.log(subContainer.children.length);
           
-          if (subnode.subelements.length > 0) {            
+          
+          if (subnode.subelements.length > 0) {  
             subnode.subelements.forEach(subelement => {
-              const
-                subComponent = new Components[subelement.type],
-                subComponentTemplate = subComponent.render(subelement.html, {
-                  nodeLevel: 'sub',
-                  draggableClass: canvasDraggableSubID
-                });
+              // const
+              //   subComponent = new Components[subelement.type],
+              //   subComponentTemplate = subComponent.render(subelement.html, {
+              //     nodeLevel: 'sub',
+              //     draggableClass: canvasDraggableSubID
+              //   });
               
-              subContainer.insertAdjacentHTML('beforeend', subComponentTemplate);
-              subComponent.updateDOM(subContainer.lastElementChild);
+              // subContainer.insertAdjacentHTML('beforeend', subComponentTemplate);
+              // subComponent.updateDOM(subContainer.lastElementChild);
 
               // Apply Events and Behavior            
               // subComponent.updateDOM(subContainer.lastElementChild, UserInterfaceBuilder.images);

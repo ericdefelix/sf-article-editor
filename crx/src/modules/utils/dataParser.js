@@ -48,7 +48,7 @@ export function dataParser(htmlSection) {
     let data = {};
     data = ComponentParser(nodeMain);
     
-    if (data.hasSubnodes) { 
+    if (data.hasSubnodes) {
       data.subnodes.forEach(element => {
         element.subelements = (() => {
           const subnodesData = [];

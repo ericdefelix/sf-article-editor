@@ -26,9 +26,6 @@ export const ParseHTML = {
     data.type = 'Accordion';
     data.html = htmlNode.outerHTML;
     return data;
-  },
-  generate: (htmlNode) => {
-
   }
 };
 
@@ -41,13 +38,13 @@ export default class Accordion {
     this.accordionCurrentCount = this.accordionCountMin;
   }
 
-  render(html, options) {    
+  render(item, options) {    
     const params = {
       id: this.id,
       type: 'Accordion',
       controlsTemplate: this.controlsTemplate(this.id),
       draggableClass: options.draggableClass,
-      componentTemplate: html === '' ? this.template() : html,
+      componentTemplate: item.html === '' ? this.template() : item.html,
       addTemplate: options.nodeLevel == 'main' ? AddContentBlockBtnTemplate(this.id) : ''
     };
 

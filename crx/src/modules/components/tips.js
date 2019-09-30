@@ -53,13 +53,13 @@ export default class Tips {
     return `<select class="canvas-form-control" name="s-${this.id}" data-target="snippet-${this.id}">${template}</select>`;
   }
 
-  render(html,options) {    
+  render(item, options) {    
     const params = {
       id: this.id,
       type: 'Tips',
-      controlsTemplate: this.renderControlsTemplate(html === '' ? this.template() : html),
+      controlsTemplate: this.renderControlsTemplate(item.html === '' ? this.template() : item.html),
       draggableClass: options.draggableClass,
-      componentTemplate: html === '' ? this.template() : html,
+      componentTemplate: item.html === '' ? this.template() : item.html,
       addTemplate: options.nodeLevel == 'main' ? AddContentBlockBtnTemplate(this.id) : ''
     };
 

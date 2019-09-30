@@ -62,7 +62,15 @@ export const imageGalleryMockData = [
 ];
 
 
-export const htmlMockData = `<ol class="sf-list-bullet-circular"><li id="list-23422"></li><li id="list-14209"></li><li id="list-11059"><ol class="sf-list-bullet-circular"><li id="list-50299"></li><li id="list-87402"></li></ol></li></ol>`;
+export const htmlMockData = `<div class="sf-well"><h5 class="sf-well-heading">Click to edit heading</h5>
+			<div class="sf-well-body">Click here to edit/paste content</div>
+    </div><ol class="sf-list-bullet-circular">
+<li id="list-23422"></li>
+<li id="list-14209"></li>
+<li id="list-11059">
+<ol class="sf-list-bullet-circular">
+<li id="list-50299"></li><li id="list-87402"></li></ol>
+</li></ol>`;
 
 export const zhtmlMockData = `<ol class="sf-list-bullet-circular">
 <li id="list-85291"><ol class="sf-list-bullet-circular">

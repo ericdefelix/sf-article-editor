@@ -12,9 +12,6 @@ export const ParseHTML = {
     data['type'] = 'Info';
     data['html'] = node.outerHTML;
     return data;
-  },
-  generate: (htmlNode) => {
-
   }
 };
 
@@ -28,13 +25,13 @@ export default class Info {
     };
   }
 
-  render(html, options) {    
+  render(item, options) {    
     const params = {
       id: this.id,
       type: 'Info',
       controlsTemplate: '',
       draggableClass: options.draggableClass,
-      componentTemplate: html === '' ? this.template() : html,
+      componentTemplate: item.html === '' ? this.template() : item.html,
       addTemplate: options.nodeLevel == 'main' ? AddContentBlockBtnTemplate(this.id) : ''
     };
 

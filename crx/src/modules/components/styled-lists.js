@@ -47,7 +47,7 @@ export default class StyledLists {
       type: 'Styled Lists',
       controlsTemplate: this.controlsTemplate(this.id),
       draggableClass: options.draggableClass,
-      componentTemplate: html === '' ? this.template('') : html,
+      componentTemplate: this.template(html),
       addTemplate: options.nodeLevel == 'main' ? AddContentBlockBtnTemplate(this.id) : ''
     };
 
