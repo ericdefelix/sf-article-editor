@@ -41,14 +41,14 @@ export default class StyledLists {
     this.numberingCurrentCount = this.numberingCountMin;
   }
 
-  render(item, options) { 
+  render(html, options) { 
     const params = {
       id: this.id,
       type: 'Styled Lists',
       controlsTemplate: this.controlsTemplate(this.id),
       draggableClass: options.draggableClass,
-      componentTemplate: this.template(item),
-      addTemplate: AddContentBlockBtnTemplate(this.id)
+      componentTemplate: html === '' ? this.template('') : html,
+      addTemplate: options.nodeLevel == 'main' ? AddContentBlockBtnTemplate(this.id) : ''
     };
 
     return ContentBlockTemplate(params);
@@ -64,13 +64,15 @@ export default class StyledLists {
   }
 
   template(existingData) {
-    console.log(existingData);
-    
     let numberingSections = ``;
-    const numberingCountMin = existingData.subnodes.length > 0 ? existingData.subnodes.length : this.numberingCountMin;
+    
+    const numberingCountMin = existingData !== '' ? existingData.subnodes.length : this.numberingCountMin;
+
+    console.log(numberingCountMin);
+    
 
     for (let i = 0; i < numberingCountMin; i++) {
-      const numberingID = existingData.subnodes.length > 0 ? existingData.subnodes[i].id : GenerateTabID();
+      const numberingID = existingData !== '' ? existingData.subnodes[i].id : GenerateTabID();
       numberingSections += this.numberingSectionTemplate(numberingID);
     }
     return `<ol class="${this.cssClass}">${numberingSections}</ol>`;
@@ -82,6 +84,11 @@ export default class StyledLists {
   }
 
   updateDOM(HTMLObject) {
+    // console.log('======');
+    // console.log(HTMLObject);
+    // console.log('======');
+    
+    
     try {
       let numberingCurrentCount = this.numberingCurrentCount;
 
@@ -127,8 +134,7 @@ export default class StyledLists {
           setButtonStates();
         }
       });
-
-
+      
       // Mutations
       observer.observe(HTMLObject.querySelector(`.${this.cssClass}`), {
         attributes: false,
@@ -136,7 +142,7 @@ export default class StyledLists {
         childList: true,
       });
 
-      HTMLObject.querySelectorAll('li').forEach((numberList) => {
+      [...HTMLObject.querySelector(`.${this.cssClass}`).children].forEach((numberList) => {
         bindControls(numberList);
       });
 

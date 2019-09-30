@@ -15,9 +15,6 @@ export const ParseHTML = {
     data['type'] = 'Tips';
     data['html'] = node.outerHTML;
     return data;
-  },
-  generate: (htmlNode) => {
-
   }
 };
 
@@ -63,7 +60,7 @@ export default class Tips {
       controlsTemplate: this.renderControlsTemplate(html === '' ? this.template() : html),
       draggableClass: options.draggableClass,
       componentTemplate: html === '' ? this.template() : html,
-      addTemplate: parseInt(options.nodeLevel) == 1 ? AddContentBlockBtnTemplate(this.id) : ''
+      addTemplate: options.nodeLevel == 'main' ? AddContentBlockBtnTemplate(this.id) : ''
     };
 
     return ContentBlockTemplate(params);
@@ -75,7 +72,6 @@ export default class Tips {
         contentEditorAppConfig,
         heading,
         typeSelector;
-      
         
       contentEditorAppConfig = {
         container: `#snippet-${HTMLObject.id} .sf-blockquote-content-body`,

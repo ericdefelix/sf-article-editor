@@ -132,29 +132,41 @@ const UserInterfaceBuilder = {
       canvasContainer.insertAdjacentHTML('beforeend', componentTemplate);
 
       // Apply Events and Behavior
-      const appendedChild = canvasContainer.lastElementChild;
-      
-      component.updateDOM(appendedChild);
+      component.updateDOM(canvasContainer.lastElementChild);
 
       // If component has child nodes
-      // if (item.hasSubnodes) {
-      //   item.subnodes.forEach(subnode => {
-      //     // Attach to DOM          
-      //     subnode.subelements.forEach(subelement => {
-      //       const
-      //         subComponent = new Components[subelement.type],
-      //         subComponentTemplate = subComponent.render(subelement.html, {
-      //           nodeLevel: 'sub',
-      //           draggableClass: `canvasDraggableSub_${subnode.id}`
-      //         });
-            
-      //       subnode.container.insertAdjacentHTML('beforeend', subComponentTemplate);
+      if (item.hasSubnodes) {
+        item.subnodes.forEach(subnode => {
+          const containerID = `canvasSubContainer_${subnode.id}`;
+          const subContainer = document.getElementById(containerID);
+          const canvasDraggableSubID = `canvasDraggableSub_${subnode.id}`;
+          
+          // Attach to DOM
+          console.log(subnode.subelements);
+          
+          if (subnode.subelements.length > 0) {            
+            subnode.subelements.forEach(subelement => {
+              const
+                subComponent = new Components[subelement.type],
+                subComponentTemplate = subComponent.render(subelement.html, {
+                  nodeLevel: 'sub',
+                  draggableClass: canvasDraggableSubID
+                });
+              
+              subContainer.insertAdjacentHTML('beforeend', subComponentTemplate);
+              subComponent.updateDOM(subContainer.lastElementChild);
 
-      //       // Apply Events and Behavior            
-      //       // subComponent.updateDOM(subContainer.lastElementChild, UserInterfaceBuilder.images);
-      //     });
-      //   });
-      // }
+              // Apply Events and Behavior            
+              // subComponent.updateDOM(subContainer.lastElementChild, UserInterfaceBuilder.images);
+            });
+
+            // UserInterfaceSortable({
+            //   container: subContainer,
+            //   contentDraggableClass: canvasDraggableSubID
+            // });
+          }
+        });
+      }
     });
     
     UserInterfaceSortable({
@@ -172,8 +184,8 @@ const UserInterfaceBuilder = {
     const
       componentType = this.getAttribute('data-ui-label'),
       component = new Components[componentType],
-      draggableClass = UserInterfaceBuilder.targetNodeLevel == 'sub' ?
-        `canvasDraggableSub_${UserInterfaceBuilder.placeholderPointerID}` : 'canvasDraggableMain';
+      draggableClass = UserInterfaceBuilder.targetNodeLevel === 'sub' ? `canvasDraggableSub_${containerID.split('canvasSubContainer_')[1]}` : 'canvasDraggableMain';  
+
     
     const options = {
       nodeLevel: UserInterfaceBuilder.targetNodeLevel,

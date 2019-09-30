@@ -51,8 +51,8 @@ export default class Tabs {
       type: 'Tabs',
       controlsTemplate: this.controlsTemplate(this.id),
       draggableClass: options.draggableClass,
-      componentTemplate: this.template(html),
-      addTemplate: AddContentBlockBtnTemplate(this.id)
+      componentTemplate: html === '' ? this.template() : html,
+      addTemplate: options.nodeLevel == 'main' ? AddContentBlockBtnTemplate(this.id) : ''
     };
 
     return ContentBlockTemplate(params);

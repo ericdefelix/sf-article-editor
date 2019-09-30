@@ -35,7 +35,7 @@ export default class Info {
       controlsTemplate: '',
       draggableClass: options.draggableClass,
       componentTemplate: html === '' ? this.template() : html,
-      addTemplate: parseInt(options.nodeLevel) == 1 ? AddContentBlockBtnTemplate(this.id) : ''
+      addTemplate: options.nodeLevel == 'main' ? AddContentBlockBtnTemplate(this.id) : ''
     };
 
     return ContentBlockTemplate(params);
