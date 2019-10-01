@@ -12,24 +12,38 @@ export const ParseHTML = {
   parse: (htmlNode) => {
     const data = new DataTemplate();
 
-    data.subnodes = (() => {
-      const subnodes = [];
-
-      htmlNode.querySelectorAll('.sf-tab-content').forEach(tab => {
-        subnodes.push({
-          id: tab.id.split('tab-')[1],
-          container: tab
-        });
-      });
-
-      return subnodes;
-    })();
-
     data.titleSelector = '.sf-tab-item-link';
     data.containerSelector = '.sf-tab-content';
     data.hasSubnodes = true;
     data.type = 'Tabs';
     data.html = htmlNode.outerHTML;
+
+    data.sections = (() => {
+      const sectionIDs = [];
+      [...htmlNode.children].forEach(section => {
+        if (section.classList.value !== 'sf-tabs-bar') {  
+          sectionIDs.push({
+            numID: section.id.split('tab-')[1],
+            id: section.id,
+            title: document.getElementById(`target_${section.id}`).innerText
+          }); 
+        }
+      });
+      return sectionIDs;
+    })();
+
+    data.subnodes = (() => {
+      const subnodes = [];
+
+      htmlNode.querySelectorAll('.sf-tabs > .sf-tab-content').forEach(tab => {
+        subnodes.push({
+          numID: tab.id.split('tab-')[1],
+          containerID: tab.id,
+          items: tab.childElementCount > 0 ? [...tab.children] : []
+        });
+      });
+      return subnodes;
+    })();
 
     return data;
   }
@@ -51,11 +65,30 @@ export default class Tabs {
       type: 'Tabs',
       controlsTemplate: this.controlsTemplate(this.id),
       draggableClass: options.draggableClass,
-      componentTemplate: item.html === '' ? this.template() : item.html,
-      addTemplate: options.nodeLevel == 'main' ? AddContentBlockBtnTemplate(this.id) : ''
+      componentTemplate: this.template(item),
+      addTemplate: item.nodeLevel === 'main' ? AddContentBlockBtnTemplate(this.id) : ''
     };
 
     return ContentBlockTemplate(params);
+  }
+
+  template(existingData) {    
+    let navTabItems = ``, navTabSections = ``;
+    const tabsCountMin = existingData !== null && existingData.hasOwnProperty('sections') ? existingData.sections.length : this.tabsCountMin;
+
+    for (let i = 0; i < tabsCountMin; i++) {      
+      const
+        tabID = existingData !== null && existingData.hasOwnProperty('sections') ? existingData.sections[i].numID : GenerateTabID(),
+        tabTitle = existingData !== null && existingData.hasOwnProperty('sections') ? existingData.sections[i].title : `Tab ${i + 1}`;
+      
+      navTabItems += this.tabLinkTemplate(tabID, tabTitle, i + 1);
+      navTabSections += this.tabBodyTemplate(tabID, i + 1);
+    }
+
+    const defaultTemplate = `${this.editComponentSectionTemplate()}<div class="sf-tabs">
+      <div class="sf-tabs-bar"><ul class="sf-tab-nav">${navTabItems}</ul></div>${navTabSections}</div>`;
+
+    return defaultTemplate;
   }
 
   controlsTemplate(componentID) {
@@ -95,24 +128,6 @@ export default class Tabs {
                 <i class="icon-plus">&#43;</i> New Tab Section
               </button>
             </div>`;
-  }
-
-  template(existingData) {
-    let navTabItems = ``, navTabSections = ``;
-    const tabsCountMin = typeof existingData === 'object' ? existingData.length : this.tabsCountMin;
-
-    for (let i = 0; i < tabsCountMin; i++) {      
-      const
-        tabID = typeof existingData === 'object' ? existingData[i].id : GenerateTabID(),
-        tabTitle = typeof existingData === 'object' ? existingData[i].title : `Tab ${i + 1}`;
-      navTabItems += this.tabLinkTemplate(tabID, tabTitle, i + 1);
-      navTabSections += this.tabBodyTemplate(tabID, i + 1);
-    }
-
-    const defaultTemplate = `${this.editComponentSectionTemplate()}<div class="sf-tabs">
-      <div class="sf-tabs-bar"><ul class="sf-tab-nav">${navTabItems}</ul></div>${navTabSections}</div>`;
-
-    return defaultTemplate;
   }
 
   updateTabsList(editFields, tabLinkTemplateFxn, tabBodyTemplateFxn) {

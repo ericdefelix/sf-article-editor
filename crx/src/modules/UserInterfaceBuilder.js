@@ -131,43 +131,34 @@ const UserInterfaceBuilder = {
       // Attach to DOM
       canvasContainer.insertAdjacentHTML('beforeend', componentTemplate);
 
-      // Apply Events and Behavior
+      // Apply Events and Behavior      
       component.updateDOM(canvasContainer.lastElementChild);
 
       // If component has child nodes
-      if (item.hasSubnodes) {
+      if (item.hasSubnodes && item.subnodes.length > 0) {
         item.subnodes.forEach(subnode => {
-          const containerID = `canvasSubContainer_${subnode.id}`;
+          const containerID = `canvasSubContainer_${subnode.numID}`;
           const subContainer = document.getElementById(containerID);
-          const canvasDraggableSubID = `canvasDraggableSub_${subnode.id}`;
-          
-          // Attach to DOM
-          console.log(subContainer.children.length);
-          
-          
-          if (subnode.subelements.length > 0) {  
-            subnode.subelements.forEach(subelement => {
-              // const
-              //   subComponent = new Components[subelement.type],
-              //   subComponentTemplate = subComponent.render(subelement.html, {
-              //     nodeLevel: 'sub',
-              //     draggableClass: canvasDraggableSubID
-              //   });
-              
-              // subContainer.insertAdjacentHTML('beforeend', subComponentTemplate);
-              // subComponent.updateDOM(subContainer.lastElementChild);
+          const canvasDraggableSubID = `canvasDraggableSub_${subnode.numID}`;
 
-              // Apply Events and Behavior            
-              // subComponent.updateDOM(subContainer.lastElementChild, UserInterfaceBuilder.images);
-            });
+          subnode.data.forEach(dataItem => {
+              const
+                subComponent = new Components[dataItem.type],
+                subComponentTemplate = subComponent.render(dataItem, {
+                  nodeLevel: 'sub',
+                  draggableClass: canvasDraggableSubID
+                });
+            
+            subContainer.insertAdjacentHTML('beforeend', subComponentTemplate);
+            subComponent.updateDOM(subContainer.lastElementChild);
+          });
 
-            // UserInterfaceSortable({
-            //   container: subContainer,
-            //   contentDraggableClass: canvasDraggableSubID
-            // });
-          }
+          UserInterfaceSortable({
+            container: subContainer,
+            contentDraggableClass: canvasDraggableSubID
+          });
         });
-      }
+      }      
     });
     
     UserInterfaceSortable({
@@ -193,7 +184,7 @@ const UserInterfaceBuilder = {
       draggableClass: draggableClass
     };
 
-    const componentTemplate = component.render('', options);
+    const componentTemplate = component.render({ nodeLevel: UserInterfaceBuilder.targetNodeLevel }, options);
     
     targetPreviousElementSibling = document.getElementById(containerID);
 

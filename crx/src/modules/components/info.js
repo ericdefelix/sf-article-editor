@@ -31,8 +31,8 @@ export default class Info {
       type: 'Info',
       controlsTemplate: '',
       draggableClass: options.draggableClass,
-      componentTemplate: item.html === '' ? this.template() : item.html,
-      addTemplate: options.nodeLevel == 'main' ? AddContentBlockBtnTemplate(this.id) : ''
+      componentTemplate: !item.hasOwnProperty('html') ? this.template() : item.html,
+      addTemplate: item.nodeLevel === 'main' ? AddContentBlockBtnTemplate(this.id) : ''
     };
 
     return ContentBlockTemplate(params);

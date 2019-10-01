@@ -57,10 +57,10 @@ export default class Tips {
     const params = {
       id: this.id,
       type: 'Tips',
-      controlsTemplate: this.renderControlsTemplate(item.html === '' ? this.template() : item.html),
+      controlsTemplate: this.renderControlsTemplate(!item.hasOwnProperty('html') ? this.template() : item.html),
       draggableClass: options.draggableClass,
-      componentTemplate: item.html === '' ? this.template() : item.html,
-      addTemplate: options.nodeLevel == 'main' ? AddContentBlockBtnTemplate(this.id) : ''
+      componentTemplate: !item.hasOwnProperty('html') ? this.template() : item.html,
+      addTemplate: item.nodeLevel === 'main' ? AddContentBlockBtnTemplate(this.id) : ''
     };
 
     return ContentBlockTemplate(params);

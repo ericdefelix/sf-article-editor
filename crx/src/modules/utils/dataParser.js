@@ -43,28 +43,20 @@ export function dataParser(htmlSection) {
   };
 
   dataFormatter(htmlSection, htmlSection.childNodes);
+
+  htmlSection.innerHTML = htmlSection.innerHTML.replace(/>\s+</g, '><');  
   
   [...htmlSection.childNodes].forEach(nodeMain => {
-    let data = {};
-    data = ComponentParser(nodeMain);
+    const data = ComponentParser(nodeMain);
     
     if (data.hasSubnodes) {
-      data.subnodes.forEach(element => {
-        element.subelements = (() => {
-          const subnodesData = [];
-          if (element.container.childElementCount > 0) {
-            
-            [...element.container.children].forEach(nodeSub => {
-              let subdata = {};
-              subdata = ComponentParser(nodeSub);
-              subdata.nodeLevel = 'sub';
-              subnodesData.push(subdata);
-            });
-
-            element.container.innerHTML = '';
-          }
-          return subnodesData;
-        })();
+      data.subnodes.forEach(subnode => {
+        subnode.data = [];
+        subnode.items.forEach(item => {
+          const itemData = ComponentParser(item);
+          itemData.nodeLevel = 'sub';
+          subnode.data.push(itemData);
+        });
       });
     }
 
@@ -72,8 +64,8 @@ export function dataParser(htmlSection) {
     nodesData.push(data);
   });
   
+  console.table(nodesData); 
 
-  console.log(nodesData);      
-  
+  // debugger;
   return nodesData;
 }

@@ -62,15 +62,52 @@ export const imageGalleryMockData = [
 ];
 
 
-export const htmlMockData = `<div class="sf-well"><h5 class="sf-well-heading">Click to edit heading</h5>
-			<div class="sf-well-body">Click here to edit/paste content</div>
-    </div><ol class="sf-list-bullet-circular">
-<li id="list-23422"></li>
-<li id="list-14209"></li>
-<li id="list-11059">
-<ol class="sf-list-bullet-circular">
-<li id="list-50299"></li><li id="list-87402"></li></ol>
-</li></ol>`;
+export const htmlMockData = `<ol class="sf-list-bullet-circular">
+  <li id="list-85291">
+    <ol class="sf-list-bullet-circular">
+      <li id="list-23422">
+        <div class="sf-editor-content">
+          <ul>
+            <li>test</li>
+          </ul>
+        </div>
+      </li>
+      <li id="list-14209">
+        <div class="sf-editor-content">
+          <p>Click to edit content</p>
+        </div>
+      </li>
+      <li id="list-11059">
+        <div class="sf-editor-content">
+          <p>Click to edit content</p>
+        </div>
+      </li>
+    </ol>
+  </li>
+  <li id="list-45663">
+    <div class="sf-editor-content">
+      <p>Click to edit content</p>
+    </div>
+  </li>
+  <li id="list-87976">
+    <div class="sf-editor-content">
+      <p>Click to edit content</p>
+    </div>
+  </li>
+</ol>`;
+
+export const chtmlMockData = `<div class="sf-well"><h5 class="sf-well-heading">Click to edit heading</h5><div class="sf-well-body">Click here to edit/paste content</div></div><div class="sf-editor-content"><ul><li>test 1</li></ul></div><ol class="sf-list-bullet-circular">
+  <li id="list-01">
+    <div class="sf-editor-content"><p>This is a paragraph</p></div>
+    <ol class="sf-list-bullet-circular">
+      <li id="list-0101">
+        <div class="sf-editor-content"><ul><li>test 1</li></ul></div></li>
+      <li id="list-0102">
+        <div class="sf-editor-content"><ul><li>test 1</li></ul></div></li>
+    </ol>
+  </li>
+  <li id="list-02"></li>
+</ol>`;
 
 export const zhtmlMockData = `<ol class="sf-list-bullet-circular">
 <li id="list-85291"><ol class="sf-list-bullet-circular">

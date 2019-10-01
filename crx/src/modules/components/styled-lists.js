@@ -12,23 +12,36 @@ export const ParseHTML = {
   parse: (htmlNode) => {
     const data = new DataTemplate();
 
+    data.hasSubnodes = true;
+    data.type = 'StyledLists';
+    data.containerSelector = 'li';
+    data.itemCount = htmlNode.childElementCount;
+    data.html = htmlNode.outerHTML;
+
+    data.sections = (() => {
+      const sectionIDs = [];
+      [...htmlNode.children].forEach(section => {
+        sectionIDs.push({
+          numID: section.id.split('list-')[1],
+          id: section.id
+        });
+      });
+      return sectionIDs;
+    })();
+
     data.subnodes = (() => {
       const subnodes = [];
 
       htmlNode.querySelectorAll('.sf-list-bullet-circular > li').forEach(bullet => {
         subnodes.push({
-          id: bullet.id.split('list-')[1],
-          container: bullet
+          numID: bullet.id.split('list-')[1],
+          containerID: bullet.id,
+          items: bullet.childElementCount > 0 ? [...bullet.children] : []
         });
       });
-
       return subnodes;
     })();
 
-    data.hasSubnodes = true;
-    data.type = 'StyledLists';
-    data.containerSelector = 'li';
-    data.html = htmlNode.outerHTML;
     return data;
   }
 };
@@ -41,17 +54,30 @@ export default class StyledLists {
     this.numberingCurrentCount = this.numberingCountMin;
   }
 
-  render(html, options) { 
+  render(item, options) {
     const params = {
       id: this.id,
       type: 'Styled Lists',
       controlsTemplate: this.controlsTemplate(this.id),
       draggableClass: options.draggableClass,
-      componentTemplate: this.template(html),
-      addTemplate: options.nodeLevel == 'main' ? AddContentBlockBtnTemplate(this.id) : ''
+      componentTemplate: this.template(item),
+      addTemplate: item.nodeLevel === 'main' ? AddContentBlockBtnTemplate(this.id) : ''
     };
 
     return ContentBlockTemplate(params);
+  }
+
+  template(existingData) {
+    let numberingSections = ``;
+
+    const numberingCountMin = existingData !== null && existingData.hasOwnProperty('sections') ? existingData.sections.length : this.numberingCountMin;
+
+    for (let i = 0; i < numberingCountMin; i++) {
+      const numberingID = existingData !== null && existingData.hasOwnProperty('sections') ? existingData.sections[i].numID : GenerateTabID();
+      numberingSections += this.numberingSectionTemplate(numberingID);
+    }
+
+    return `<ol class="${this.cssClass}">${numberingSections}</ol>`;
   }
 
   controlsTemplate() {
@@ -63,32 +89,12 @@ export default class StyledLists {
     return `<li id="list-${numberingID}"><div class="canvas-subcontainer" id="canvasSubContainer_${numberingID}"></div>${AddDeleteSubContentBlockBtnTemplate(numberingID)}</li>`;
   }
 
-  template(existingData) {
-    let numberingSections = ``;
-    
-    const numberingCountMin = existingData !== '' ? existingData.subnodes.length : this.numberingCountMin;
-
-    console.log(numberingCountMin);
-    
-
-    for (let i = 0; i < numberingCountMin; i++) {
-      const numberingID = existingData !== '' ? existingData.subnodes[i].id : GenerateTabID();
-      numberingSections += this.numberingSectionTemplate(numberingID);
-    }
-    return `<ol class="${this.cssClass}">${numberingSections}</ol>`;
-  }
-
   deleteNumberingItem() {
     const targetListItem = this.getAttribute('data-target');
     document.getElementById(targetListItem).remove();
   }
 
   updateDOM(HTMLObject) {
-    // console.log('======');
-    // console.log(HTMLObject);
-    // console.log('======');
-    
-    
     try {
       let numberingCurrentCount = this.numberingCurrentCount;
 
@@ -134,15 +140,15 @@ export default class StyledLists {
           setButtonStates();
         }
       });
-      
+
       // Mutations
       observer.observe(HTMLObject.querySelector(`.${this.cssClass}`), {
         attributes: false,
         subtree: false,
         childList: true,
       });
-
-      [...HTMLObject.querySelector(`.${this.cssClass}`).children].forEach((numberList) => {
+      
+      [...HTMLObject.querySelector('.sf-list-bullet-circular').children].forEach((numberList) => {        
         bindControls(numberList);
       });
 
