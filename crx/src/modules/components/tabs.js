@@ -23,26 +23,12 @@ export const ParseHTML = {
       [...htmlNode.children].forEach(section => {
         if (section.classList.value !== 'sf-tabs-bar') {  
           sectionIDs.push({
-            numID: section.id.split('tab-')[1],
             id: section.id,
             title: document.getElementById(`target_${section.id}`).innerText
           }); 
         }
       });
       return sectionIDs;
-    })();
-
-    data.subnodes = (() => {
-      const subnodes = [];
-
-      htmlNode.querySelectorAll('.sf-tabs > .sf-tab-content').forEach(tab => {
-        subnodes.push({
-          numID: tab.id.split('tab-')[1],
-          containerID: tab.id,
-          items: tab.childElementCount > 0 ? [...tab.children] : []
-        });
-      });
-      return subnodes;
     })();
 
     return data;
@@ -74,12 +60,13 @@ export default class Tabs {
 
   template(existingData) {    
     let navTabItems = ``, navTabSections = ``;
-    const tabsCountMin = existingData !== null && existingData.hasOwnProperty('sections') ? existingData.sections.length : this.tabsCountMin;
+    const hasChildren = () => { return existingData !== null && existingData.hasOwnProperty('sections'); };
+    const tabsCountMin = hasChildren() ? existingData.sections.length : this.tabsCountMin;
 
     for (let i = 0; i < tabsCountMin; i++) {      
       const
-        tabID = existingData !== null && existingData.hasOwnProperty('sections') ? existingData.sections[i].numID : GenerateTabID(),
-        tabTitle = existingData !== null && existingData.hasOwnProperty('sections') ? existingData.sections[i].title : `Tab ${i + 1}`;
+        tabID = hasChildren() ? existingData.sections[i].id : GenerateTabID(),
+        tabTitle = hasChildren() ? existingData.sections[i].title : `Tab ${i + 1}`;
       
       navTabItems += this.tabLinkTemplate(tabID, tabTitle, i + 1);
       navTabSections += this.tabBodyTemplate(tabID, i + 1);
@@ -98,14 +85,14 @@ export default class Tabs {
   tabLinkTemplate(tabID, tabTitle, index) {
     const template = `
       <li class="sf-tab-item${ index === 1 ? ' active' : ''}">
-        <span class="sf-tab-item-link" id="target_tab-${tabID}">${tabTitle}</span>
+        <span class="sf-tab-item-link" id="target_${tabID}">${tabTitle}</span>
       </li>`;
     return template;
   }
 
   tabBodyTemplate(tabID, index) {
     const template = `
-    <div class="sf-tab-content${index === 1 ? ' in' : ''}" id="tab-${tabID}">
+    <div class="sf-tab-content${index === 1 ? ' in' : ''}" id="${tabID}">
       <div class="canvas-subcontainer" id="canvasSubContainer_${tabID}"></div>
       ${AddSubContentBlockBtnTemplate(tabID)}
     </div>`;
@@ -200,9 +187,8 @@ export default class Tabs {
       };
 
       function addTabItem() {
-        const newBtnTabID = `tab-${GenerateTabID()}`;
         tabsCurrentCount += 1;
-        contentEditList.insertAdjacentHTML('beforeend', editFieldTemplateFxn('', newBtnTabID));
+        contentEditList.insertAdjacentHTML('beforeend', editFieldTemplateFxn('', `cid-${GenerateTabID()}`));
       }
 
       function setButtonStates(clickedBtn) {
@@ -229,10 +215,9 @@ export default class Tabs {
 
       // Mutations`
       HTMLObject.querySelectorAll('.sf-tab-content').forEach((tab) => {
-        const tabID = tab.id.split('tab-')[1];
         UserInterfaceSortable({
-          container: document.getElementById(`canvasSubContainer_${tabID}`),
-          contentDraggableClass: `.canvasDraggableSub_${tabID}`
+          container: document.getElementById(`canvasSubContainer_${tab.id}`),
+          contentDraggableClass: `.canvasDraggableSub_${tab.id}`
         });
       });
 

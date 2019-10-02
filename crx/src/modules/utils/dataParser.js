@@ -45,27 +45,39 @@ export function dataParser(htmlSection) {
   dataFormatter(htmlSection, htmlSection.childNodes);
 
   htmlSection.innerHTML = htmlSection.innerHTML.replace(/>\s+</g, '><');  
-  
+
   [...htmlSection.childNodes].forEach(nodeMain => {
     const data = ComponentParser(nodeMain);
-    
+
+    const subcontainers = [];
     if (data.hasSubnodes) {
-      data.subnodes.forEach(subnode => {
-        subnode.data = [];
-        subnode.items.forEach(item => {
-          const itemData = ComponentParser(item);
-          itemData.nodeLevel = 'sub';
-          subnode.data.push(itemData);
+      console.log(nodeMain);
+      
+      // console.log(nodeMain.querySelectorAll('id^="cid-"]'));
+      
+      nodeMain.querySelectorAll('[id^="cid-"]').forEach(subcontainer => {  
+        subcontainers.push({
+          id: subcontainer.id,
+          nodes: subcontainer.childElementCount === 0 ? [] : (() => {
+            const nodes = [];
+            [...subcontainer.children].forEach(child => {
+              const data = ComponentParser(child);
+              data.dom = child;
+              data.nodeLevel = 'sub';
+              nodes.push(data);
+            });
+            return nodes;
+          })()
         });
       });
     }
 
+    data.subcontainers = subcontainers;
     data.nodeLevel = 'main';
     nodesData.push(data);
   });
   
   console.table(nodesData); 
 
-  // debugger;
   return nodesData;
 }

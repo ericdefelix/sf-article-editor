@@ -100,7 +100,7 @@ export function TinyMCEHelper(contentEditorAppConfig) {
 		toolbar: contentEditorAppConfig.config.toolbar,
 		plugins: contentEditorAppConfig.config.plugins,
 		file_picker_callback: function (cb, value) {
-			console.log(cb,value);
+			// console.log(cb,value);
 			// ImageGallery.run(contentEditorAppConfig.images);		
 		}
 	};

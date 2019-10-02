@@ -21,29 +21,16 @@ export const ParseHTML = {
     data.sections = (() => {
       const sectionIDs = [];
       [...htmlNode.children].forEach(section => {
-        const toggle = section.querySelector('.sf-accordion-toggle');
-        const toggleTitle = toggle.querySelector('sf-accordion-text');
+        const toggle = section.querySelector('.sf-accordion-content');
+        const toggleTitle = section.querySelector('.sf-accordion-toggle > .sf-accordion-text');
         sectionIDs.push({
-          numID: toggle.id.split('pane-')[1],
           id: toggle.id,
           title: toggleTitle.innerText
         });
       });
       return sectionIDs;
     })();
-    
-    data.subnodes = (() => {
-      const subnodes = [];
-      htmlNode.querySelectorAll('.sf-accordion > .sf-accordion-content').forEach(pane => {
-        subnodes.push({
-          numID: pane.id.split('pane-')[1],
-          containerID: pane.id,
-          items: pane.childElementCount > 0 ? [...pane.children] : []
-        });
-      });
-      return subnodes;
-    })();
-
+  
     return data;
   }
 };
@@ -72,12 +59,13 @@ export default class Accordion {
 
   template(existingData) {
     let accordionSections = ``;
-    const accordionCountMin = existingData !== null && existingData.hasOwnProperty('sections') ? existingData.sections.length : this.accordionCountMin;
+    const hasChildren = () => { return existingData !== null && existingData.hasOwnProperty('sections'); };
+    const accordionCountMin = hasChildren() ? existingData.sections.length : this.accordionCountMin;
 
     for (let i = 0; i < accordionCountMin; i++) {
       const
-        accordionID = existingData !== null && existingData.hasOwnProperty('sections') ? existingData.sections[i].id : GenerateTabID(),
-        accordionTitle = existingData !== null && existingData.hasOwnProperty('sections') ? existingData.sections[i].title : 'Accordion Display Text';
+        accordionID = hasChildren() ? existingData.sections[i].id : GenerateTabID(),
+        accordionTitle = hasChildren() ? existingData.sections[i].title : 'Accordion Display Text';
 
       accordionSections += this.accordionSectionTemplate(accordionID, accordionTitle);
     }
@@ -90,11 +78,11 @@ export default class Accordion {
 
   accordionSectionTemplate(accordionID, accordionTitle) {
     const template = `<div class="sf-accordion-item">
-                        <div class="sf-accordion-toggle" id="pane-${accordionID}">
+                        <div class="sf-accordion-toggle" id="target_${accordionID}">
                           <h4 class="sf-accordion-text">${accordionTitle}</h4>
                           <i class="sf-accordion-icon"></i>	
                         </div>
-                        <div class="sf-accordion-content">
+                        <div class="sf-accordion-content" id="${accordionID}">
                           <div class="canvas-subcontainer" id="canvasSubContainer_${accordionID}"></div>
                           ${AddSubContentBlockBtnTemplate(accordionID)}
                         </div>
@@ -182,7 +170,7 @@ export default class Accordion {
       };
 
       function addAccordionItem() {
-        const newBtnTabID = `pane-${GenerateTabID()}`;
+        const newBtnTabID = `cid-${GenerateTabID()}`;
         accordionCurrentCount += 1;
         contentEditList.insertAdjacentHTML('beforeend', editFieldTemplateFxn('', newBtnTabID));
       }
@@ -208,11 +196,10 @@ export default class Accordion {
       });
 
       // Mutations`
-      HTMLObject.querySelectorAll('.sf-accordion-toggle').forEach((toggle) => {
-        const toggleID = toggle.id.split('pane-')[1];
+      HTMLObject.querySelectorAll('.sf-accordion-content').forEach((content) => {
         UserInterfaceSortable({
-          container: document.getElementById(`canvasSubContainer_${toggleID}`),
-          contentDraggableClass: `.canvasDraggableSub_${toggleID}`
+          container: document.getElementById(`canvasSubContainer_${content.id}`),
+          contentDraggableClass: `.canvasDraggableSub_${content.id}`
         });
       });
 

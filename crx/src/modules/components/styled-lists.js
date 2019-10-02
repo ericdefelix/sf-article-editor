@@ -22,25 +22,24 @@ export const ParseHTML = {
       const sectionIDs = [];
       [...htmlNode.children].forEach(section => {
         sectionIDs.push({
-          numID: section.id.split('list-')[1],
           id: section.id
         });
       });
       return sectionIDs;
     })();
 
-    data.subnodes = (() => {
-      const subnodes = [];
+    // data.subnodes = (() => {
+    //   const subnodes = [];
 
-      htmlNode.querySelectorAll('.sf-list-bullet-circular > li').forEach(bullet => {
-        subnodes.push({
-          numID: bullet.id.split('list-')[1],
-          containerID: bullet.id,
-          items: bullet.childElementCount > 0 ? [...bullet.children] : []
-        });
-      });
-      return subnodes;
-    })();
+    //   htmlNode.querySelectorAll('.sf-list-bullet-circular > li').forEach(bullet => {
+    //     subnodes.push({
+    //       numID: bullet.id.split('list-')[1],
+    //       containerID: bullet.id,
+    //       items: bullet.childElementCount > 0 ? [...bullet.children] : []
+    //     });
+    //   });
+    //   return subnodes;
+    // })();
 
     return data;
   }
@@ -69,11 +68,11 @@ export default class StyledLists {
 
   template(existingData) {
     let numberingSections = ``;
-
-    const numberingCountMin = existingData !== null && existingData.hasOwnProperty('sections') ? existingData.sections.length : this.numberingCountMin;
+    const hasChildren = () => { return existingData !== null && existingData.hasOwnProperty('sections'); };
+    const numberingCountMin = hasChildren() ? existingData.sections.length : this.numberingCountMin;
 
     for (let i = 0; i < numberingCountMin; i++) {
-      const numberingID = existingData !== null && existingData.hasOwnProperty('sections') ? existingData.sections[i].numID : GenerateTabID();
+      const numberingID = hasChildren() ? existingData.sections[i].id : GenerateTabID();
       numberingSections += this.numberingSectionTemplate(numberingID);
     }
 
@@ -86,7 +85,7 @@ export default class StyledLists {
   }
 
   numberingSectionTemplate(numberingID) {
-    return `<li id="list-${numberingID}"><div class="canvas-subcontainer" id="canvasSubContainer_${numberingID}"></div>${AddDeleteSubContentBlockBtnTemplate(numberingID)}</li>`;
+    return `<li id="${numberingID}"><div class="canvas-subcontainer" id="canvasSubContainer_${numberingID}"></div>${AddDeleteSubContentBlockBtnTemplate(numberingID)}</li>`;
   }
 
   deleteNumberingItem() {
@@ -112,10 +111,9 @@ export default class StyledLists {
       };
 
       const bindControls = function (numberList) {
-        const numberListID = numberList.id.split('list-')[1];
         UserInterfaceSortable({
-          container: document.getElementById(`canvasSubContainer_${numberListID}`),
-          contentDraggableClass: `.canvasDraggableSub_${numberListID}`
+          container: document.getElementById(`canvasSubContainer_${numberList.id}`),
+          contentDraggableClass: `.canvasDraggableSub_${numberList.id}`
         });
 
         numberList.querySelector('[data-action="remove-bullet"]').onclick = deleteNumberingItemFxn;

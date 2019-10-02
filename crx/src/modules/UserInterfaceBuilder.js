@@ -135,20 +135,19 @@ const UserInterfaceBuilder = {
       component.updateDOM(canvasContainer.lastElementChild);
 
       // If component has child nodes
-      if (item.hasSubnodes && item.subnodes.length > 0) {
-        item.subnodes.forEach(subnode => {
-          const containerID = `canvasSubContainer_${subnode.numID}`;
-          const subContainer = document.getElementById(containerID);
-          const canvasDraggableSubID = `canvasDraggableSub_${subnode.numID}`;
+      if (item.hasSubnodes && item.sections.length > 0) {
+        item.subcontainers.forEach(subcontainer => {
+          const subContainer = document.getElementById(`canvasSubContainer_${subcontainer.id}`);
+          const canvasDraggableSubID = `canvasDraggableSub_${subcontainer.id}`;
 
-          subnode.data.forEach(dataItem => {
+          subcontainer.nodes.forEach(node => {            
               const
-                subComponent = new Components[dataItem.type],
-                subComponentTemplate = subComponent.render(dataItem, {
+                subComponent = new Components[node.type],
+                subComponentTemplate = subComponent.render(node, {
                   nodeLevel: 'sub',
                   draggableClass: canvasDraggableSubID
                 });
-            
+
             subContainer.insertAdjacentHTML('beforeend', subComponentTemplate);
             subComponent.updateDOM(subContainer.lastElementChild);
           });
