@@ -64,7 +64,7 @@ export default class Accordion {
 
     for (let i = 0; i < accordionCountMin; i++) {
       const
-        accordionID = hasChildren() ? existingData.sections[i].id : GenerateTabID(),
+        accordionID = hasChildren() ? existingData.sections[i].id : 'cid-' + GenerateTabID(),
         accordionTitle = hasChildren() ? existingData.sections[i].title : 'Accordion Display Text';
 
       accordionSections += this.accordionSectionTemplate(accordionID, accordionTitle);

@@ -65,7 +65,7 @@ export default class Tabs {
 
     for (let i = 0; i < tabsCountMin; i++) {      
       const
-        tabID = hasChildren() ? existingData.sections[i].id : GenerateTabID(),
+        tabID = hasChildren() ? existingData.sections[i].id : 'cid-' + GenerateTabID(),
         tabTitle = hasChildren() ? existingData.sections[i].title : `Tab ${i + 1}`;
       
       navTabItems += this.tabLinkTemplate(tabID, tabTitle, i + 1);

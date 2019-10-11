@@ -44,17 +44,13 @@ export function dataParser(htmlSection) {
 
   dataFormatter(htmlSection, htmlSection.childNodes);
 
-  htmlSection.innerHTML = htmlSection.innerHTML.replace(/>\s+</g, '><');  
+  htmlSection.innerHTML = htmlSection.innerHTML.replace(new RegExp("\>[\s]+\<", "g"), "><");  
 
   [...htmlSection.childNodes].forEach(nodeMain => {
     const data = ComponentParser(nodeMain);
 
     const subcontainers = [];
     if (data.hasSubnodes) {
-      console.log(nodeMain);
-      
-      // console.log(nodeMain.querySelectorAll('id^="cid-"]'));
-      
       nodeMain.querySelectorAll('[id^="cid-"]').forEach(subcontainer => {  
         subcontainers.push({
           id: subcontainer.id,
