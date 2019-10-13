@@ -9,7 +9,7 @@ export const Toolbox = {
     document.getElementById('toolboxPlaceholder').insertAdjacentHTML('beforeend', template);
   },
   render: () => {
-    let template = `<div class="toolbox" id="toolbox"><ul class="toolbox-toolbar" id="toolbar" tabIndex="-1">`;
+    let template = `<div class="toolbox" id="toolbox" tabIndex="0"><ul class="toolbox-toolbar" id="toolbar" tabIndex="-1">`;
 
     for (const key in ComponentTypes) {
       template += `<li class="toolbar-item" data-action="add-component" data-ui-label="${key}">
@@ -29,9 +29,14 @@ export const Toolbox = {
     toolbox.style.display = 'block';
     toolbox.style.left = 'calc(50% - ' + (toolbox.offsetWidth / 2 + 4) + 'px)';
     toolbox.classList.contains('in') ? toolbox.classList.remove('in') : toolbox.classList.add('in');
-    toolbox.focus();
+    toolbox.parentNode.insertAdjacentHTML('beforeend', '<div class="toolbox-overlay"></div>');
+
+    // toolbox.nextElementSibling.onclick = (() => {
+    //   this.remove();
+    // });
   },
   hide: () => {
     document.getElementById('toolboxPlaceholder').appendChild(document.getElementById('toolbox'));
+    // document.querySelector('.toolbox-overlay').remove();
   }
 };

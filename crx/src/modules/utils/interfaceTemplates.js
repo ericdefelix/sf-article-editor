@@ -70,7 +70,7 @@ export function AddDeleteSubContentBlockBtnTemplate(containerID) {
 	return `<div class="canvas-add-component" >
 			<div class="subcontent-action-hotspot">
 				<button type="button" class="canvas-btn canvas-btn-xs" data-action="select-component" data-node-level="sub" data-target="canvasSubContainer_${containerID}"><i class="icon-plus">&#43;</i> Add Content</button>
-				<button type="button" class="canvas-btn canvas-btn-xs" data-action="remove-bullet" data-target="list-${containerID}">Remove Bullet Point</button>
+				<button type="button" class="canvas-btn canvas-btn-xs" data-action="remove-bullet" data-target="${containerID}">Remove Bullet Point</button>
 			</div>
 		</div>`;
 }

@@ -72,7 +72,7 @@ export default class StyledLists {
     const numberingCountMin = hasChildren() ? existingData.sections.length : this.numberingCountMin;
 
     for (let i = 0; i < numberingCountMin; i++) {
-      const numberingID = hasChildren() ? existingData.sections[i].id : GenerateTabID();
+      const numberingID = hasChildren() ? existingData.sections[i].id : 'cid-' + GenerateTabID();
       numberingSections += this.numberingSectionTemplate(numberingID);
     }
 
@@ -153,7 +153,7 @@ export default class StyledLists {
       // Add New Line
       HTMLObject.querySelector('[data-action="add-bullet-point"]').onclick = () => {
         const listContainer = document.querySelector(`#snippet-${this.id} .${this.cssClass}`);
-        const newListItemID = GenerateTabID();
+        const newListItemID = 'cid' + GenerateTabID();
         listContainer.insertAdjacentHTML('beforeend', numberingSectionTemplateFxn(newListItemID));
       };
 

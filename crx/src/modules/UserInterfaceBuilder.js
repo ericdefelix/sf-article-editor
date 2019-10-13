@@ -135,12 +135,13 @@ const UserInterfaceBuilder = {
       component.updateDOM(canvasContainer.lastElementChild);
 
       // If component has child nodes
-      if (item.hasSubnodes && item.sections.length > 0) {
+      if (item.hasSubnodes && item.sections.length > 0) {        
         item.subcontainers.forEach(subcontainer => {
-          const subContainer = document.getElementById(`canvasSubContainer_${subcontainer.id}`);
-          const canvasDraggableSubID = `canvasDraggableSub_${subcontainer.id}`;
+          try {
+            const subContainer = document.getElementById(`canvasSubContainer_${subcontainer.id}`);
+            const canvasDraggableSubID = `canvasDraggableSub_${subcontainer.id}`;
 
-          subcontainer.nodes.forEach(node => {            
+            subcontainer.nodes.forEach(node => {
               const
                 subComponent = new Components[node.type],
                 subComponentTemplate = subComponent.render(node, {
@@ -148,14 +149,17 @@ const UserInterfaceBuilder = {
                   draggableClass: canvasDraggableSubID
                 });
 
-            subContainer.insertAdjacentHTML('beforeend', subComponentTemplate);
-            subComponent.updateDOM(subContainer.lastElementChild);
-          });
+              subContainer.insertAdjacentHTML('beforeend', subComponentTemplate);
+              subComponent.updateDOM(subContainer.lastElementChild);
+            });
 
-          UserInterfaceSortable({
-            container: subContainer,
-            contentDraggableClass: canvasDraggableSubID
-          });
+            UserInterfaceSortable({
+              container: subContainer,
+              contentDraggableClass: canvasDraggableSubID
+            });
+          } catch (error) {
+            console.log(error);
+          }
         });
       }      
     });

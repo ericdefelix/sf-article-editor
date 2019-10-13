@@ -48,7 +48,6 @@ export function dataParser(htmlSection) {
 
   [...htmlSection.childNodes].forEach(nodeMain => {
     const data = ComponentParser(nodeMain);
-
     const subcontainers = [];
     if (data.hasSubnodes) {
       nodeMain.querySelectorAll('[id^="cid-"]').forEach(subcontainer => {  
@@ -72,8 +71,6 @@ export function dataParser(htmlSection) {
     data.nodeLevel = 'main';
     nodesData.push(data);
   });
-  
-  console.table(nodesData); 
 
   return nodesData;
 }

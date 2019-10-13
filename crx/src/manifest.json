@@ -3,7 +3,7 @@
   "name": "Salesforce Knowledge Advanced Editor",
   "short_name": "SFK Advanced Editor",
   "author": "LEAP DEV: Eric De Felix",
-  "version": "1.7",
+  "version": "1.8",
   "minimum_chrome_version": "46",
   "description": "Allow Salesforce Knowledge Article authors to easily compose HTML Content Blocks in the article's edit page",
   "icons": {
