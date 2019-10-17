@@ -72,7 +72,7 @@ export function GetComponentType(HTMLNode) {
 }
 
 export function DataTemplate () {
-	return { html: '', type: '', nodeLevel: 1, hasSubnodes: false, subnodes: [] };
+	return { html: '', type: '', nodeLevel: '', hasSubnodes: false, subnodes: [] };
 };
 
 export function UnwrapElement(wrapper) {
@@ -100,6 +100,7 @@ export function TinyMCEHelper(contentEditorAppConfig) {
 		toolbar: contentEditorAppConfig.config.toolbar,
 		plugins: contentEditorAppConfig.config.plugins,
 		file_picker_callback: function (cb, value) {
+			// console.log(cb,value);
 			// ImageGallery.run(contentEditorAppConfig.images);		
 		}
 	};
@@ -111,8 +112,9 @@ export function IsNullOrWhiteSpace(str) {
 
 export function ExtractSubnodes(params, ComponentParser) {
 	const data = { containers: [], elements: [] };
-	const titles = [...params.htmlNode.querySelectorAll(params.titleSelector)];
-	params.htmlNode.querySelectorAll(params.containerSelector).forEach((container, index) => {
+	const titles = params.titleSelector === '' ? null : [...params.htmlNode.querySelectorAll(params.titleSelector)];
+
+	params.htmlNode.querySelectorAll(params.containerSelector).forEach((container, index) => {		
 		const elements = [];
 		if (container.children.length !== 0) {
 			[...container.children].forEach(child => {
@@ -125,7 +127,7 @@ export function ExtractSubnodes(params, ComponentParser) {
 		data.elements.push(elements);
 
 		container.innerHTML = '';
-		data.containers.push({ dom: container, title: titles[index].textContent });
+		data.containers.push({ dom: container, title: titles === null ? null : titles[index].textContent });
 	});
 
 	return data;

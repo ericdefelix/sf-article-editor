@@ -1,45 +1,75 @@
-import { TextContentParser, ComponentParser } from '../components/componentHelpers';
-import { IsNullOrWhiteSpace } from './chromeExtensionUtils';
+import { ComponentParser } from '../components/componentHelpers';
 
-export function dataParser(childNodes) {
+export function dataParser(htmlSection) {
   const nodesData = [];
+  const dataFormatter = (element, nodeList) => {
+    let lastIgnoreIndex = -1;
+    const newList = [];
 
-  let textContentConcatenate = '';
-  
-  // Iterate each child element  
-  [...childNodes].forEach(currentNode => {
-    let data = {};    
-    if (currentNode.nodeName === '#text' || typeof currentNode.classList === 'undefined' || currentNode.classList.value === '') {
-      if (!IsNullOrWhiteSpace(currentNode.textContent)) {
-        textContentConcatenate += currentNode.textContent;
+    nodeList.forEach((item, index) => {
+      // if ignore at index
+      const ignore = item.className && item.className.match("sf-");
+
+      if (ignore) {
+        // push straight
+        newList.push(item);
+        lastIgnoreIndex = index;
+      } else {
+        const isPrevArray = Array.isArray(newList[index - 1]);
+        // either 1ts item is note ignore or first of non-ignore slice
+        if (
+          (lastIgnoreIndex < 0 || lastIgnoreIndex === index - 1) &&
+          !isPrevArray
+        ) {
+          lastIgnoreIndex = 0;
+          const newArr = [item];
+          newList.push(newArr);
+          return;
+        }
+        newList[newList.length - 1].push(item);
       }
+    });
+
+    // transformation retuns array
+    return newList.map((item, index) => {
+      if (Array.isArray(item)) {
+        // do transform as item is an array\
+        const newDiv = document.createElement("div");
+        newDiv.setAttribute("class", "sf-editor-content");
+        element.insertBefore(newDiv, item[0]);
+        item.map(i => newDiv.appendChild(i));
+      }
+    });
+  };
+
+  dataFormatter(htmlSection, htmlSection.childNodes);
+
+  htmlSection.innerHTML = htmlSection.innerHTML.replace(new RegExp("\>[\s]+\<", "g"), "><");  
+
+  [...htmlSection.childNodes].forEach(nodeMain => {
+    const data = ComponentParser(nodeMain);
+    const subcontainers = [];
+    if (data.hasSubnodes) {
+      nodeMain.querySelectorAll('[id^="cid-"]').forEach(subcontainer => {  
+        subcontainers.push({
+          id: subcontainer.id,
+          nodes: subcontainer.childElementCount === 0 ? [] : (() => {
+            const nodes = [];
+            [...subcontainer.children].forEach(child => {
+              const data = ComponentParser(child);
+              data.dom = child;
+              data.nodeLevel = 'sub';
+              nodes.push(data);
+            });
+            return nodes;
+          })()
+        });
+      });
     }
 
-    if (currentNode.nodeName !== '#text' && typeof currentNode.classList !== 'undefined' && currentNode.classList.value !== '') {
-      let combinedTextContentData = {};
-      data = ComponentParser(currentNode);
-
-      if (data.type !== 'TextContent' && textContentConcatenate !== '') {
-        const p = document.createElement('p');
-        p.textContent = textContentConcatenate;
-        combinedTextContentData = TextContentParser.parse(p);
-        nodesData.push(combinedTextContentData);
-        textContentConcatenate = '';
-      }
-      if (nodesData.length >= 2 && textContentConcatenate !== '' && nodesData[nodesData.length-1].type === 'TextContent') {
-        currentNode.insertAdjacentHTML('beforeend', textContentConcatenate);
-        combinedTextContentData = TextContentParser.parse(currentNode);
-        textContentConcatenate = '';
-      }
-      if (data.type === 'TextContent' && textContentConcatenate !== '') {
-        currentNode.insertAdjacentHTML('afterbegin', textContentConcatenate);
-        combinedTextContentData = TextContentParser.parse(currentNode);
-        nodesData.push(combinedTextContentData);
-        textContentConcatenate = '';
-      }
-
-      if (textContentConcatenate === '') nodesData.push(data);
-    }
+    data.subcontainers = subcontainers;
+    data.nodeLevel = 'main';
+    nodesData.push(data);
   });
 
   return nodesData;

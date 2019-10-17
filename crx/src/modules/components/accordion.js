@@ -6,25 +6,31 @@ import { ComponentParser } from './componentHelpers';
 export const AccordionLabel = 'Accordion';
 
 export const ParseHTML = {
-  isTrue: (htmlNode) => {
+  isTrue: (htmlNode) => {    
     return htmlNode.classList.value.includes('sf-accordion') ? true : false;
   },
   parse: (htmlNode) => {
     const data = new DataTemplate();
 
-    data.subnodes = ExtractSubnodes({
-      htmlNode: htmlNode,
-      titleSelector: '.sf-accordion-text',
-      containerSelector: '.sf-accordion-item .sf-accordion-content'
-    }, ComponentParser);
-    
-    document.querySelectorAll('.sf-accordion-toggle').forEach((toggle, index) => {
-      data.subnodes.containers[index]['id'] = toggle.id.split('pane-')[1];
-    });
-
+    data.titleSelector = '.sf-accordion-text';
+    data.containerSelector = '.sf-accordion-item .sf-accordion-content';
     data.hasSubnodes = true;
     data.type = 'Accordion';
     data.html = htmlNode.outerHTML;
+
+    data.sections = (() => {
+      const sectionIDs = [];
+      [...htmlNode.children].forEach(section => {
+        const toggle = section.querySelector('.sf-accordion-content');
+        const toggleTitle = section.querySelector('.sf-accordion-toggle > .sf-accordion-text');
+        sectionIDs.push({
+          id: toggle.id,
+          title: toggleTitle.innerText
+        });
+      });
+      return sectionIDs;
+    })();
+  
     return data;
   }
 };
@@ -38,17 +44,32 @@ export default class Accordion {
     this.accordionCurrentCount = this.accordionCountMin;
   }
 
-  render(html, options) {    
+  render(item, options) {    
     const params = {
       id: this.id,
       type: 'Accordion',
       controlsTemplate: this.controlsTemplate(this.id),
       draggableClass: options.draggableClass,
-      componentTemplate: this.template(html),
-      addTemplate: AddContentBlockBtnTemplate(this.id)
+      componentTemplate: this.template(item),
+      addTemplate: item.nodeLevel === 'main' ? AddContentBlockBtnTemplate(this.id) : ''
     };
 
     return ContentBlockTemplate(params);
+  }
+
+  template(existingData) {
+    let accordionSections = ``;
+    const hasChildren = () => { return existingData !== null && existingData.hasOwnProperty('sections'); };
+    const accordionCountMin = hasChildren() ? existingData.sections.length : this.accordionCountMin;
+
+    for (let i = 0; i < accordionCountMin; i++) {
+      const
+        accordionID = hasChildren() ? existingData.sections[i].id : 'cid-' + GenerateTabID(),
+        accordionTitle = hasChildren() ? existingData.sections[i].title : 'Accordion Display Text';
+
+      accordionSections += this.accordionSectionTemplate(accordionID, accordionTitle);
+    }
+    return `${this.editComponentSectionTemplate()}<div class="sf-accordion">${accordionSections}</div>`;
   }
 
   controlsTemplate(componentID) {
@@ -57,14 +78,11 @@ export default class Accordion {
 
   accordionSectionTemplate(accordionID, accordionTitle) {
     const template = `<div class="sf-accordion-item">
-                        <div class="sf-accordion-toggle" id="pane-${accordionID}">
+                        <div class="sf-accordion-toggle" id="target_${accordionID}">
                           <h4 class="sf-accordion-text">${accordionTitle}</h4>
                           <i class="sf-accordion-icon"></i>	
                         </div>
-                        <div class="sf-accordion-content">
-                          <div class="canvas-subcontainer" id="canvasSubContainer_${accordionID}"></div>
-                          ${AddSubContentBlockBtnTemplate(accordionID)}
-                        </div>
+                        <div class="sf-accordion-content" id="${accordionID}"><div class="canvas-subcontainer" id="canvasSubContainer_${accordionID}"></div>${AddSubContentBlockBtnTemplate(accordionID)}</div>
                       </div>`;
     return template;
   }
@@ -85,20 +103,6 @@ export default class Accordion {
                 <i class="icon-plus">&#43;</i> New Accordion Section
               </button>
             </div>`;
-  }
-
-  template(existingData) {
-    let accordionSections = ``;
-    const accordionCountMin = typeof existingData === 'object' ? existingData.length : this.accordionCountMin;
-    
-    for (let i = 0; i < accordionCountMin; i++) {
-      const
-        accordionID = typeof existingData === 'object' ? existingData[i].id : GenerateTabID(),
-        accordionTitle = typeof existingData === 'object' ? existingData[i].title : 'Accordion Display Text';
-
-      accordionSections += this.accordionSectionTemplate(accordionID, accordionTitle);
-    }
-    return `${this.editComponentSectionTemplate()}<div class="sf-accordion">${accordionSections}</div>`;
   }
 
   updateAccordionList(editFields, accordionSectionTemplateFxn) {
@@ -163,7 +167,7 @@ export default class Accordion {
       };
 
       function addAccordionItem() {
-        const newBtnTabID = `pane-${GenerateTabID()}`;
+        const newBtnTabID = `cid-${GenerateTabID()}`;
         accordionCurrentCount += 1;
         contentEditList.insertAdjacentHTML('beforeend', editFieldTemplateFxn('', newBtnTabID));
       }
@@ -189,11 +193,10 @@ export default class Accordion {
       });
 
       // Mutations`
-      HTMLObject.querySelectorAll('.sf-accordion-toggle').forEach((toggle) => {
-        const toggleID = toggle.id.split('pane-')[1];
+      HTMLObject.querySelectorAll('.sf-accordion-content').forEach((content) => {
         UserInterfaceSortable({
-          container: document.getElementById(`canvasSubContainer_${toggleID}`),
-          contentDraggableClass: `.canvasDraggableSub_${toggleID}`
+          container: document.getElementById(`canvasSubContainer_${content.id}`),
+          contentDraggableClass: `.canvasDraggableSub_${content.id}`
         });
       });
 

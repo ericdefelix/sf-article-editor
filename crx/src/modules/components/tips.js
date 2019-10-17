@@ -53,14 +53,14 @@ export default class Tips {
     return `<select class="canvas-form-control" name="s-${this.id}" data-target="snippet-${this.id}">${template}</select>`;
   }
 
-  render(html,options) {    
+  render(item, options) {    
     const params = {
       id: this.id,
       type: 'Tips',
-      controlsTemplate: this.renderControlsTemplate(html === '' ? this.template() : html),
+      controlsTemplate: this.renderControlsTemplate(!item.hasOwnProperty('html') ? this.template() : item.html),
       draggableClass: options.draggableClass,
-      componentTemplate: html === '' ? this.template() : html,
-      addTemplate: parseInt(options.nodeLevel) == 1 ? AddContentBlockBtnTemplate(this.id) : ''
+      componentTemplate: !item.hasOwnProperty('html') ? this.template() : item.html,
+      addTemplate: item.nodeLevel === 'main' ? AddContentBlockBtnTemplate(this.id) : ''
     };
 
     return ContentBlockTemplate(params);
@@ -72,7 +72,6 @@ export default class Tips {
         contentEditorAppConfig,
         heading,
         typeSelector;
-      
         
       contentEditorAppConfig = {
         container: `#snippet-${HTMLObject.id} .sf-blockquote-content-body`,

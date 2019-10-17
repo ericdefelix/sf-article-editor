@@ -10,7 +10,7 @@ export function UserInterfaceSortable(config) {
     dragClass: 'canvas-content-dragging',
     animation: 300,
     easing: 'cubic-bezier(1, 0, 0, 1)',
-    handle: config.contentDraggableClass,
+    handle: `${config.contentDraggableClass}`,
     direction: 'vertical'
   };
 

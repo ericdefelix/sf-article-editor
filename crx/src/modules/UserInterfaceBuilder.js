@@ -8,7 +8,7 @@ import Accordion from './components/accordion';
 
 import ImageGallery from './ImageGallery';
 import { UserInterfaceSortable } from '../modules/utils/sortableHandler';
-import { EmptyStateTemplate, ImageGalleryTemplate } from '../modules/utils/interfaceTemplates';
+import { EmptyStateTemplate } from '../modules/utils/interfaceTemplates';
 
 const Components = {
   TextContent,
@@ -31,7 +31,7 @@ const UserInterfaceBuilder = {
     UserInterfaceBuilder.container = container;
 
     // Attach mutation observer
-    UserInterfaceBuilder.observe('canvasContainer',1);
+    UserInterfaceBuilder.observe('canvasContainer');
 
     // If data is empty emptyStateTemplate, if not renderExistingData
     params.data.length === 0 ?
@@ -46,14 +46,16 @@ const UserInterfaceBuilder = {
 
     UserInterfaceBuilder.initEmptyStateButton();
 
-    ImageGallery.init({
-      data: typeof params.images === 'undefined' ? [] : params.images,
-      template: ImageGalleryTemplate,
-    });
+    if (typeof params.images !== 'undefined') {
+      ImageGallery.init({
+        data: typeof params.images === 'undefined' ? [] : params.images
+      }); 
+    }
   },
   toolboxDisplay: function () {    
-    UserInterfaceBuilder.targetNodeLevel = parseInt(this.getAttribute('data-node-level'));
+    UserInterfaceBuilder.targetNodeLevel = this.getAttribute('data-node-level');
     UserInterfaceBuilder.placeholderPointerID = this.getAttribute('data-target');
+    
     Toolbox.display(this);
   },
   subscriber: (mutations) => {
@@ -98,7 +100,7 @@ const UserInterfaceBuilder = {
       UserInterfaceBuilder.initEmptyStateButton();
     }    
   },
-  observe: (containerID,nodeLevel) => {
+  observe: (containerID) => {
     // instantiating observer
     const containerObserver = new MutationObserver(UserInterfaceBuilder.subscriber);
     const observedElement = document.getElementById(containerID);
@@ -116,77 +118,80 @@ const UserInterfaceBuilder = {
     UserInterfaceBuilder.container.insertAdjacentHTML('afterbegin', EmptyStateTemplate('canvasContainer'));
   },
   renderExistingData: (data) => {
-    UserInterfaceBuilder.elementCount = data.length;
-    const canvasContainer = 'canvasContainer', canvasDraggableMain = 'canvasDraggableMain';
+    const canvasContainer = document.getElementById('canvasContainer');
     
     data.forEach((item) => {
       // Create a component instance
       const component = new Components[item.type];
-      const componentTemplate = component.render(item.hasSubnodes ? item.subnodes.containers : item.html, {
-        nodeLevel: 1,
-        draggableClass: canvasDraggableMain
+      const componentTemplate = component.render(item, {
+        nodeLevel: 'main',
+        draggableClass: 'canvasDraggableMain'
       });
 
       // Attach to DOM
-      document.getElementById(canvasContainer).insertAdjacentHTML('beforeend', componentTemplate);
+      canvasContainer.insertAdjacentHTML('beforeend', componentTemplate);
 
-      // Apply Events and Behavior
-      const appendedChild = document.getElementById(canvasContainer).lastElementChild;
-      
-      component.updateDOM(appendedChild);
+      // Apply Events and Behavior      
+      component.updateDOM(canvasContainer.lastElementChild);
 
       // If component has child nodes
-      if (item.hasSubnodes) {
-        item.subnodes.containers.forEach((container, index) => {
-          // Attach to DOM
-          item.subnodes.elements[index].forEach(element => {
-            const
-              subComponent = new Components[element.type],
-              subComponentTemplate = subComponent.render(element.html, {
-                nodeLevel: 2,
-                draggableClass: `canvasDraggableSub_${container.id}`
-              }),
-              subContainer = document.getElementById(`canvasSubContainer_${container.id}`);
-            
-            subContainer.insertAdjacentHTML('beforeend', subComponentTemplate);
+      if (item.hasSubnodes && item.sections.length > 0) {        
+        item.subcontainers.forEach(subcontainer => {
+          try {
+            const subContainer = document.getElementById(`canvasSubContainer_${subcontainer.id}`);
+            const canvasDraggableSubID = `canvasDraggableSub_${subcontainer.id}`;
 
-            // Apply Events and Behavior            
-            subComponent.updateDOM(subContainer.lastElementChild, UserInterfaceBuilder.images);
-          });
+            subcontainer.nodes.forEach(node => {
+              const
+                subComponent = new Components[node.type],
+                subComponentTemplate = subComponent.render(node, {
+                  nodeLevel: 'sub',
+                  draggableClass: canvasDraggableSubID
+                });
+
+              subContainer.insertAdjacentHTML('beforeend', subComponentTemplate);
+              subComponent.updateDOM(subContainer.lastElementChild);
+            });
+
+            UserInterfaceSortable({
+              container: subContainer,
+              contentDraggableClass: canvasDraggableSubID
+            });
+          } catch (error) {
+            console.log(error);
+          }
         });
-      }
-
+      }      
     });
-
+    
     UserInterfaceSortable({
-      container: document.getElementById(canvasContainer),
-      contentDraggableClass: '.' + canvasDraggableMain
+      container: canvasContainer,
+      contentDraggableClass: '.canvasDraggableMain' 
     });
   },
   _evtAddComponent: function () {
     let targetPreviousElementSibling, appendedChild;
 
     const emptyStateContainer = document.querySelector('[data-content="empty"]');
-    const canvasContainer = document.getElementById('canvasContainer');
-
-    const containerID = UserInterfaceBuilder.targetNodeLevel == 2 ?
-      `canvasSubContainer_${UserInterfaceBuilder.placeholderPointerID}` : UserInterfaceBuilder.placeholderPointerID;
+    const canvasContainer = document.getElementById('canvasContainer');    
+    const containerID = UserInterfaceBuilder.placeholderPointerID;
 
     const
       componentType = this.getAttribute('data-ui-label'),
-      component = new Components[componentType];
+      component = new Components[componentType],
+      draggableClass = UserInterfaceBuilder.targetNodeLevel === 'sub' ? `canvasDraggableSub_${containerID.split('canvasSubContainer_')[1]}` : 'canvasDraggableMain';  
+
     
     const options = {
       nodeLevel: UserInterfaceBuilder.targetNodeLevel,
-      draggableClass: UserInterfaceBuilder.targetNodeLevel == 2 ?
-        `canvasDraggableSub_${UserInterfaceBuilder.placeholderPointerID}` : 'canvasDraggableMain'
+      draggableClass: draggableClass
     };
 
-    const componentTemplate = component.render('', options);
+    const componentTemplate = component.render({ nodeLevel: UserInterfaceBuilder.targetNodeLevel }, options);
     
     targetPreviousElementSibling = document.getElementById(containerID);
-    
-    if (UserInterfaceBuilder.targetNodeLevel === 1) {
+
+    if (UserInterfaceBuilder.targetNodeLevel === 'main') {
       if (emptyStateContainer !== null) {
         canvasContainer.insertAdjacentHTML('beforeend', componentTemplate);
         appendedChild = canvasContainer.lastElementChild;
@@ -197,7 +202,7 @@ const UserInterfaceBuilder = {
       }
     }
 
-    if (UserInterfaceBuilder.targetNodeLevel === 2) {
+    if (UserInterfaceBuilder.targetNodeLevel === 'sub') {
       targetPreviousElementSibling.insertAdjacentHTML('beforeend', componentTemplate);
       appendedChild = targetPreviousElementSibling.lastElementChild;
     }

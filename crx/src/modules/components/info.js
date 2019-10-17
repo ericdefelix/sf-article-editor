@@ -25,14 +25,14 @@ export default class Info {
     };
   }
 
-  render(html, options) {    
+  render(item, options) {    
     const params = {
       id: this.id,
       type: 'Info',
       controlsTemplate: '',
       draggableClass: options.draggableClass,
-      componentTemplate: html === '' ? this.template() : html,
-      addTemplate: parseInt(options.nodeLevel) == 1 ? AddContentBlockBtnTemplate(this.id) : ''
+      componentTemplate: !item.hasOwnProperty('html') ? this.template() : item.html,
+      addTemplate: item.nodeLevel === 'main' ? AddContentBlockBtnTemplate(this.id) : ''
     };
 
     return ContentBlockTemplate(params);

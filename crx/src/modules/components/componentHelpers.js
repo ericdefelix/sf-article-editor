@@ -32,4 +32,4 @@ const ComponentParser = function (currentNode) {
   return data;
 };
 
-export { ComponentTypes, ComponentParser, TextContentParser };
+export { ComponentTypes, ComponentParser };

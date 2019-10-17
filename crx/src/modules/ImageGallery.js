@@ -1,7 +1,9 @@
+import { ImageGalleryTemplate } from '../modules/utils/interfaceTemplates';
+
 const ImageGallery = {
   container: null,
   init: (params) => {
-    document.body.insertAdjacentHTML('beforeend', params.template()); 
+    document.body.insertAdjacentHTML('beforeend', ImageGalleryTemplate()); 
     ImageGallery.container = document.getElementById('modalImageGallery');
     ImageGallery.listeners();
     ImageGallery.render(params.data);
@@ -16,8 +18,6 @@ const ImageGallery = {
         }); 
       }
     });
-
-    console.log(ImageGallery.container.querySelector('.img-gallery-scroll'));
     
     imageGalleryListObserver.observe(ImageGallery.container.querySelector('.img-gallery-scroll'), {
       attributes: false,

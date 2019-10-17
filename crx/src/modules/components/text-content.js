@@ -20,22 +20,27 @@ export default class TextContent {
     this.id = GenerateID();
     this.cssClass = 'sf-editor-content';
     this.contentEditorConfig = {
-      plugins: 'lists link image table imagetools',
+      plugins: 'lists advlist link image table imagetools',
       toolbar: 'undo redo | formatselect | bold italic strikethrough | alignleft aligncenter alignright alignjustify | link image table | numlist bullist'
     };
   }
 
-  render(html, options) {
+  render(item, options) {    
     const params = {
       id: this.id,
       type: 'Text Content',
       controlsTemplate: '',
       draggableClass: options.draggableClass,
-      componentTemplate: html === '' ? this.template() : html,
-      addTemplate: parseInt(options.nodeLevel) == 1 ? AddContentBlockBtnTemplate(this.id) : ''
+      componentTemplate: !item.hasOwnProperty('html') ? this.template() : item.html,
+      addTemplate: item.nodeLevel === 'main' ? AddContentBlockBtnTemplate(this.id) : ''
     };
 
     return ContentBlockTemplate(params);
+  }
+
+  template() {
+    const defaultTemplate = `<div class="sf-editor-content"><p>Click to edit content</p></div>`;
+    return defaultTemplate;
   }
 
   updateDOM(HTMLObject) {
@@ -51,10 +56,5 @@ export default class TextContent {
     } catch (error) {
       console.log('Update DOM is not defined properly');
     }
-  }
-
-  template() {
-    const defaultTemplate = `<div class="sf-editor-content"><p>Click to edit content</p></div>`;
-    return defaultTemplate;
   }
 }

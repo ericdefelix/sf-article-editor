@@ -12,19 +12,24 @@ export const ParseHTML = {
   parse: (htmlNode) => {
     const data = new DataTemplate();
 
-    data.subnodes = ExtractSubnodes({
-      htmlNode: htmlNode,
-      titleSelector: '.sf-tab-item-link',
-      containerSelector: '.sf-tab-content'
-    }, ComponentParser);
-
-    data.subnodes.containers.forEach(container => {
-      container['id'] = container.dom.id.split('tab-')[1];
-    });
-
+    data.titleSelector = '.sf-tab-item-link';
+    data.containerSelector = '.sf-tab-content';
     data.hasSubnodes = true;
     data.type = 'Tabs';
     data.html = htmlNode.outerHTML;
+
+    data.sections = (() => {
+      const sectionIDs = [];
+      [...htmlNode.children].forEach(section => {
+        if (section.classList.value !== 'sf-tabs-bar') {  
+          sectionIDs.push({
+            id: section.id,
+            title: document.getElementById(`target_${section.id}`).innerText
+          }); 
+        }
+      });
+      return sectionIDs;
+    })();
 
     return data;
   }
@@ -40,17 +45,37 @@ export default class Tabs {
     this.selectorDOMSections = '.sf-tab-content';
   }
 
-  render(html, options) {
+  render(item, options) {
     const params = {
       id: this.id,
       type: 'Tabs',
       controlsTemplate: this.controlsTemplate(this.id),
       draggableClass: options.draggableClass,
-      componentTemplate: this.template(html),
-      addTemplate: AddContentBlockBtnTemplate(this.id)
+      componentTemplate: this.template(item),
+      addTemplate: item.nodeLevel === 'main' ? AddContentBlockBtnTemplate(this.id) : ''
     };
 
     return ContentBlockTemplate(params);
+  }
+
+  template(existingData) {    
+    let navTabItems = ``, navTabSections = ``;
+    const hasChildren = () => { return existingData !== null && existingData.hasOwnProperty('sections'); };
+    const tabsCountMin = hasChildren() ? existingData.sections.length : this.tabsCountMin;
+
+    for (let i = 0; i < tabsCountMin; i++) {      
+      const
+        tabID = hasChildren() ? existingData.sections[i].id : 'cid-' + GenerateTabID(),
+        tabTitle = hasChildren() ? existingData.sections[i].title : `Tab ${i + 1}`;
+      
+      navTabItems += this.tabLinkTemplate(tabID, tabTitle, i + 1);
+      navTabSections += this.tabBodyTemplate(tabID, i + 1);
+    }
+
+    const defaultTemplate = `${this.editComponentSectionTemplate()}<div class="sf-tabs">
+      <div class="sf-tabs-bar"><ul class="sf-tab-nav">${navTabItems}</ul></div>${navTabSections}</div>`;
+
+    return defaultTemplate;
   }
 
   controlsTemplate(componentID) {
@@ -60,14 +85,14 @@ export default class Tabs {
   tabLinkTemplate(tabID, tabTitle, index) {
     const template = `
       <li class="sf-tab-item${ index === 1 ? ' active' : ''}">
-        <span class="sf-tab-item-link" id="target_tab-${tabID}">${tabTitle}</span>
+        <span class="sf-tab-item-link" id="target_${tabID}">${tabTitle}</span>
       </li>`;
     return template;
   }
 
   tabBodyTemplate(tabID, index) {
     const template = `
-    <div class="sf-tab-content${index === 1 ? ' in' : ''}" id="tab-${tabID}">
+    <div class="sf-tab-content${index === 1 ? ' in' : ''}" id="${tabID}">
       <div class="canvas-subcontainer" id="canvasSubContainer_${tabID}"></div>
       ${AddSubContentBlockBtnTemplate(tabID)}
     </div>`;
@@ -90,24 +115,6 @@ export default class Tabs {
                 <i class="icon-plus">&#43;</i> New Tab Section
               </button>
             </div>`;
-  }
-
-  template(existingData) {
-    let navTabItems = ``, navTabSections = ``;
-    const tabsCountMin = typeof existingData === 'object' ? existingData.length : this.tabsCountMin;
-
-    for (let i = 0; i < tabsCountMin; i++) {      
-      const
-        tabID = typeof existingData === 'object' ? existingData[i].id : GenerateTabID(),
-        tabTitle = typeof existingData === 'object' ? existingData[i].title : `Tab ${i + 1}`;
-      navTabItems += this.tabLinkTemplate(tabID, tabTitle, i + 1);
-      navTabSections += this.tabBodyTemplate(tabID, i + 1);
-    }
-
-    const defaultTemplate = `${this.editComponentSectionTemplate()}<div class="sf-tabs">
-      <div class="sf-tabs-bar"><ul class="sf-tab-nav">${navTabItems}</ul></div>${navTabSections}</div>`;
-
-    return defaultTemplate;
   }
 
   updateTabsList(editFields, tabLinkTemplateFxn, tabBodyTemplateFxn) {
@@ -180,9 +187,8 @@ export default class Tabs {
       };
 
       function addTabItem() {
-        const newBtnTabID = `tab-${GenerateTabID()}`;
         tabsCurrentCount += 1;
-        contentEditList.insertAdjacentHTML('beforeend', editFieldTemplateFxn('', newBtnTabID));
+        contentEditList.insertAdjacentHTML('beforeend', editFieldTemplateFxn('', `cid-${GenerateTabID()}`));
       }
 
       function setButtonStates(clickedBtn) {
@@ -209,10 +215,9 @@ export default class Tabs {
 
       // Mutations`
       HTMLObject.querySelectorAll('.sf-tab-content').forEach((tab) => {
-        const tabID = tab.id.split('tab-')[1];
         UserInterfaceSortable({
-          container: document.getElementById(`canvasSubContainer_${tabID}`),
-          contentDraggableClass: `.canvasDraggableSub_${tabID}`
+          container: document.getElementById(`canvasSubContainer_${tab.id}`),
+          contentDraggableClass: `.canvasDraggableSub_${tab.id}`
         });
       });
 
