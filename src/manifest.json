@@ -1,0 +1,51 @@
+{
+  "manifest_version": 2,
+  "name": "Salesforce Knowledge Advanced Editor",
+  "short_name": "SFK Advanced Editor",
+  "author": "LEAP DEV: Eric De Felix",
+  "version": "1.8",
+  "minimum_chrome_version": "46",
+  "description": "Allow Salesforce Knowledge Article authors to easily compose HTML Content Blocks in the article's edit page",
+  "icons": {
+    "16": "images/icon16.png",
+    "24": "images/icon24.png",
+    "32": "images/icon32.png",
+    "48": "images/icon48.png",
+    "64": "images/icon64.png",
+    "128": "images/icon128.png"
+  },
+  "page_action": {
+    "default_icon": {
+      "24": "images/icon24.png",
+      "32": "images/icon32.png"
+    },
+    "default_title": "Salesforce Knowledge Article Advanced Editor"
+  },
+  "background": {
+    "page": "background.html",
+    "persistent": false
+  },
+  "permissions": [
+    "activeTab",
+    "tabs",
+    "storage",
+    "webNavigation",
+    "*://*/*",
+    "file:///*",
+    "unlimitedStorage",
+    "https://leap.my.salesforce.com/",
+    "https://leap--uxui.cs101.my.salesforce.com/"
+  ],
+  "content_security_policy": "script-src 'self' https://cdnjs.cloudflare.com ;object-src 'self'",
+  "web_accessible_resources": [
+    "https://cdnjs.cloudflare.com/ajax/libs/tinymce/4.9.2/tinymce.min.js",
+    "https://cdnjs.cloudflare.com/ajax/libs/tinymce/",
+    "/modules/utils/chromeExtensionUtils.js",
+    "/modules/",
+    "webpage.js",
+    "editor.js",
+    "sf-leap.js",
+    "editor-themes-insert.css",
+    "editor.css"
+  ]
+}

@@ -1,6 +1,9 @@
 import { ComponentParser } from '../components/componentHelpers';
 
 export function dataParser(htmlSection) {
+  const isEmpty = (item) => {
+    return item.textContent.trim().length === 0 ? true : false;
+  };
   const nodesData = [];
   const dataFormatter = (element, nodeList) => {
     let lastIgnoreIndex = -1;
@@ -9,20 +12,16 @@ export function dataParser(htmlSection) {
     nodeList.forEach((item, index) => {
       // if ignore at index
       const ignore = item.className && item.className.match("sf-");
-
+      
       if (ignore) {
-        // push straight
         newList.push(item);
-        lastIgnoreIndex = index;
+        lastIgnoreIndex = index; 
       } else {
         const isPrevArray = Array.isArray(newList[index - 1]);
         // either 1ts item is note ignore or first of non-ignore slice
-        if (
-          (lastIgnoreIndex < 0 || lastIgnoreIndex === index - 1) &&
-          !isPrevArray
-        ) {
-          lastIgnoreIndex = 0;
+        if ((lastIgnoreIndex < 0 || lastIgnoreIndex === index - 1) && !isPrevArray) {
           const newArr = [item];
+          lastIgnoreIndex = 0;
           newList.push(newArr);
           return;
         }
@@ -31,7 +30,7 @@ export function dataParser(htmlSection) {
     });
 
     // transformation retuns array
-    return newList.map((item, index) => {
+    return newList.map(item => {
       if (Array.isArray(item)) {
         // do transform as item is an array\
         const newDiv = document.createElement("div");
@@ -42,9 +41,13 @@ export function dataParser(htmlSection) {
     });
   };
 
-  dataFormatter(htmlSection, htmlSection.childNodes);
+  [...htmlSection.childNodes].forEach(item => {
+    if (isEmpty(item)) {
+      item.remove();
+    }
+  });
 
-  htmlSection.innerHTML = htmlSection.innerHTML.replace(new RegExp("\>[\s]+\<", "g"), "><");  
+  dataFormatter(htmlSection, htmlSection.childNodes);
 
   [...htmlSection.childNodes].forEach(nodeMain => {
     const data = ComponentParser(nodeMain);

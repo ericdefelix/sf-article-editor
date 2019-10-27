@@ -1,7 +1,8 @@
 {
-  "name": "webpack-starter",
+  "name": "sf-knowledge-article-crx",
   "version": "1.0.0",
-  "description": "A light foundation for your next frontend project based on webpack.",
+  "main": "index.js",
+  "description": "A visual and sortable content editor for the article's edit page. A custom button will be added to the page via the chrome extension which when clicked will open the editor in a popup window.",
   "scripts": {
     "build": "webpack --config webpack/webpack.config.prod.js  --colors",
     "start": "webpack-dev-server --open --config webpack/webpack.config.dev.js"
@@ -18,7 +19,7 @@
     "javascript",
     "webdev"
   ],
-  "author": "webkid.io",
+  "author": "LEAP DEV: Eric De Felix",
   "license": "MIT",
   "bugs": {
     "url": "https://github.com/wbkd/webpack-starter/issues"
@@ -45,7 +46,7 @@
     "recursive-readdir": "^2.2.2",
     "sass-loader": "^7.1.0",
     "style-loader": "^0.23.1",
-    "webpack": "^4.29.6",
+    "webpack": "^4.41.2",
     "webpack-cli": "^3.2.3",
     "webpack-dev-server": "^3.1.14",
     "webpack-merge": "^4.2.1"

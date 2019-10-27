@@ -1,5 +1,9 @@
 import { ComponentTypes } from './components/componentHelpers';
 
+const toolboxOverlay = () => {
+  return document.querySelector('.toolbox-overlay');
+};
+
 export const Toolbox = {
   targetNodeLevel: undefined,
   placeholderPointerID: undefined,
@@ -31,12 +35,13 @@ export const Toolbox = {
     toolbox.classList.contains('in') ? toolbox.classList.remove('in') : toolbox.classList.add('in');
     toolbox.parentNode.insertAdjacentHTML('beforeend', '<div class="toolbox-overlay"></div>');
 
-    // toolbox.nextElementSibling.onclick = (() => {
-    //   this.remove();
-    // });
+    toolbox.nextElementSibling.onclick = function (e) {      
+      e.stopPropagation();
+      Toolbox.hide();
+    };
   },
   hide: () => {
+    if (toolboxOverlay() !== null) toolboxOverlay().remove();
     document.getElementById('toolboxPlaceholder').appendChild(document.getElementById('toolbox'));
-    // document.querySelector('.toolbox-overlay').remove();
   }
 };

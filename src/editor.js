@@ -124,7 +124,8 @@ const editor = {
       editor.close_preview();
       chrome.runtime.sendMessage(editor.crxID, request);
     } catch (e) {
-      // statements
+      editor.generate_html();
+      // editor.html_view();
       console.log('Chrome API not available. Page origin is not via chrome extension');
     }
   },

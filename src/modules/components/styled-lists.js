@@ -1,7 +1,6 @@
 import { GenerateID, GenerateTabID, DataTemplate, ExtractSubnodes } from '../utils/chromeExtensionUtils';
 import { ContentBlockTemplate, AddContentBlockBtnTemplate, AddDeleteSubContentBlockBtnTemplate } from '../utils/interfaceTemplates';
 import { UserInterfaceSortable } from '../utils/sortableHandler';
-import { ComponentParser } from './componentHelpers';
 
 export const StyledListsLabel = 'Numbering';
 
@@ -28,19 +27,8 @@ export const ParseHTML = {
       return sectionIDs;
     })();
 
-    // data.subnodes = (() => {
-    //   const subnodes = [];
-
-    //   htmlNode.querySelectorAll('.sf-list-bullet-circular > li').forEach(bullet => {
-    //     subnodes.push({
-    //       numID: bullet.id.split('list-')[1],
-    //       containerID: bullet.id,
-    //       items: bullet.childElementCount > 0 ? [...bullet.children] : []
-    //     });
-    //   });
-    //   return subnodes;
-    // })();
-
+    console.log(data);
+    
     return data;
   }
 };
@@ -153,7 +141,7 @@ export default class StyledLists {
       // Add New Line
       HTMLObject.querySelector('[data-action="add-bullet-point"]').onclick = () => {
         const listContainer = document.querySelector(`#snippet-${this.id} .${this.cssClass}`);
-        const newListItemID = 'cid' + GenerateTabID();
+        const newListItemID = 'cid-' + GenerateTabID();
         listContainer.insertAdjacentHTML('beforeend', numberingSectionTemplateFxn(newListItemID));
       };
 
