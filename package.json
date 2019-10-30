@@ -1,6 +1,6 @@
 {
   "name": "sf-knowledge-article-crx",
-  "version": "1.0.0",
+  "version": "1.0.9",
   "main": "index.js",
   "description": "A visual and sortable content editor for the article's edit page. A custom button will be added to the page via the chrome extension which when clicked will open the editor in a popup window.",
   "scripts": {
