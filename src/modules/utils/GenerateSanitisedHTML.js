@@ -1,4 +1,4 @@
-export function GenerateSanitisedHTML(canvasContainer, htmlSection, sourceSection) {
+export function GenerateSanitisedHTML(canvasContainer, htmlSection) {
   htmlSection.innerHTML = '';
 
   if (!canvasContainer.children.length) {
@@ -31,11 +31,11 @@ export function GenerateSanitisedHTML(canvasContainer, htmlSection, sourceSectio
 
       htmlSection.appendChild(element.querySelector('.canvas-content-snippet').lastElementChild);
 
-      if (htmlSection.lastElementChild.className === 'sf-tabs') {
-        htmlSection.lastElementChild.querySelector('.sf-tab-item:first-child .sf-tab-item-link').click();
-      }
+      // if (htmlSection.lastElementChild.className === 'sf-tabs') {
+      //   htmlSection.lastElementChild.querySelector('.sf-tab-item:first-child .sf-tab-item-link').click();
+      // }
+      // TODO: 
 
-      sourceSection.value = htmlSection.innerHTML;
 
       if (htmlSection.querySelector('.sf-tabs') !== null) {
         htmlSection.querySelectorAll('.sf-tab-item-link').forEach(link => {

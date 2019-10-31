@@ -100,10 +100,15 @@ const editor = {
     document.querySelector('body').classList.value = '';
     document.querySelector('body').classList.add('sf-' + themeValue);
   },
-  generate_html: function () {
-    GenerateSanitisedHTML(editor.canvasContainer, editor.htmlSection, editor.sourceSection);
+  generate_html: () => {
+    GenerateSanitisedHTML(editor.canvasContainer, editor.htmlSection);
     editor.outputPane.style.display = 'block';
     document.querySelector('body').style.overflow = 'hidden';
+  },
+  clean_html: () => {
+    // TODO: 
+    editor.sourceSection.value = editor.htmlSection.innerHTML;
+    //(\s{3,})|\n|\r
   },
   save_html: function () {
     editor.generate_html();
