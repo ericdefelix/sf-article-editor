@@ -114,6 +114,10 @@
   border-bottom-left-radius: $canvas-gui-border-radius;
   border-bottom-right-radius: $canvas-gui-border-radius;
 
+  & &:hover {
+    @include box-shadow(0,0,0,1px rgba(106, 193, 255, 0.58) inset);
+  }
+
   &.cke_editable_inline {
     ol,ul {
       &:not(.list-bullet-circular) {

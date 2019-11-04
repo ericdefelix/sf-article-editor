@@ -18,7 +18,8 @@ export const htmlMockData = `<div class="sf-editor-content">&nbsp; Start Test</d
     <div class="sf-tab-content in" id="cid-95606">
       
       
-    <ol class="sf-list-bullet-circular"><li id="cid-32698"><div class="sf-editor-content"><p><span class="test-id__field-value slds-form-element__static slds-grow  is-read-only" data-aura-rendered-by="20:281;a">Tap&nbsp;<img alt="User-added image" data-mce-src="https://community.leap.us/servlet/rtaImage?eid=ka12X000000gkhL&amp;feoid=00Nw000000897g4&amp;refid=0EM2X000001VeA8" src="https://community.leap.us/servlet/rtaImage?eid=ka12X000000gkhL&amp;feoid=00Nw000000897g4&amp;refid=0EM2X000001VeA8"> on your Apple Watch.</span></p></div></li><li id="cid-40393"><div class="sf-editor-content"><p><span class="test-id__field-value slds-form-element__static slds-grow  is-read-only" data-aura-rendered-by="20:281;a">Tap <strong>Start</strong> to commence time recording.</span></p></div></li><li id="cid-33312"><div class="sf-blockquote sf-blockquote-info" role="blockquote">
+    <ol class="sf-list-bullet-circular"><li id="cid-32698"></li>
+    <li id="cid-33312"><div class="sf-blockquote sf-blockquote-info" role="blockquote">
       <div class="sf-blockquote-addon"></div>
       <div class="sf-blockquote-content">
         <h5 class="sf-blockquote-content-header">asdfasdfs</h5>

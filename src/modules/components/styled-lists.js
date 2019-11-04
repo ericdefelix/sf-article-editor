@@ -27,8 +27,6 @@ export const ParseHTML = {
       return sectionIDs;
     })();
 
-    console.log(data);
-    
     return data;
   }
 };
