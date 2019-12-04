@@ -35,7 +35,7 @@ export default class StyledLists {
   constructor() {
     this.id = GenerateID();
     this.cssClass = 'sf-list-bullet-circular';
-    this.numberingCountMin = 2;
+    this.numberingCountMin = 1;
     this.numberingCurrentCount = this.numberingCountMin;
   }
 
