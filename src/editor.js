@@ -75,15 +75,11 @@ const editor = {
       images: editor.image_gallery
     });
 
-    editor.btnPreview.onclick = editor.generate_html;
+    editor.btnPreview.onclick = editor.preview;
     editor.btnSave.onclick = editor.save_html;
     editor.toggleView.onchange = editor.html_view;
     editor.btnClose.onclick = editor.close_preview;
     editor.btnThemeSelector.onchange = editor.select_theme;
-  },
-  togglePageButtons: () => {
-    editor.btnPreview.style.display = editor.existing_data.length == 0 ? 'none' : 'initial';
-    editor.btnSave.style.display = editor.existing_data.length == 0 ? 'none' : 'initial';
   },
   html_view: function () {
     const view = this.value;
@@ -100,32 +96,63 @@ const editor = {
     document.querySelector('body').classList.value = '';
     document.querySelector('body').classList.add('sf-' + themeValue);
   },
-  generate_html: function () {
-    GenerateSanitisedHTML(editor.canvasContainer, editor.htmlSection, editor.sourceSection);
+  preview: () => {
+    GenerateSanitisedHTML(editor.canvasContainer, editor.htmlSection);
+    editor.set_source();
+    editor.handle_preview();
     editor.outputPane.style.display = 'block';
     document.querySelector('body').style.overflow = 'hidden';
   },
+  set_source: () => {
+    let sourceString = editor.htmlSection.innerHTML.replace(/(\s{3,})|\n|\r|\t/g, '');
+    sourceString = sourceString.replace(/sf-accordion-toggle in/g, 'sf-accordion-toggle');
+    sourceString = sourceString.replace(/sf-tab-content in/g, 'sf-tab-content');
+    sourceString = sourceString.replace(/sf-tab-item active/g, 'sf-tab-item');
+    
+    const div = document.createElement('DIV');
+    div.innerHTML = sourceString;
+    div.querySelectorAll('.sf-tabs').forEach(tabs => {
+      tabs.querySelector('.sf-tab-nav > li').classList.add('active');
+      tabs.querySelector('.sf-tab-content').classList.add('in');
+    });
+    sourceString = div.innerHTML;
+    editor.sourceSection.value = sourceString;
+
+    div.remove();
+  },
+  handle_preview: () => {
+    if (editor.htmlSection.childNodes.length) {
+      editor.htmlSection.querySelectorAll('.sf-tab-item-link').forEach(link => {
+        const targetLinkSectionID = link.id.split('target_')[1];
+        link.id = link.id + 'preview';
+        editor.htmlSection.querySelector(`#${targetLinkSectionID}`).id = editor.htmlSection.querySelector(`#${targetLinkSectionID}`).id + `preview`;
+      });
+    }
+    else {
+      return;
+    }
+  },
   save_html: function () {
-    editor.generate_html();
-
-    const request = {
-      method: 'insertToContentEditor',
-      origin: window.location.origin,
-      crxid: editor.crxID,
-      data: {
-        html: editor.sourceSection.value,
-        ckeditorIntanceId: this.getAttribute('data-target'),
-        popupId: this.getAttribute('data-popup-id'),
-        tabId: this.getAttribute('data-tab-id')
-      }
-    };
-
     try {
+      GenerateSanitisedHTML(editor.canvasContainer, editor.htmlSection);
+      editor.set_source();
+
+      const request = {
+        method: 'insertToContentEditor',
+        origin: window.location.origin,
+        crxid: editor.crxID,
+        data: {
+          html: editor.sourceSection.value,
+          ckeditorIntanceId: this.getAttribute('data-target'),
+          popupId: this.getAttribute('data-popup-id'),
+          tabId: this.getAttribute('data-tab-id')
+        }
+      };
+
       editor.close_preview();
       chrome.runtime.sendMessage(editor.crxID, request);
     } catch (e) {
-      editor.generate_html();
-      // editor.html_view();
+      console.log(e);
       console.log('Chrome API not available. Page origin is not via chrome extension');
     }
   },

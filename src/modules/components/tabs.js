@@ -40,7 +40,7 @@ export default class Tabs {
     this.id = GenerateID();
     this.cssClass = 'sf-tabs';
     this.tabNamePrefix = 'Tab ';
-    this.tabsCountMin = 3;
+    this.tabsCountMin = 2;
     this.tabsCurrentCount = this.tabsCountMin;
     this.selectorDOMSections = '.sf-tab-content';
   }

@@ -40,7 +40,7 @@ export default class Accordion {
     this.id = GenerateID();
     this.cssClass = 'sf-accordion';
     this.accordionNamePrefix = 'Accordion Pane ';
-    this.accordionCountMin = 3;
+    this.accordionCountMin = 2;
     this.accordionCurrentCount = this.accordionCountMin;
   }
 

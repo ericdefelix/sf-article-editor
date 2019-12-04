@@ -179,8 +179,7 @@ const UserInterfaceBuilder = {
     const
       componentType = this.getAttribute('data-ui-label'),
       component = new Components[componentType],
-      draggableClass = UserInterfaceBuilder.targetNodeLevel === 'sub' ? `canvasDraggableSub_${containerID.split('canvasSubContainer_')[1]}` : 'canvasDraggableMain';  
-
+      draggableClass = UserInterfaceBuilder.targetNodeLevel === 'sub' ? `canvasDraggableSub_${containerID.split('canvasSubContainer_')[1]}` : 'canvasDraggableMain';
     
     const options = {
       nodeLevel: UserInterfaceBuilder.targetNodeLevel,
@@ -201,8 +200,7 @@ const UserInterfaceBuilder = {
         appendedChild = targetPreviousElementSibling.nextElementSibling;
       }
     }
-
-    if (UserInterfaceBuilder.targetNodeLevel === 'sub') {
+    else {
       targetPreviousElementSibling.insertAdjacentHTML('beforeend', componentTemplate);
       appendedChild = targetPreviousElementSibling.lastElementChild;
     }
