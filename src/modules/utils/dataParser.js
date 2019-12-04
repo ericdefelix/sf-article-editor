@@ -62,6 +62,7 @@ export function dataParser(htmlSection) {
               const data = ComponentParser(child);
               data.dom = child;
               data.nodeLevel = 'sub';
+              data.html = data.html.replace(/font\-size\:\s*\d*px\s*\;/g,'');
               nodes.push(data);
             });
             return nodes;
@@ -72,6 +73,7 @@ export function dataParser(htmlSection) {
 
     data.subcontainers = subcontainers;
     data.nodeLevel = 'main';
+    data.html = data.html.replace(/font\-size\:\s*\d*px\s*\;/g,'');
     nodesData.push(data);
   });
 
