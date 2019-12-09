@@ -80,7 +80,7 @@ export default class Accordion {
     const template = `<div class="sf-accordion-item">
                         <div class="sf-accordion-toggle" id="target_${accordionID}">
                           <h4 class="sf-accordion-text">${accordionTitle}</h4>
-                          <i class="sf-accordion-icon"></i>	
+                          <div class="sf-accordion-icon"></div>
                         </div>
                         <div class="sf-accordion-content" id="${accordionID}"><div class="canvas-subcontainer" id="canvasSubContainer_${accordionID}"></div>${AddSubContentBlockBtnTemplate(accordionID)}</div>
                       </div>`;

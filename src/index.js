@@ -12,20 +12,19 @@ const index = {
 		// CKEDITOR starts manipulating the DOM
 		// -- server rendered
 		const testElement = document.getElementsByClassName('TypeRICH_TEXT_AREA_editable');
+		const sectionContent = document.querySelectorAll('[id^=articleDetail]');
 
 		MutationObserver = window.MutationObserver || window.WebKitMutationObserver;
 		if (testElement.length > 0) {
-			const observer = new MutationObserver((mutations, observer) => {
-
+				const observer = new MutationObserver((mutations, observer) => {
+				let injectedCSS = document.createElement('input');
 				let webpageScript = document.createElement('script');
 				webpageScript.setAttribute('type', 'module');
 				webpageScript.setAttribute('src', chrome.extension.getURL('webpage.js'));
 
-				let injectedCSS = document.createElement('input');
 				injectedCSS.setAttribute('id', 'injectedCSSURL');
 				injectedCSS.setAttribute('type', 'hidden');
 				injectedCSS.setAttribute('value', chrome.extension.getURL('editor-themes-insert.css'));
-
 				webpageScript.onload = () => { webpageScript.remove(); };
 
 				(document.head || document.documentElement).appendChild(webpageScript); // Attach to document
@@ -51,6 +50,13 @@ const index = {
 			});
 
 			observer.observe(testElement[testElement.length - 1], { subtree: true, childList: true, attributes: true });
+		}else if (sectionContent.length > 0) {
+			let injectedCSS = document.createElement('link');
+			injectedCSS.setAttribute('id', 'injectedCSSURL');
+			injectedCSS.setAttribute('rel', 'stylesheet');
+			injectedCSS.setAttribute('class', 'user');
+			injectedCSS.setAttribute('href', chrome.extension.getURL('editor-themes-insert.css'));
+			(document.head || document.documentElement).appendChild(injectedCSS); // Attach to document
 		}
 
 		chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {

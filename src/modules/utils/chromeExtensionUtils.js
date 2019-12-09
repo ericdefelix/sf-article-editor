@@ -13,6 +13,7 @@ export function RequestIsValid(request) {
 export function UrlContainsArticleEdit(url) {
   let flag = false;
   if (url.indexOf('/knowledge/publishing/articleEdit') !== -1) flag = true;
+  if(url.indexOf('knowledge/publishing/articleOnlineDetail') !== -1) flag = true;
   return flag;
 }
 

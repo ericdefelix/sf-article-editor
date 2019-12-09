@@ -20,6 +20,7 @@ export default class TextContent {
     this.id = GenerateID();
     this.cssClass = 'sf-editor-content';
     this.contentEditorConfig = {
+      indentation: '15px',
       plugins: 'lists advlist link image table imagetools',
       toolbar: 'undo redo | formatselect | bold italic strikethrough | alignleft aligncenter alignright alignjustify | link image table | numlist bullist'
     };
@@ -51,8 +52,8 @@ export default class TextContent {
       };
 
       const config = TinyMCEHelper(contentEditorAppConfig);
-
       tinymce.init(config);
+
     } catch (error) {
       console.log('Update DOM is not defined properly');
     }

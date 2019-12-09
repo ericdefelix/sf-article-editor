@@ -206,7 +206,10 @@ const webpage = {
 		}
 	},
 	run: () => {
-		webpage.init();
+		const testElement = document.getElementsByClassName('TypeRICH_TEXT_AREA_editable');
+		if(testElement.length > 0){
+			webpage.init();
+		}
 	}
 };
 
