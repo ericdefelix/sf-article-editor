@@ -78,13 +78,13 @@ export default class Accordion {
   accordionSectionTemplate(accordionID, accordionTitle) {
     const template = `<div class="sf-accordion-item">
                         <div class="sf-accordion-toggle" id="target_${accordionID}">
-                          <div class="sf-accordion-title">
-                            <div class="canvas-content-draggable dragg-handle"></div>
-                            <h4 class="sf-accordion-text">${accordionTitle}</h4>
-                          </div>
+                          <div class="canvas-content-draggable dragg-handle"></div>
+                          <h4 class="sf-accordion-text">${accordionTitle}</h4>
                           <div class="sf-accordion-icon"></div>
                         </div>
-                        <div class="sf-accordion-content" id="${accordionID}"><div class="canvas-subcontainer" id="canvasSubContainer_${accordionID}"></div>${AddSubContentBlockBtnTemplate(accordionID)}</div>
+                        <div class="sf-accordion-content" id="${accordionID}"><div class="canvas-subcontainer" id="canvasSubContainer_${accordionID}"></div>${AddSubContentBlockBtnTemplate(
+      accordionID
+    )}</div>
                       </div>`;
     return template;
   }

@@ -6,23 +6,30 @@
 	display: flex;
 }
 
-// .sf-accordion-item {
-//   padding: 0.5rem;
-//   .sf-accordion-title {
-//     display: flex;
-//     flex-direction: row;
-//     align-items: center;
-//     justify-content: start;
-//     .canvas-content-draggable {
-//         position: relative;
-//         min-height: 1rem;
-//         min-width: 1rem;
-//         padding: 0.5rem 0;
-//         margin-right: 1rem;
-//         border-radius: 0;
-//     }
-//   }
-// }
+.sf-accordion-item {
+  // padding: 0.5rem;
+  position: relative;
+  .sf-accordion-toggle {
+    padding-left: 3rem !important;
+    .dragg-handle {
+      z-index: 2;
+    }
+  }
+  // .sf-accordion-title {
+  //   display: flex;
+  //   flex-direction: row;
+  //   align-items: center;
+  //   justify-content: start;
+  //   .canvas-content-draggable {
+  //       position: relative;
+  //       min-height: 1rem;
+  //       min-width: 1rem;
+  //       padding: 0.5rem 0;
+  //       margin-right: 1rem;
+  //       border-radius: 0;
+  //   }
+  // }
+}
 
 
 .output-container {
