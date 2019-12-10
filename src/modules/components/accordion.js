@@ -79,9 +79,9 @@ export default class Accordion {
   accordionSectionTemplate(accordionID, accordionTitle) {
     const template = `<div class="sf-accordion-item">
                         <div class="sf-accordion-toggle" id="target_${accordionID}">
-                          <div>
+                          <div class="sf-accordion-title">
+                            <div class="canvas-content-draggable dragg-handle"></div>
                             <h4 class="sf-accordion-text">${accordionTitle}</h4>
-                            <div style="position:relative; width: 20px; height: 20px; padding: 5px; border-radius: 3px;" class="canvas-content-draggable dragg-handle"></div>
                           </div>
                           <div class="sf-accordion-icon"></div>
                         </div>
