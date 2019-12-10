@@ -1,7 +1,6 @@
-import { GenerateID, GenerateTabID, DataTemplate, ExtractSubnodes } from '../utils/chromeExtensionUtils';
+import { GenerateID, GenerateTabID, DataTemplate } from '../utils/chromeExtensionUtils';
 import { ContentBlockTemplate, AddContentBlockBtnTemplate, AddSubContentBlockBtnTemplate } from '../utils/interfaceTemplates';
 import { UserInterfaceSortable, AccordionSortable } from '../utils/sortableHandler';
-import { ComponentParser } from './componentHelpers';
 
 export const AccordionLabel = 'Accordion';
 
