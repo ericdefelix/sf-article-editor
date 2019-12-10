@@ -6,15 +6,8 @@
 	display: flex;
 }
 
-.sf-accordion-item {
+// .sf-accordion-item {
   // padding: 0.5rem;
-  position: relative;
-  .sf-accordion-toggle {
-    padding-left: 3rem !important;
-    .dragg-handle {
-      z-index: 2;
-    }
-  }
   // .sf-accordion-title {
   //   display: flex;
   //   flex-direction: row;
@@ -29,7 +22,7 @@
   //       border-radius: 0;
   //   }
   // }
-}
+// }
 
 
 .output-container {
@@ -73,7 +66,17 @@
 
 	@media (min-width: 1400px) {
 		width: $min-container-width;
-	}
+  }
+  
+  .sf-accordion-item {
+    position: relative;
+    .sf-accordion-toggle {
+      padding-left: 3rem !important;
+      .dragg-handle {
+        z-index: 2;
+      }
+    }
+  }
 }
 
 .canvas-content-block {
