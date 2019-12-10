@@ -1,6 +1,6 @@
 import { GenerateID, GenerateTabID, DataTemplate, ExtractSubnodes } from '../utils/chromeExtensionUtils';
 import { ContentBlockTemplate, AddContentBlockBtnTemplate, AddSubContentBlockBtnTemplate } from '../utils/interfaceTemplates';
-import { UserInterfaceSortable } from '../utils/sortableHandler';
+import { UserInterfaceSortable, AccordionSortable } from '../utils/sortableHandler';
 import { ComponentParser } from './componentHelpers';
 
 export const AccordionLabel = 'Accordion';
@@ -69,7 +69,7 @@ export default class Accordion {
 
       accordionSections += this.accordionSectionTemplate(accordionID, accordionTitle);
     }
-    return `${this.editComponentSectionTemplate()}<div class="sf-accordion">${accordionSections}</div>`;
+    return `${this.editComponentSectionTemplate()}<div class="sf-accordion" id="accordionSubContainer">${accordionSections}</div>`;
   }
 
   controlsTemplate(componentID) {
@@ -79,7 +79,10 @@ export default class Accordion {
   accordionSectionTemplate(accordionID, accordionTitle) {
     const template = `<div class="sf-accordion-item">
                         <div class="sf-accordion-toggle" id="target_${accordionID}">
-                          <h4 class="sf-accordion-text">${accordionTitle}</h4>
+                          <div>
+                            <h4 class="sf-accordion-text">${accordionTitle}</h4>
+                            <div style="position:relative; width: 20px; height: 20px; padding: 5px; border-radius: 3px;" class="canvas-content-draggable dragg-handle"></div>
+                          </div>
                           <div class="sf-accordion-icon"></div>
                         </div>
                         <div class="sf-accordion-content" id="${accordionID}"><div class="canvas-subcontainer" id="canvasSubContainer_${accordionID}"></div>${AddSubContentBlockBtnTemplate(accordionID)}</div>
@@ -146,7 +149,7 @@ export default class Accordion {
         editFieldTemplateFxn = this.editFieldTemplate,
         accordionSectionTemplateFxn = this.accordionSectionTemplate,
         updateAccordionListFxn = this.updateAccordionList;
-      
+
       function deleteAccordionItem(){
         const targetInput = document.getElementById(`editInput-${this.getAttribute('data-target')}`);
 
@@ -200,6 +203,12 @@ export default class Accordion {
         });
       });
 
+      // Draggable Click
+      [...HTMLObject.querySelectorAll('.dragg-handle')].forEach(
+         e => e.onclick = e => AccordionSortable({
+            container: document.getElementById(`accordionSubContainer`),
+            })
+         );
       // Update Component
       HTMLObject.querySelector('[data-action="edit-component"]').onclick = function (event) {
         editFields = document.getElementById(`editFields-${HTMLObject.id}`);
