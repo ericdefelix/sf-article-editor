@@ -68,7 +68,7 @@ export default class Accordion {
 
       accordionSections += this.accordionSectionTemplate(accordionID, accordionTitle);
     }
-    return `${this.editComponentSectionTemplate()}<div class="sf-accordion" id="accordionSubContainer">${accordionSections}</div>`;
+    return `${this.editComponentSectionTemplate()}<div class="sf-accordion">${accordionSections}</div>`;
   }
 
   controlsTemplate(componentID) {
@@ -78,13 +78,11 @@ export default class Accordion {
   accordionSectionTemplate(accordionID, accordionTitle) {
     const template = `<div class="sf-accordion-item">
                         <div class="sf-accordion-toggle" id="target_${accordionID}">
-                          <div class="canvas-content-draggable dragg-handle"></div>
+                          <div class="canvas-content-draggable"></div>
                           <h4 class="sf-accordion-text">${accordionTitle}</h4>
                           <div class="sf-accordion-icon"></div>
                         </div>
-                        <div class="sf-accordion-content" id="${accordionID}"><div class="canvas-subcontainer" id="canvasSubContainer_${accordionID}"></div>${AddSubContentBlockBtnTemplate(
-      accordionID
-    )}</div>
+                        <div class="sf-accordion-content" id="${accordionID}"><div class="canvas-subcontainer" id="canvasSubContainer_${accordionID}"></div>${AddSubContentBlockBtnTemplate(accordionID)}</div>
                       </div>`;
     return template;
   }
@@ -201,13 +199,12 @@ export default class Accordion {
           contentDraggableClass: `.canvasDraggableSub_${content.id}`
         });
       });
+      
+      UserInterfaceSortable({
+        container: HTMLObject.querySelector('.sf-accordion'),
+        contentDraggableClass: '.canvas-content-draggable'
+      });
 
-      // Draggable Click
-      [...HTMLObject.querySelectorAll('.dragg-handle')].forEach(
-         e => e.onclick = e => AccordionSortable({
-            container: document.getElementById(`accordionSubContainer`),
-            })
-         );
       // Update Component
       HTMLObject.querySelector('[data-action="edit-component"]').onclick = function (event) {
         editFields = document.getElementById(`editFields-${HTMLObject.id}`);
