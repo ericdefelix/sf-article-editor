@@ -99,6 +99,7 @@ const editor = {
     document.querySelector('body').classList.add('sf-' + themeValue);
   },
   preview: () => {
+    storeMarkupErrors(editor.htmlSection.innerHTML, 'preview');
     GenerateSanitisedHTML(editor.canvasContainer, editor.htmlSection);
     editor.set_source();
     editor.handle_preview();
@@ -106,6 +107,7 @@ const editor = {
     document.querySelector('body').style.overflow = 'hidden';
   },
   set_source: () => {
+    storeMarkupErrors(editor.htmlSection.innerHTML, 'set_source');
     let sourceString = editor.htmlSection.innerHTML.replace(/(\s{3,})|\n|\r|\t/g, '');
     sourceString = sourceString.replace(/sf-accordion-toggle in/g, 'sf-accordion-toggle');
     sourceString = sourceString.replace(/sf-tab-content in/g, 'sf-tab-content');
@@ -124,10 +126,11 @@ const editor = {
   },
   handle_preview: () => {
     if (editor.htmlSection.childNodes.length) {
+      storeMarkupErrors(editor.htmlSection.innerHTML, 'Editor Save');
       editor.htmlSection.querySelectorAll('.sf-tab-item-link').forEach(link => {
         const targetLinkSectionID = link.id.split('target_')[1];
         link.id = link.id + 'preview';
-        editor.htmlSection.querySelector(`#${targetLinkSectionID}`).id = editor.htmlSection.querySelector(`#${targetLinkSectionID}`).id + `preview`;
+        editor.htmlSection.querySelector(`#${targetLinkSectionID}`).id = editor.htmlSection.querySelector(`#${targetLinkSectionID}`).id + 'preview';
       });
     }
     else {
