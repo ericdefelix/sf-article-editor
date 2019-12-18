@@ -4,6 +4,7 @@ import ImageGallery from './modules/ImageGallery';
 import { dataParser } from './modules/utils/dataParser';
 import { GenerateSanitisedHTML } from './modules/utils/GenerateSanitisedHTML';
 import { imageGalleryMockData, htmlMockData } from './modules/utils/mockData';
+import storeMarkupErrors from './modules/utils/markupErrorLogger';
 
 const editor = {
   crxID: '',
@@ -43,11 +44,12 @@ const editor = {
         editor.image_gallery = JSON.parse(objLocalStorage.image_gallery);
         // ImageGallery.render(editor.image_gallery);
       });
-
+      
       chrome.storage.local.get(['instanceHTML'], (objLocalStorage) => {
         const ih = objLocalStorage.instanceHTML;
 
         if (ih !== '' || typeof ih !== 'undefined') {
+          storeMarkupErrors(ih, 'User Markup');
           editor.htmlSection.insertAdjacentHTML('afterbegin', ih);
           editor.existing_data = dataParser(editor.htmlSection);
           editor.htmlSection.innerHTML = '';
@@ -136,7 +138,7 @@ const editor = {
     try {
       GenerateSanitisedHTML(editor.canvasContainer, editor.htmlSection);
       editor.set_source();
-
+      storeMarkupErrors(editor.htmlSection, 'Editor Save');
       const request = {
         method: 'insertToContentEditor',
         origin: window.location.origin,
