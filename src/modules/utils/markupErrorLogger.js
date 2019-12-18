@@ -22,13 +22,14 @@ export default function storeMarkupErrors(ih, type) {
       const isRepeated =
         typeof localStorageArray.find(i => i.message === message) === 'object' ||
         typeof messageArr.find(i => i.message === message) === 'object';
-      console.log('isRepeated', isRepeated, localStorageArray);
+
       const newItem = {
         type,
         date: gmtErrotDate.toLocaleString(),
         message: message,
         markup: ih
       };
+
       if(!isRepeated) {
         messageArr = [
           ...messageArr,
@@ -40,6 +41,7 @@ export default function storeMarkupErrors(ih, type) {
         ];
       }
     });
+    
     localStorage.setItem('DebugLog', JSON.stringify(messageArr));
   }
 }
