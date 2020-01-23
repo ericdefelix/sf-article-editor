@@ -1,7 +1,6 @@
-import { GenerateID, GenerateTabID, DataTemplate, ExtractSubnodes } from '../utils/chromeExtensionUtils';
+import { GenerateID, GenerateTabID, DataTemplate } from '../utils/chromeExtensionUtils';
 import { ContentBlockTemplate, AddContentBlockBtnTemplate, AddSubContentBlockBtnTemplate } from '../utils/interfaceTemplates';
-import { UserInterfaceSortable } from '../utils/sortableHandler';
-import { ComponentParser } from './componentHelpers';
+import { UserInterfaceSortable, AccordionSortable } from '../utils/sortableHandler';
 
 export const AccordionLabel = 'Accordion';
 
@@ -79,6 +78,7 @@ export default class Accordion {
   accordionSectionTemplate(accordionID, accordionTitle) {
     const template = `<div class="sf-accordion-item">
                         <div class="sf-accordion-toggle" id="target_${accordionID}">
+                          <div class="canvas-content-draggable"></div>
                           <h4 class="sf-accordion-text">${accordionTitle}</h4>
                           <div class="sf-accordion-icon"></div>
                         </div>
@@ -146,7 +146,7 @@ export default class Accordion {
         editFieldTemplateFxn = this.editFieldTemplate,
         accordionSectionTemplateFxn = this.accordionSectionTemplate,
         updateAccordionListFxn = this.updateAccordionList;
-      
+
       function deleteAccordionItem(){
         const targetInput = document.getElementById(`editInput-${this.getAttribute('data-target')}`);
 
@@ -198,6 +198,11 @@ export default class Accordion {
           container: document.getElementById(`canvasSubContainer_${content.id}`),
           contentDraggableClass: `.canvasDraggableSub_${content.id}`
         });
+      });
+      
+      UserInterfaceSortable({
+        container: HTMLObject.querySelector('.sf-accordion'),
+        contentDraggableClass: '.canvas-content-draggable'
       });
 
       // Update Component
