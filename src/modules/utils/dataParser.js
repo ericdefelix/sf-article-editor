@@ -1,4 +1,4 @@
-import { ComponentParser } from '../components/componentHelpers';
+import { ComponentParser } from '../utils/componentHelpers';
 
 export function dataParser(htmlSection) {
   const isEmpty = (item) => {
