@@ -1,4 +1,4 @@
-import { ComponentTypes } from './components/componentHelpers';
+import { ComponentTypes } from './utils/componentHelpers';
 
 const toolboxOverlay = () => {
   return document.querySelector('.toolbox-overlay');

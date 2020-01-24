@@ -1,7 +1,15 @@
-import { GenerateID, GenerateTabID, DataTemplate, ExtractSubnodes } from '../utils/chromeExtensionUtils';
-import { ContentBlockTemplate, AddContentBlockBtnTemplate, AddSubContentBlockBtnTemplate } from '../utils/interfaceTemplates';
-import { UserInterfaceSortable } from '../utils/sortableHandler';
-import { ComponentParser } from './componentHelpers';
+import {
+  AddContentBlockBtnTemplate,
+  AddSubContentBlockBtnTemplate,
+  ContentBlockTemplate
+} from "../utils/interfaceTemplates";
+import {
+  DataTemplate,
+  GenerateID,
+  GenerateTabID
+} from "../utils/chromeExtensionUtils";
+
+import { UserInterfaceSortable } from "../utils/sortableHandler";
 
 export const TabsLabel = 'Tabs';
 

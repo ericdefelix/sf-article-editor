@@ -1,9 +1,11 @@
 import './editor.scss';
+
+import { htmlMockData, imageGalleryMockData } from './modules/utils/mockData';
+
+import { GenerateSanitisedHTML } from './modules/utils/generateSanitisedHTML';
+// import ImageGallery from './modules/ImageGallery';
 import UserInterfaceBuilder from './modules/UserInterfaceBuilder';
-import ImageGallery from './modules/ImageGallery';
 import { dataParser } from './modules/utils/dataParser';
-import { GenerateSanitisedHTML } from './modules/utils/GenerateSanitisedHTML';
-import { imageGalleryMockData, htmlMockData } from './modules/utils/mockData';
 
 const editor = {
   crxID: '',
