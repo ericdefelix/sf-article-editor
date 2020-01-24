@@ -1,30 +1,6 @@
 @import 'styles/variables';
-@import '../../node_modules/@leapdev/gui/src/scss/xsf-crx/components/mixins';
+@import './node_modules/@leapdev/gui/dist/scss/xsf-crx/components/mixins';
 
 body.sf-leap {
-  @import './node_modules/@leapdev/gui/src/scss/xsf-crx/sites/sf-leap/sf-leap-theme';
+  @import './node_modules/@leapdev/gui/dist/scss/xsf-crx/sites/sf-leap/sf-leap-theme';
 }
-// body.sf-zaliet {
-//   @import '../../node_modules/@leapdev/gui/src/scss/xsf-crx/sites/sf-zaliet/variables';
-//   @import '../../node_modules/@leapdev/gui/src/scss/xsf-crx/components/blockquotes';
-//   @import '../../node_modules/@leapdev/gui/src/scss/xsf-crx/components/custom-tabs';
-//   @import '../../node_modules/@leapdev/gui/src/scss/xsf-crx/components/accordion';
-//   @import '../../node_modules/@leapdev/gui/src/scss/xsf-crx/components/styled-lists';
-//   @import '../../node_modules/@leapdev/gui/src/scss/xsf-crx/components/well';
-// }
-// body.sf-titlex {
-//   @import '../../node_modules/@leapdev/gui/src/scss/xsf-crx/sites/sf-titlex/variables';
-//   @import '../../node_modules/@leapdev/gui/src/scss/xsf-crx/components/blockquotes';
-//   @import '../../node_modules/@leapdev/gui/src/scss/xsf-crx/components/custom-tabs';
-//   @import '../../node_modules/@leapdev/gui/src/scss/xsf-crx/components/accordion';
-//   @import '../../node_modules/@leapdev/gui/src/scss/xsf-crx/components/styled-lists';
-//   @import '../../node_modules/@leapdev/gui/src/scss/xsf-crx/components/well';
-// }
-// body.sf-lawconnect {
-//   @import '../../node_modules/@leapdev/gui/src/scss/xsf-crx/sites/sf-lawconnect/variables';
-//   @import '../../node_modules/@leapdev/gui/src/scss/xsf-crx/components/blockquotes';
-//   @import '../../node_modules/@leapdev/gui/src/scss/xsf-crx/components/custom-tabs';
-//   @import '../../node_modules/@leapdev/gui/src/scss/xsf-crx/components/accordion';
-//   @import '../../node_modules/@leapdev/gui/src/scss/xsf-crx/components/styled-lists';
-//   @import '../../node_modules/@leapdev/gui/src/scss/xsf-crx/components/well';
-// }
