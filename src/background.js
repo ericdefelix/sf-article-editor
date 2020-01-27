@@ -2,7 +2,11 @@
 // Background.js gets called first. It listens to all window instances and
 // the tabs and popups created under each instance.
 // =================================================================================
-import { UrlContainsArticleEdit, RequestIsValid, SetPosition } from '/modules/utils/chromeExtensionUtils.js';
+import {
+  UrlContainsArticleEdit,
+  RequestIsValid,
+  SetPosition
+} from '/modules/utils/chromeExtensionUtils.js';
 
 const background = {
   crxID: '',
@@ -13,8 +17,7 @@ const background = {
   activeTabs: [],
   activeContentEditorInstances: [],
   requests: [],
-  init: function () {
-  },
+  init: function () {},
   listeners: function () {
     chrome.runtime.requestUpdateCheck(function (data) {
       console.log(data);
@@ -26,7 +29,9 @@ const background = {
           const tab = tabs[i];
           if (UrlContainsArticleEdit(tab.url) && details.reason === 'install') {
             background.currentTabID = tab.id;
-            chrome.tabs.update(tab.id, { highlighted: true });
+            chrome.tabs.update(tab.id, {
+              highlighted: true
+            });
             chrome.tabs.reload(tab.id);
           }
         }
@@ -34,32 +39,45 @@ const background = {
     });
 
     chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
-      if (changeInfo.status == 'loading' && UrlContainsArticleEdit(tab.url)) {
-        chrome.tabs.executeScript(tabId, {
-          file: 'index.js',
-          runAt: 'document_end'
-        });
-      }
+      let interval;
+
+      const checkChangeInfo = () => {
+
+        if (UrlContainsArticleEdit(tab.url) && changeInfo.status === 'complete') {
+          setTimeout(() => {
+            chrome.tabs.executeScript(tabId, {
+              file: 'index.js',
+              runAt: 'document_end'
+            })
+          }, 1500);
+          clearInterval(interval);
+        }
+      };
+
+      interval = setInterval(checkChangeInfo, 500);
+
     });
 
     chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
       const method = request.method;
 
       if (RequestIsValid(request)) background.methods[method](request);
-      sendResponse({ message: 'yes' });
+      sendResponse({
+        message: 'yes'
+      });
     });
   },
   tabRunsPlugin: function (tabId) {
     if (background.activeTabs.length === 0 || background.activeTabs.indexOf(tabId) == -1) {
       return false;
-    }
-    else {
+    } else {
       return true;
     }
   },
   methods: {
     popup: (request) => {
-      const ph = 800, pw = 1100;
+      const ph = 800,
+        pw = 1100;
       const data = request.data;
 
       const px = SetPosition(data.dimensions.win_left, data.dimensions.win_width, pw);
@@ -75,11 +93,16 @@ const background = {
       };
 
       const registerWindow = () => {
-        chrome.tabs.query({ active: true, currentWindow: true }, function (tabs) {
+        chrome.tabs.query({
+          active: true,
+          currentWindow: true
+        }, function (tabs) {
           const currTab = tabs[0];
           if (currTab) {
             chrome.windows.create(popupWindowConfig, function (win) {
-              chrome.windows.getCurrent({ populate: true }, function (currentWindow) {
+              chrome.windows.getCurrent({
+                populate: true
+              }, function (currentWindow) {
                 const activeWindow = {
                   windowID: currentWindow.id,
                   instanceID: request.data.contentEditorInstanceId
@@ -87,10 +110,18 @@ const background = {
 
                 background.activeWindows.push(activeWindow);
                 background.activeContentEditorInstances.push(request.data.contentEditorInstanceId);
-                chrome.storage.local.set({ image_gallery: request.data.image_gallery });
-                chrome.storage.local.set({ tab_id: currTab.id });
-                chrome.storage.local.set({ popup_id: currentWindow.id });
-                chrome.storage.local.set({ contentEditorInstanceId: request.data.contentEditorInstanceId });
+                chrome.storage.local.set({
+                  image_gallery: request.data.image_gallery
+                });
+                chrome.storage.local.set({
+                  tab_id: currTab.id
+                });
+                chrome.storage.local.set({
+                  popup_id: currentWindow.id
+                });
+                chrome.storage.local.set({
+                  contentEditorInstanceId: request.data.contentEditorInstanceId
+                });
               });
             });
           }
@@ -98,7 +129,9 @@ const background = {
       };
 
       if (data.display) {
-        chrome.storage.local.set({ instanceHTML: request.data.instanceHTML }, registerWindow);
+        chrome.storage.local.set({
+          instanceHTML: request.data.instanceHTML
+        }, registerWindow);
       }
     },
     insertToContentEditor: (request) => {
@@ -115,8 +148,7 @@ const background = {
     openImageUpload: (request) => {
       chrome.tabs.sendMessage(background.currentTabID, request);
     },
-    initEditor: (request) => {
-    },
+    initEditor: (request) => {},
     closePopups: (request) => {
       for (var i = 0; i <= background.activeWindows - 1; i++) {
         chrome.windows.remove(background.activeWindows[i].windowID);

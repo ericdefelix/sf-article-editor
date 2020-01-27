@@ -1,4 +1,6 @@
-import { ComponentParser } from '../utils/componentHelpers';
+import {
+  ComponentParser
+} from '../utils/componentHelpers';
 
 export function dataParser(htmlSection) {
   const isEmpty = (item) => {
@@ -12,10 +14,10 @@ export function dataParser(htmlSection) {
     nodeList.forEach((item, index) => {
       // if ignore at index
       const ignore = item.className && item.className.match("sf-");
-      
+
       if (ignore) {
         newList.push(item);
-        lastIgnoreIndex = index; 
+        lastIgnoreIndex = index;
       } else {
         const isPrevArray = Array.isArray(newList[index - 1]);
         // either 1ts item is note ignore or first of non-ignore slice
@@ -53,7 +55,7 @@ export function dataParser(htmlSection) {
     const data = ComponentParser(nodeMain);
     const subcontainers = [];
     if (data.hasSubnodes) {
-      nodeMain.querySelectorAll('[id^="cid-"]').forEach(subcontainer => {  
+      nodeMain.querySelectorAll('[id^="cid-"]').forEach(subcontainer => {
         subcontainers.push({
           id: subcontainer.id,
           nodes: subcontainer.childElementCount === 0 ? [] : (() => {
@@ -62,7 +64,7 @@ export function dataParser(htmlSection) {
               const data = ComponentParser(child);
               data.dom = child;
               data.nodeLevel = 'sub';
-              data.html = data.html.replace(/font\-size\:\s*\d*px\s*\;/g,'');
+              data.html = data.html.replace(/font\-size\:\s*\d*px\s*\;/g, '');
               nodes.push(data);
             });
             return nodes;
@@ -73,7 +75,7 @@ export function dataParser(htmlSection) {
 
     data.subcontainers = subcontainers;
     data.nodeLevel = 'main';
-    data.html = data.html.replace(/font\-size\:\s*\d*px\s*\;/g,'');
+    data.html = data.html.replace(/font\-size\:\s*\d*px\s*\;/g, '');
     nodesData.push(data);
   });
 

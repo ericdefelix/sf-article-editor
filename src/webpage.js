@@ -6,7 +6,10 @@
 // CKEDITOR object from Window
 // =================================================================================
 
-import { UrlContainsArticleEdit, GetClosestParent } from '/modules/utils/chromeExtensionUtils.js';
+import {
+	UrlContainsArticleEdit,
+	GetClosestParent
+} from '/modules/utils/chromeExtensionUtils.js';
 // import { NewBtnTemplateCKEDITOR } from './modules/utils/interfaceTemplates';
 
 const NewBtnTemplateCKEDITOR = (id) => {
@@ -58,7 +61,7 @@ const webpage = {
 		const
 			btnAdvancedEditor = document.querySelectorAll('.cke_button__advancededitor'),
 			btnSource = document.querySelectorAll('.cke_button__source');
-		
+
 		btnAdvancedEditor.forEach((elem, index) => {
 			const
 				ckeditorProxyInstanceId = GetClosestParent(elem, '.cke').getAttribute('id'),
@@ -106,7 +109,7 @@ const webpage = {
 					iframe = document.getElementById('cke_' + contentEditorInstanceId).querySelector('iframe'),
 					head = iframe.contentDocument.querySelector('head'),
 					body = iframe.contentDocument.querySelector('body');
-				
+
 				webpage.methods.initIframeCSS(head, body, 'sf-leap');
 				webpage.methods.collectImgGallery(body);
 			});
@@ -137,7 +140,7 @@ const webpage = {
 				window.postMessage(config, window.location.origin);
 			}
 		},
-		initIframeCSS: (head,body,theme) => {
+		initIframeCSS: (head, body, theme) => {
 			let linkElement = document.createElement('link');
 			linkElement.setAttribute('rel', 'stylesheet');
 			linkElement.setAttribute('type', 'text/css');
@@ -150,7 +153,7 @@ const webpage = {
 			const
 				contentEditorInstanceId = request.data.ckeditorIntanceId,
 				dataHTMLString = request.data.html;
-			
+
 			CKEDITOR.instances[contentEditorInstanceId].setData(dataHTMLString);
 
 			const contentEditorContainer = document.getElementById('cke_' + contentEditorInstanceId);
@@ -177,7 +180,7 @@ const webpage = {
 				if (btn.classList.contains('cke_button__sfdcimage') ||
 					btn.classList.contains('cke_button__source'))
 					continue;
-				
+
 				toolboxItems[i].style.display = 'none';
 			}
 		},
@@ -191,11 +194,14 @@ const webpage = {
 					el = arr[index],
 					alt = el.getAttribute('alt'),
 					src = el.getAttribute('src');
-				
+
 				if (el.nodeType == 1 && el.nodeName == 'IMG' && !el.classList.contains('cke_anchor')) {
 					el.style.width = 200;
 					el.style.height = 'auto';
-					webpage.tempArrayImg.push({ alt: alt, src: src });
+					webpage.tempArrayImg.push({
+						alt: alt,
+						src: src
+					});
 				}
 			}
 
@@ -207,7 +213,7 @@ const webpage = {
 	},
 	run: () => {
 		const testElement = document.getElementsByClassName('TypeRICH_TEXT_AREA_editable');
-		if(testElement.length > 0){
+		if (testElement.length > 0) {
 			webpage.init();
 		}
 	}
