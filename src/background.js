@@ -38,26 +38,6 @@ const background = {
       });
     });
 
-    chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
-      let interval;
-
-      const checkChangeInfo = () => {
-
-        if (UrlContainsArticleEdit(tab.url) && changeInfo.status === 'complete') {
-          setTimeout(() => {
-            chrome.tabs.executeScript(tabId, {
-              file: 'index.js',
-              runAt: 'document_end'
-            })
-          }, 1500);
-          clearInterval(interval);
-        }
-      };
-
-      interval = setInterval(checkChangeInfo, 500);
-
-    });
-
     chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
       const method = request.method;
 

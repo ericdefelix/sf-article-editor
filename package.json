@@ -4,7 +4,7 @@
   "main": "index.js",
   "description": "A visual and sortable content editor for the article's edit page. A custom button will be added to the page via the chrome extension which when clicked will open the editor in a popup window.",
   "scripts": {
-    "build": "webpack --config webpack/webpack.config.prod.js  --colors",
+    "build": "webpack --config webpack/webpack.config.dev.js  --colors",
     "start": "webpack-dev-server --open --config webpack/webpack.config.dev.js"
   },
   "repository": {
