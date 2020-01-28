@@ -50,10 +50,6 @@ const index = {
 				}
 
 			}, false);
-
-
-
-
 		} else if (sectionContent.length > 0) {
 			let injectedCSS = document.createElement('link');
 			injectedCSS.setAttribute('id', 'injectedCSSURL');
@@ -86,7 +82,6 @@ const index = {
 // Inject script into the page salesforce body to read page variables
 
 const injectScript = `(function() { 
-	
 	var checkCKEDITint;
 	var checkCKEDIT = function () {
 		if(kbRTAReady === true) {
@@ -97,12 +92,12 @@ const injectScript = `(function() {
 
 	checkCKEDITint = setInterval(checkCKEDIT, 1000);
 
-})();`
+})();`;
 
 window.addEventListener('load', e => {
-	const script = document.createElement('script')
-	script.text = injectScript
-	document.documentElement.appendChild(script)
+	const script = document.createElement('script');
+	script.text = injectScript;
+	document.documentElement.appendChild(script);
 });
 
 // Read session item for the variable changes & load additional script
@@ -117,6 +112,6 @@ const checkCKEDITR = () => {
 		clearInterval(checkCKEDITRint);
 	}
 
-}
+};
 
 checkCKEDITRint = setInterval(checkCKEDITR, 1000);

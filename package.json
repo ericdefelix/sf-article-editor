@@ -25,11 +25,11 @@
     "url": "https://github.com/wbkd/webpack-starter/issues"
   },
   "devDependencies": {
-    "@leapdev/gui": "0.2.110",
     "@babel/core": "^7.3.3",
     "@babel/plugin-proposal-class-properties": "^7.3.3",
     "@babel/plugin-syntax-dynamic-import": "^7.2.0",
     "@babel/preset-env": "^7.3.1",
+    "@leapdev/gui": "0.2.110",
     "babel-loader": "^8.0.5",
     "clean-webpack-plugin": "^0.1.19",
     "compression-webpack-plugin": "^2.0.0",
@@ -47,6 +47,7 @@
     "recursive-readdir": "^2.2.2",
     "sass-loader": "^7.1.0",
     "style-loader": "^0.23.1",
+    "terser-webpack-plugin": "^2.3.3",
     "webpack": "^4.41.2",
     "webpack-cli": "^3.2.3",
     "webpack-dev-server": "^3.1.14",
