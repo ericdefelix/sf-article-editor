@@ -1,15 +1,16 @@
+/* eslint-disable quotes */
 import {
   AddContentBlockBtnTemplate,
   AddDeleteSubContentBlockBtnTemplate,
   ContentBlockTemplate
-} from "../utils/interfaceTemplates";
+} from '../utils/interfaceTemplates';
 import {
   DataTemplate,
   GenerateID,
   GenerateTabID
-} from "../utils/chromeExtensionUtils";
+} from '../utils/chromeExtensionUtils';
 
-import { UserInterfaceSortable } from "../utils/sortableHandler";
+import { UserInterfaceSortable } from '../utils/sortableHandler';
 
 export const StyledListsLabel = 'Numbering';
 

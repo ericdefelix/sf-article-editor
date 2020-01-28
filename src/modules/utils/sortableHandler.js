@@ -16,21 +16,3 @@ export function UserInterfaceSortable(config) {
 
   new Sortable(config.container, sortableConfig);
 };
-
-export function AccordionSortable({container, contentDraggableClass}) {
-  console.log('dragging');
-  const sortableConfig = {
-    sort: true,
-    touchStartThreshold: 5,
-    filter: '[data-content="empty"]',
-    chosenClass: 'canvas-content-chosen',
-    ghostClass: 'canvas-content-ghost',
-    dragClass: 'canvas-content-dragging',
-    animation: 300,
-    handle: contentDraggableClass,
-    easing: 'cubic-bezier(1, 0, 0, 1)',
-    direction: 'vertical'
-  };
-
-  new Sortable(container, sortableConfig);
-};

@@ -2,14 +2,14 @@ import {
   AddContentBlockBtnTemplate,
   AddSubContentBlockBtnTemplate,
   ContentBlockTemplate
-} from "../utils/interfaceTemplates";
+} from '../utils/interfaceTemplates';
 import {
   DataTemplate,
   GenerateID,
   GenerateTabID
-} from "../utils/chromeExtensionUtils";
+} from '../utils/chromeExtensionUtils';
 
-import { UserInterfaceSortable } from "../utils/sortableHandler";
+import { UserInterfaceSortable } from '../utils/sortableHandler';
 
 export const TabsLabel = 'Tabs';
 
@@ -67,6 +67,7 @@ export default class Tabs {
   }
 
   template(existingData) {    
+    // eslint-disable-next-line quotes
     let navTabItems = ``, navTabSections = ``;
     const hasChildren = () => { return existingData !== null && existingData.hasOwnProperty('sections'); };
     const tabsCountMin = hasChildren() ? existingData.sections.length : this.tabsCountMin;
@@ -163,6 +164,7 @@ export default class Tabs {
     try {
       let
         editFields,
+        // eslint-disable-next-line quotes
         editFieldsInput = ``,
         isEditOpen = false,
         tabsCurrentCount = this.tabsCurrentCount,

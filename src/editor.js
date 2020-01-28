@@ -6,6 +6,8 @@ import { GenerateSanitisedHTML } from './modules/utils/generateSanitisedHTML';
 // import ImageGallery from './modules/ImageGallery';
 import UserInterfaceBuilder from './modules/UserInterfaceBuilder';
 import { dataParser } from './modules/utils/dataParser';
+// import { imageGalleryMockData, htmlMockData } from './modules/utils/mockData';
+import storeMarkupErrors from './modules/utils/markupErrorLogger';
 
 const editor = {
   crxID: '',
@@ -45,11 +47,12 @@ const editor = {
         editor.image_gallery = JSON.parse(objLocalStorage.image_gallery);
         // ImageGallery.render(editor.image_gallery);
       });
-
+      
       chrome.storage.local.get(['instanceHTML'], (objLocalStorage) => {
         const ih = objLocalStorage.instanceHTML;
 
         if (ih !== '' || typeof ih !== 'undefined') {
+          storeMarkupErrors(ih, 'User Markup');
           editor.htmlSection.insertAdjacentHTML('afterbegin', ih);
           editor.existing_data = dataParser(editor.htmlSection);
           editor.htmlSection.innerHTML = '';
@@ -99,6 +102,7 @@ const editor = {
     document.querySelector('body').classList.add('sf-' + themeValue);
   },
   preview: () => {
+    storeMarkupErrors(editor.htmlSection.innerHTML, 'preview');
     GenerateSanitisedHTML(editor.canvasContainer, editor.htmlSection);
     editor.set_source();
     editor.handle_preview();
@@ -106,6 +110,7 @@ const editor = {
     document.querySelector('body').style.overflow = 'hidden';
   },
   set_source: () => {
+    storeMarkupErrors(editor.htmlSection.innerHTML, 'set_source');
     let sourceString = editor.htmlSection.innerHTML.replace(/(\s{3,})|\n|\r|\t/g, '');
     sourceString = sourceString.replace(/sf-accordion-toggle in/g, 'sf-accordion-toggle');
     sourceString = sourceString.replace(/sf-tab-content in/g, 'sf-tab-content');
@@ -124,10 +129,11 @@ const editor = {
   },
   handle_preview: () => {
     if (editor.htmlSection.childNodes.length) {
+      storeMarkupErrors(editor.htmlSection.innerHTML, 'Editor Save');
       editor.htmlSection.querySelectorAll('.sf-tab-item-link').forEach(link => {
         const targetLinkSectionID = link.id.split('target_')[1];
         link.id = link.id + 'preview';
-        editor.htmlSection.querySelector(`#${targetLinkSectionID}`).id = editor.htmlSection.querySelector(`#${targetLinkSectionID}`).id + `preview`;
+        editor.htmlSection.querySelector(`#${targetLinkSectionID}`).id = editor.htmlSection.querySelector(`#${targetLinkSectionID}`).id + 'preview';
       });
     }
     else {
@@ -138,7 +144,7 @@ const editor = {
     try {
       GenerateSanitisedHTML(editor.canvasContainer, editor.htmlSection);
       editor.set_source();
-
+      storeMarkupErrors(editor.htmlSection, 'Editor Save');
       const request = {
         method: 'insertToContentEditor',
         origin: window.location.origin,

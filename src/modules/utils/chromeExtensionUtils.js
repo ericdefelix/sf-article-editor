@@ -93,7 +93,7 @@ export function TinyMCEHelper(contentEditorAppConfig) {
 		selector: contentEditorAppConfig.container,  // change this value according to your HTML
 		inline: true,
 		menubar: false,
-		default_link_target: "_blank",
+		default_link_target: '_blank',
 		image_title: true,
 		automatic_uploads: true,
 		paste_data_images: true,

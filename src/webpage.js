@@ -147,7 +147,7 @@ const webpage = {
 			linkElement.setAttribute('href', document.getElementById('injectedCSSURL').value);
 
 			head.appendChild(linkElement);
-			body.classList.add(theme);
+			body.classList && body.classList.add(theme);
 		},
 		insertToContentEditor: (request) => {
 			const
