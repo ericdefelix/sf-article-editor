@@ -1,3 +1,4 @@
+/* eslint-disable quotes */
 import { ImageGalleryTemplate } from '../modules/utils/interfaceTemplates';
 
 const ImageGallery = {

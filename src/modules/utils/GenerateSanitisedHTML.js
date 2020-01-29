@@ -30,7 +30,7 @@ export function GenerateSanitisedHTML(canvasContainer, htmlSection) {
       }
 
       if (element.querySelector('.sf-accordion') !== null) {
-        element.querySelectorAll(".sf-accordion").forEach(accordion => {
+        element.querySelectorAll('.sf-accordion').forEach(accordion => {
           const draggHandle = accordion.querySelectorAll('.canvas-content-draggable');
 
           [...draggHandle].forEach(draggHandleNode => {

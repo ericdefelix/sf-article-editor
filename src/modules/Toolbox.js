@@ -1,3 +1,4 @@
+/* eslint-disable quotes */
 import { ComponentTypes } from './utils/componentHelpers';
 
 const toolboxOverlay = () => {

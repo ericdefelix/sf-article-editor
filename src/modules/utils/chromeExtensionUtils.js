@@ -56,6 +56,10 @@ export function EncodeHTMLString(str) {
 	return str.replace(/</g,'&lt;').replace(/>/g,'&gt;');
 }
 
+export function RemoveNewLines(str) {
+	return str.replace(/\r?\n|\r/g, '');
+}
+
 export function replaceString(baseStr, strLookup, strReplacement) {
 	return baseStr.replace(strLookup, strReplacement);
 }
@@ -93,7 +97,7 @@ export function TinyMCEHelper(contentEditorAppConfig) {
 		selector: contentEditorAppConfig.container,  // change this value according to your HTML
 		inline: true,
 		menubar: false,
-		default_link_target: "_blank",
+		default_link_target: '_blank',
 		image_title: true,
 		automatic_uploads: true,
 		paste_data_images: true,

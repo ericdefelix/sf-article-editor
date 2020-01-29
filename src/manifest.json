@@ -37,7 +37,14 @@
     "https://leap--uxui.my.salesforce.com/*",
     "https://leap--uxui.cs101.my.salesforce.com/*"
   ],
-  "content_security_policy": "script-src 'self' https://cdnjs.cloudflare.com ;object-src 'self'",
+  "content_security_policy": "script-src 'self' 'unsafe-eval' https://cdnjs.cloudflare.com ;object-src 'self';",
+  "content_scripts": [{
+    "matches": ["https://leap.my.salesforce.com/*",
+      "https://leap--uxui.my.salesforce.com/*",
+      "https://leap--uxui.cs101.my.salesforce.com/*"
+    ],
+    "js": ["index.js"]
+  }],
   "web_accessible_resources": [
     "https://cdnjs.cloudflare.com/ajax/libs/tinymce/4.9.2/tinymce.min.js",
     "https://cdnjs.cloudflare.com/ajax/libs/tinymce/",

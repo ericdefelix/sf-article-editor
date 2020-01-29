@@ -8,6 +8,8 @@
     "sourceType": "module"
   },
   "rules": {
-    "semi": 2
+    "semi": 2,
+    "quotes": [2, "single", { "avoidEscape": true }],
+    "no-undef": 0
   }
 }

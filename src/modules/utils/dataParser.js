@@ -1,6 +1,4 @@
-import {
-  ComponentParser
-} from '../utils/componentHelpers';
+import { ComponentParser } from '../utils/componentHelpers';
 
 export function dataParser(htmlSection) {
   const isEmpty = (item) => {
@@ -13,7 +11,7 @@ export function dataParser(htmlSection) {
 
     nodeList.forEach((item, index) => {
       // if ignore at index
-      const ignore = item.className && item.className.match("sf-");
+      const ignore = item.className && item.className.match('sf-');
 
       if (ignore) {
         newList.push(item);
@@ -35,8 +33,8 @@ export function dataParser(htmlSection) {
     return newList.map(item => {
       if (Array.isArray(item)) {
         // do transform as item is an array\
-        const newDiv = document.createElement("div");
-        newDiv.setAttribute("class", "sf-editor-content");
+        const newDiv = document.createElement('div');
+        newDiv.setAttribute('class', 'sf-editor-content');
         element.insertBefore(newDiv, item[0]);
         item.map(i => newDiv.appendChild(i));
       }

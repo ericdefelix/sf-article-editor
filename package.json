@@ -4,7 +4,7 @@
   "main": "index.js",
   "description": "A visual and sortable content editor for the article's edit page. A custom button will be added to the page via the chrome extension which when clicked will open the editor in a popup window.",
   "scripts": {
-    "build": "webpack --config webpack/webpack.config.prod.js  --colors",
+    "build": "webpack --config webpack/webpack.config.dev.js  --colors",
     "start": "webpack-dev-server --open --config webpack/webpack.config.dev.js"
   },
   "repository": {
@@ -25,7 +25,7 @@
     "url": "https://github.com/wbkd/webpack-starter/issues"
   },
   "devDependencies": {
-    "@leapdev/gui": "0.2.110",
+    "@leapdev/gui": "0.2.119",
     "@babel/core": "^7.3.3",
     "@babel/plugin-proposal-class-properties": "^7.3.3",
     "@babel/plugin-syntax-dynamic-import": "^7.2.0",
@@ -47,6 +47,7 @@
     "recursive-readdir": "^2.2.2",
     "sass-loader": "^7.1.0",
     "style-loader": "^0.23.1",
+    "terser-webpack-plugin": "^2.3.3",
     "webpack": "^4.41.2",
     "webpack-cli": "^3.2.3",
     "webpack-dev-server": "^3.1.14",
@@ -56,6 +57,7 @@
     "@babel/polyfill": "^7.2.5",
     "ckeditor": "^4.11.2",
     "core-js": "^2.6.10",
+    "htmlhint": "^0.11.0",
     "sortablejs": "^1.8.3"
   }
 }

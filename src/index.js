@@ -5,52 +5,52 @@
 // and background.js. This script will attach a script to the page which will handle
 // the triggers coming from Salesforce.
 // =================================================================================
+
 const index = {
 	crxID: '',
 	init: function () {
 		// Get the first FieldCol node (pristine state) rendered by Salesforce and observe if
 		// CKEDITOR starts manipulating the DOM
 		// -- server rendered
+
 		const testElement = document.getElementsByClassName('TypeRICH_TEXT_AREA_editable');
 		const sectionContent = document.querySelectorAll('[id^=articleDetail]');
 
-		MutationObserver = window.MutationObserver || window.WebKitMutationObserver;
+		// MutationObserver = window.MutationObserver || window.WebKitMutationObserver;
 		if (testElement.length > 0) {
-				const observer = new MutationObserver((mutations, observer) => {
-				let injectedCSS = document.createElement('input');
-				let webpageScript = document.createElement('script');
-				webpageScript.setAttribute('type', 'module');
-				webpageScript.setAttribute('src', chrome.extension.getURL('webpage.js'));
 
-				injectedCSS.setAttribute('id', 'injectedCSSURL');
-				injectedCSS.setAttribute('type', 'hidden');
-				injectedCSS.setAttribute('value', chrome.extension.getURL('editor-themes-insert.css'));
-				webpageScript.onload = () => { webpageScript.remove(); };
+			let injectedCSS = document.createElement('input');
+			let webpageScript = document.createElement('script');
+			webpageScript.setAttribute('type', 'module');
+			webpageScript.setAttribute('src', chrome.extension.getURL('webpage.js'));
 
-				(document.head || document.documentElement).appendChild(webpageScript); // Attach to document
-				(document.head || document.documentElement).appendChild(injectedCSS); // Attach to document
+			injectedCSS.setAttribute('id', 'injectedCSSURL');
+			injectedCSS.setAttribute('type', 'hidden');
+			injectedCSS.setAttribute('value', chrome.extension.getURL('editor-themes-insert.css'));
+			webpageScript.onload = () => {
+				webpageScript.remove();
+			};
 
-				observer.disconnect(); // Stop observing if CKEDITOR is initialised
+			(document.head || document.documentElement).appendChild(webpageScript); // Attach to document
+			(document.head || document.documentElement).appendChild(injectedCSS); // Attach to document
 
-				window.addEventListener('message', function (event) {
-					const method = event.data.method;
+			// observer.disconnect(); // Stop observing if CKEDITOR is initialised
 
-					// We only accept messages from ourselves
-					if (event.source != window) return;
-					if (event.type == 'message' && method == 'popup') {
-						chrome.runtime.sendMessage(event.data);
-					}
+			window.addEventListener('message', function (event) {
+				const method = event.data.method;
 
-					if (event.type == 'message' && method == 'closePopups') {
-						chrome.runtime.sendMessage(event.data);
-					}
+				// We only accept messages from ourselves
+				if (event.source != window) return;
+				if (event.type == 'message' && method == 'popup') {
+					chrome.runtime.sendMessage(event.data);
+				}
 
-				}, false);
+				if (event.type == 'message' && method == 'closePopups') {
+					chrome.runtime.sendMessage(event.data);
+				}
 
-			});
-
-			observer.observe(testElement[testElement.length - 1], { subtree: true, childList: true, attributes: true });
-		}else if (sectionContent.length > 0) {
+			}, false);
+		} else if (sectionContent.length > 0) {
 			let injectedCSS = document.createElement('link');
 			injectedCSS.setAttribute('id', 'injectedCSSURL');
 			injectedCSS.setAttribute('rel', 'stylesheet');
@@ -61,20 +61,95 @@ const index = {
 
 		chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
 			const method = request.method;
-			if (method == 'insertToContentEditor') {
-				if (request.crxid == sender.id) {
-					window.postMessage(request, window.location.origin);
-				}
-			}
-			if (method == 'openImageUpload') {
-				window.postMessage(request, window.location.origin);
-			}
-			sendResponse({ message: 'yes' });
+			if (
+        method == 'insertToContentEditor' ||
+        method == 'recordError' ||
+        method == 'openImageUpload'
+      ) {
+        if (request.crxid == sender.id) {
+          window.postMessage(request, window.location.origin);
+        }
+      }
+			// if (method == 'recordError') {
+      //   if (request.crxid == sender.id) {
+      //     window.postMessage(request, window.location.origin);
+      //   }
+      // }
+			// if (method == 'openImageUpload') {
+			// 	window.postMessage(request, window.location.origin);
+			// }
+			sendResponse({
+				message: 'yes'
+			});
 		});
 	},
 	run: function () {
-		index.init();
+		console.log('index.run');
+		let ckeditorChecker, ckeditorCheckerLimiter;
+
+		const timeoutMax = 15000;
+		const clearTimers = () => {
+			clearTimeout(ckeditorCheckerLimiter);
+      clearInterval(ckeditorChecker);			
+		};
+
+		ckeditorChecker = setInterval(() => {
+			// window.sessionStorage.kbRTAReady || 
+			if (document.getElementById('sfdc-ckeditor4-css-override') !== null) {
+        clearTimers();
+        index.init();
+      } else {
+        // console.log('not yet loaded');
+      }
+		}, 200);
+		
+		ckeditorCheckerLimiter = setTimeout(() => {
+			// console.log(document.getElementById('sfdc-ckeditor4-css-override'));
+			clearTimers();
+			console.log('index.js init checker is taking too long. Something wrong with your connection');
+			
+		}, timeoutMax);
 	}
 };
 
-index.run();
+if (window.location.href.includes('/knowledge/publishing/articleEdit')) {
+	index.run();
+}
+
+
+// Inject script into the page salesforce body to read page variables
+
+// const injectScript = `(function() { 
+// 	var checkCKEDITint;
+// 	var checkCKEDIT = function () {
+// 		if(kbRTAReady === true) {
+// 			sessionStorage.setItem('kbRTAReady', true);
+// 			clearInterval(checkCKEDITint);
+// 		}
+// 	}
+
+// 	checkCKEDITint = setInterval(checkCKEDIT, 1000);
+
+// })();`;
+
+// window.addEventListener('load', e => {
+// 	const script = document.createElement('script');
+// 	script.text = injectScript;
+// 	document.documentElement.appendChild(script);
+// });
+
+// // Read session item for the variable changes & load additional script
+
+// let checkCKEDITRint;
+// const checkCKEDITR = () => {
+
+// 	if (sessionStorage.getItem('kbRTAReady')) {
+// 		setTimeout(() => {
+// 			index.run();
+// 		}, 5000);
+// 		clearInterval(checkCKEDITRint);
+// 	}
+
+// };
+
+// checkCKEDITRint = setInterval(checkCKEDITR, 1000);
