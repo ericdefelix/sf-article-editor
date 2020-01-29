@@ -61,19 +61,23 @@ const index = {
 
 		chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
 			const method = request.method;
-			if (method == 'insertToContentEditor') {
-				if (request.crxid == sender.id) {
-					window.postMessage(request, window.location.origin);
-				}
-			}
-			if (method == 'recordError') {
+			if (
+        method == 'insertToContentEditor' ||
+        method == 'recordError' ||
+        method == 'openImageUpload'
+      ) {
         if (request.crxid == sender.id) {
           window.postMessage(request, window.location.origin);
         }
       }
-			if (method == 'openImageUpload') {
-				window.postMessage(request, window.location.origin);
-			}
+			// if (method == 'recordError') {
+      //   if (request.crxid == sender.id) {
+      //     window.postMessage(request, window.location.origin);
+      //   }
+      // }
+			// if (method == 'openImageUpload') {
+			// 	window.postMessage(request, window.location.origin);
+			// }
 			sendResponse({
 				message: 'yes'
 			});
@@ -90,16 +94,17 @@ const index = {
 		};
 
 		ckeditorChecker = setInterval(() => {
-			if (window.sessionStorage.kbRTAReady) {				
-				clearTimers();
-				index.init();
+			// window.sessionStorage.kbRTAReady || 
+			if (document.getElementById('sfdc-ckeditor4-css-override') !== null) {
+        clearTimers();
+        index.init();
       } else {
-        console.log(window.sessionStorage);
-        console.log('not yet loaded');
+        // console.log('not yet loaded');
       }
 		}, 200);
 		
 		ckeditorCheckerLimiter = setTimeout(() => {
+			// console.log(document.getElementById('sfdc-ckeditor4-css-override'));
 			clearTimers();
 			console.log('index.js init checker is taking too long. Something wrong with your connection');
 			
@@ -107,7 +112,10 @@ const index = {
 	}
 };
 
-index.run();
+if (window.location.href.includes('/knowledge/publishing/articleEdit')) {
+	index.run();
+}
+
 
 // Inject script into the page salesforce body to read page variables
 

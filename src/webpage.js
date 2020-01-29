@@ -214,16 +214,25 @@ const webpage = {
 		},
 		recordError: request => {
 			const errorLogData = request.data.errors;
-			let errorLocalStorage = [];
+			let errorLocalStorage;
 			const gmtErrorDate = new Date();
 			const errorLocalStorageName = 'SFCRX_DebugLog';
 
-			if (localStorage.getItem(errorLocalStorageName) === null) {
-				localStorage.setItem(errorLocalStorageName, {});
-			}
+			errorLocalStorage =
+        localStorage.getItem(errorLocalStorageName) === null
+          ? []
+          : JSON.parse(localStorage.getItem(errorLocalStorageName));
 
+			errorLocalStorage.push({
+        time: gmtErrorDate,
+        errors: errorLogData
+      });
 
-			console.log(errorLogData);
+			localStorage.setItem(
+        errorLocalStorageName,
+        JSON.stringify(errorLocalStorage)
+      );
+
 		}
 	},
 	run: () => {
