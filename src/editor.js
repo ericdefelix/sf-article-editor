@@ -3,12 +3,18 @@ import './editor.scss';
 import { htmlMockData, imageGalleryMockData } from './modules/utils/mockData';
 
 import { GenerateSanitisedHTML } from './modules/utils/generateSanitisedHTML';
-// import ImageGallery from './modules/ImageGallery';
+import HTMLHint from 'htmlhint/dist/htmlhint';
 import UserInterfaceBuilder from './modules/UserInterfaceBuilder';
 import { dataParser } from './modules/utils/dataParser';
 
+// import ImageGallery from './modules/ImageGallery';
+// import { imageGalleryMockData, htmlMockData } from './modules/utils/mockData';
+
+
 const editor = {
   crxID: '',
+  popupID: '',
+  tabID: '',
   contentEditorInstanceId: '',
   instanceHTML: '',
   canvasContainer: document.getElementById('canvasContainer'),
@@ -25,45 +31,48 @@ const editor = {
   toolbox: undefined,
   init: () => {
     try {
-      chrome.storage.local.get(['contentEditorInstanceId'], (objLocalStorage) => {
-        editor.contentEditorInstanceId = objLocalStorage.contentEditorInstanceId;
-        editor.btnSave.setAttribute('data-target', editor.contentEditorInstanceId);
+      chrome.storage.local.get(['contentEditorInstanceId'], objLocalStorage => {
+        editor.contentEditorInstanceId =
+          objLocalStorage.contentEditorInstanceId;
+        editor.btnSave.setAttribute(
+          'data-target',
+          editor.contentEditorInstanceId
+        );
         editor.crxID = chrome.runtime.id;
       });
 
-      chrome.storage.local.get(['tab_id'], (objLocalStorage) => {
+      chrome.storage.local.get(['tab_id'], objLocalStorage => {
         editor.tabID = objLocalStorage.tab_id;
         editor.btnSave.setAttribute('data-tab-id', editor.tabID);
       });
 
-      chrome.storage.local.get(['popup_id'], (objLocalStorage) => {
+      chrome.storage.local.get(['popup_id'], objLocalStorage => {
         editor.popupID = objLocalStorage.popup_id;
         editor.btnSave.setAttribute('data-popup-id', editor.popupID);
       });
 
-      chrome.storage.local.get(['image_gallery'], (objLocalStorage) => {
+      chrome.storage.local.get(['image_gallery'], objLocalStorage => {
         editor.image_gallery = JSON.parse(objLocalStorage.image_gallery);
         // ImageGallery.render(editor.image_gallery);
       });
 
-      chrome.storage.local.get(['instanceHTML'], (objLocalStorage) => {
+      chrome.storage.local.get(['instanceHTML'], objLocalStorage => {
         const ih = objLocalStorage.instanceHTML;
 
         if (ih !== '' || typeof ih !== 'undefined') {
+          editor.check_html_errors(ih);
           editor.htmlSection.insertAdjacentHTML('afterbegin', ih);
           editor.existing_data = dataParser(editor.htmlSection);
           editor.htmlSection.innerHTML = '';
-          editor.start_app();
+          editor.start_app();          
         }
       });
 
       document.getElementById('versionNumber').innerText = 'v' + chrome.runtime.getManifest().version;
-
     } catch (e) {
       editor.image_gallery = imageGalleryMockData;
+      editor.check_html_errors(htmlMockData);
       editor.htmlSection.insertAdjacentHTML('afterbegin', htmlMockData);
-
-
       editor.existing_data = dataParser(editor.htmlSection);
       editor.htmlSection.innerHTML = '';
 
@@ -83,7 +92,7 @@ const editor = {
     editor.btnClose.onclick = editor.close_preview;
     editor.btnThemeSelector.onchange = editor.select_theme;
   },
-  html_view: function () {
+  html_view: function() {
     const view = this.value;
     editor.sourceSection.style.display = view == 'source' ? 'block' : 'none';
     editor.htmlSection.style.display = view == 'html' ? 'block' : 'none';
@@ -92,7 +101,7 @@ const editor = {
     editor.outputPane.style.display = 'none';
     document.querySelector('body').removeAttribute('style');
   },
-  select_theme: function () {
+  select_theme: function() {
     const themeValue = this.value;
 
     document.querySelector('body').classList.value = '';
@@ -106,11 +115,17 @@ const editor = {
     document.querySelector('body').style.overflow = 'hidden';
   },
   set_source: () => {
-    let sourceString = editor.htmlSection.innerHTML.replace(/(\s{3,})|\n|\r|\t/g, '');
-    sourceString = sourceString.replace(/sf-accordion-toggle in/g, 'sf-accordion-toggle');
+    let sourceString = editor.htmlSection.innerHTML.replace(
+      /(\s{3,})|\n|\r|\t/g,
+      ''
+    );
+    sourceString = sourceString.replace(
+      /sf-accordion-toggle in/g,
+      'sf-accordion-toggle'
+    );
     sourceString = sourceString.replace(/sf-tab-content in/g, 'sf-tab-content');
     sourceString = sourceString.replace(/sf-tab-item active/g, 'sf-tab-item');
-    
+
     const div = document.createElement('DIV');
     div.innerHTML = sourceString;
     div.querySelectorAll('.sf-tabs').forEach(tabs => {
@@ -127,18 +142,18 @@ const editor = {
       editor.htmlSection.querySelectorAll('.sf-tab-item-link').forEach(link => {
         const targetLinkSectionID = link.id.split('target_')[1];
         link.id = link.id + 'preview';
-        editor.htmlSection.querySelector(`#${targetLinkSectionID}`).id = editor.htmlSection.querySelector(`#${targetLinkSectionID}`).id + `preview`;
+        editor.htmlSection.querySelector(`#${targetLinkSectionID}`).id =
+          editor.htmlSection.querySelector(`#${targetLinkSectionID}`).id +
+          'preview';
       });
-    }
-    else {
+    } else {
       return;
     }
   },
-  save_html: function () {
+  save_html: function() {
     try {
       GenerateSanitisedHTML(editor.canvasContainer, editor.htmlSection);
       editor.set_source();
-
       const request = {
         method: 'insertToContentEditor',
         origin: window.location.origin,
@@ -155,10 +170,50 @@ const editor = {
       chrome.runtime.sendMessage(editor.crxID, request);
     } catch (e) {
       console.log(e);
-      console.log('Chrome API not available. Page origin is not via chrome extension');
+      console.log(
+        'Chrome API not available. Page origin is not via chrome extension'
+      );
     }
   },
-  run: function () {
+  check_html_errors: (htmlString) => {
+    const config = {
+      'tagname-lowercase': true,
+      'attr-value-double-quotes': true,
+      'tag-pair': true,
+      'id-unique': true,
+      'src-not-empty': true,
+      'attr-no-duplication': true,
+      'attr-lowercase': true
+    };
+    const str = `<div class="sf-well">
+    <ul>empty <h5 class="sf-well-heading">Click to edit heading</h5>
+    <div class="sf-well-body"><p>Click here to edit/paste content</p></div>
+    </div></div>`;
+    const htmlHint = HTMLHint.verify(str, config);
+    const request = {
+      method: 'recordError',
+      origin: window.location.origin,
+      crxid: editor.crxID,
+      data: {
+        errors: JSON.stringify(htmlHint),
+        ckeditorIntanceId: editor.ckeditorIntanceId,
+        popupId: editor.popupId,
+        tabId: editor.tabID
+      }
+    };
+    
+    if (htmlHint.length > 0) {
+      try {
+        chrome.runtime.sendMessage(editor.crxID, request);
+      } catch (error) {
+        console.log('You are in stand-alone mode');
+      }
+      console.log('HTML is invalid');
+    } else {
+      console.log('HTML is Valid');
+    }
+  },
+  run: function() {
     this.init();
   }
 };

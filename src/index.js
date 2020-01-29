@@ -66,6 +66,11 @@ const index = {
 					window.postMessage(request, window.location.origin);
 				}
 			}
+			if (method == 'recordError') {
+        if (request.crxid == sender.id) {
+          window.postMessage(request, window.location.origin);
+        }
+      }
 			if (method == 'openImageUpload') {
 				window.postMessage(request, window.location.origin);
 			}
@@ -75,10 +80,10 @@ const index = {
 		});
 	},
 	run: function () {
-		console.log('init');
+		console.log('index.run');
 		let ckeditorChecker, ckeditorCheckerLimiter;
 
-		const timeoutMax = 10000;
+		const timeoutMax = 15000;
 		const clearTimers = () => {
 			clearTimeout(ckeditorCheckerLimiter);
       clearInterval(ckeditorChecker);			
@@ -90,7 +95,7 @@ const index = {
 				index.init();
       } else {
         console.log(window.sessionStorage);
-        console.log("not yet loaded");
+        console.log('not yet loaded');
       }
 		}, 200);
 		

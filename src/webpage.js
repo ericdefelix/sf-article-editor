@@ -98,8 +98,10 @@ const webpage = {
 		window.addEventListener('message', function (event) {
 			const method = event.data.method;
 
-			if (event.type == 'message' && method == 'insertToContentEditor') {
-				webpage.methods.insertToContentEditor(event.data);
+			if (event.type == 'message') {
+				if (method == 'insertToContentEditor' || method == 'recordError') {
+          webpage.methods[method](event.data);
+        }
 			}
 		}, false);
 
@@ -147,7 +149,7 @@ const webpage = {
 			linkElement.setAttribute('href', document.getElementById('injectedCSSURL').value);
 
 			head.appendChild(linkElement);
-			body.classList.add(theme);
+			body.classList && body.classList.add(theme);
 		},
 		insertToContentEditor: (request) => {
 			const
@@ -209,6 +211,19 @@ const webpage = {
 		},
 		sendImageURL: (request) => {
 			window.postMessage(config, window.location.origin);
+		},
+		recordError: request => {
+			const errorLogData = request.data.errors;
+			let errorLocalStorage = [];
+			const gmtErrorDate = new Date();
+			const errorLocalStorageName = 'SFCRX_DebugLog';
+
+			if (localStorage.getItem(errorLocalStorageName) === null) {
+				localStorage.setItem(errorLocalStorageName, {});
+			}
+
+
+			console.log(errorLogData);
 		}
 	},
 	run: () => {
