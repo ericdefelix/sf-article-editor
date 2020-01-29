@@ -75,43 +75,68 @@ const index = {
 		});
 	},
 	run: function () {
-		index.init();
+		console.log('init');
+		let ckeditorChecker, ckeditorCheckerLimiter;
+
+		const timeoutMax = 10000;
+		const clearTimers = () => {
+			clearTimeout(ckeditorCheckerLimiter);
+      clearInterval(ckeditorChecker);			
+		};
+
+		ckeditorChecker = setInterval(() => {
+			if (window.sessionStorage.kbRTAReady) {				
+				clearTimers();
+				index.init();
+      } else {
+        console.log(window.sessionStorage);
+        console.log("not yet loaded");
+      }
+		}, 200);
+		
+		ckeditorCheckerLimiter = setTimeout(() => {
+			clearTimers();
+			console.log('index.js init checker is taking too long. Something wrong with your connection');
+			
+		}, timeoutMax);
 	}
 };
+
+index.run();
 
 // Inject script into the page salesforce body to read page variables
 
-const injectScript = `(function() { 
-	var checkCKEDITint;
-	var checkCKEDIT = function () {
-		if(kbRTAReady === true) {
-			sessionStorage.setItem('kbRTAReady', true);
-			clearInterval(checkCKEDITint);
-		}
-	}
+// const injectScript = `(function() { 
+// 	var checkCKEDITint;
+// 	var checkCKEDIT = function () {
+// 		if(kbRTAReady === true) {
+// 			sessionStorage.setItem('kbRTAReady', true);
+// 			clearInterval(checkCKEDITint);
+// 		}
+// 	}
 
-	checkCKEDITint = setInterval(checkCKEDIT, 1000);
+// 	checkCKEDITint = setInterval(checkCKEDIT, 1000);
 
-})();`;
+// })();`;
 
-window.addEventListener('load', e => {
-	const script = document.createElement('script');
-	script.text = injectScript;
-	document.documentElement.appendChild(script);
-});
+// window.addEventListener('load', e => {
+// 	const script = document.createElement('script');
+// 	script.text = injectScript;
+// 	document.documentElement.appendChild(script);
+// });
 
-// Read session item for the variable changes & load additional script
+// // Read session item for the variable changes & load additional script
 
-let checkCKEDITRint;
-const checkCKEDITR = () => {
+// let checkCKEDITRint;
+// const checkCKEDITR = () => {
 
-	if (sessionStorage.getItem('kbRTAReady')) {
-		setTimeout(() => {
-			index.run();
-		}, 5000);
-		clearInterval(checkCKEDITRint);
-	}
+// 	if (sessionStorage.getItem('kbRTAReady')) {
+// 		setTimeout(() => {
+// 			index.run();
+// 		}, 5000);
+// 		clearInterval(checkCKEDITRint);
+// 	}
 
-};
+// };
 
-checkCKEDITRint = setInterval(checkCKEDITR, 1000);
+// checkCKEDITRint = setInterval(checkCKEDITR, 1000);
