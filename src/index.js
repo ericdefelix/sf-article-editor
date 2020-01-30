@@ -96,8 +96,7 @@ const index = {
 		ckeditorChecker = setInterval(() => {
 			// window.sessionStorage.kbRTAReady || 
 			if (
-        document.getElementById('sfdc-ckeditor4-css-override') !== null ||
-        window.sessionStorage.kbRTAReady
+        document.getElementById('sfdc-ckeditor4-css-override') !== null 
       ) {
         clearTimers();
         index.init();
