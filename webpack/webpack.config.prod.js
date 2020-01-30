@@ -46,7 +46,7 @@ module.exports = merge(common, {
         terserOptions: {
           extractComments: 'all',
           compress: {
-            drop_console: false
+            drop_console: true
           }
         }
       })

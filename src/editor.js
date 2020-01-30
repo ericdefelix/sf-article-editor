@@ -4,10 +4,10 @@ import { htmlMockData, imageGalleryMockData } from './modules/utils/mockData';
 
 import { GenerateSanitisedHTML } from './modules/utils/generateSanitisedHTML';
 import HTMLHint from 'htmlhint/dist/htmlhint';
+import ImageGallery from './modules/ImageGallery';
 import UserInterfaceBuilder from './modules/UserInterfaceBuilder';
 import { dataParser } from './modules/utils/dataParser';
 
-// import ImageGallery from './modules/ImageGallery';
 // import { imageGalleryMockData, htmlMockData } from './modules/utils/mockData';
 
 
@@ -53,7 +53,7 @@ const editor = {
 
       chrome.storage.local.get(['image_gallery'], objLocalStorage => {
         editor.image_gallery = JSON.parse(objLocalStorage.image_gallery);
-        // ImageGallery.render(editor.image_gallery);
+        ImageGallery.render(editor.image_gallery);
       });
 
       chrome.storage.local.get(['instanceHTML'], objLocalStorage => {
@@ -185,11 +185,8 @@ const editor = {
       'attr-no-duplication': true,
       'attr-lowercase': true
     };
-    const str = `<div class="sf-well">
-    <ul>empty <h5 class="sf-well-heading">Click to edit heading</h5>
-    <div class="sf-well-body"><p>Click here to edit/paste content</p></div>
-    </div></div>`;
-    const htmlHint = HTMLHint.verify(str, config);
+
+    const htmlHint = HTMLHint.verify(htmlString, config);
     const request = {
       method: 'recordError',
       origin: window.location.origin,
@@ -201,6 +198,9 @@ const editor = {
         tabId: editor.tabID
       }
     };
+
+    const errorMarkup =
+      '<div class="error-message-container" id="errorContainer">Seems like this article contains malformed HTML. An error has been logged.</div>';
     
     if (htmlHint.length > 0) {
       try {
@@ -208,8 +208,12 @@ const editor = {
       } catch (error) {
         console.log('You are in stand-alone mode');
       }
+      document.querySelector('body').insertAdjacentHTML('afterbegin', errorMarkup);
       console.log('HTML is invalid');
     } else {
+      if (document.getElementById('errorContainer') !== null) {
+        document.getElementById('errorContainer').remove();
+      }
       console.log('HTML is Valid');
     }
   },
