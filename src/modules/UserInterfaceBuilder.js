@@ -1,14 +1,13 @@
-import { Toolbox } from './Toolbox';
-import TextContent from './components/text-content';
+import Accordion from './components/accordion';
+import { EmptyStateTemplate } from '../modules/utils/interfaceTemplates';
+import ImageGallery from './ImageGallery';
 import Info from './components/info';
-import Tips from './components/tips';
 import StyledLists from './components/styled-lists';
 import Tabs from './components/tabs';
-import Accordion from './components/accordion';
-
-import ImageGallery from './ImageGallery';
+import TextContent from './components/text-content';
+import Tips from './components/tips';
+import { Toolbox } from './Toolbox';
 import { UserInterfaceSortable } from '../modules/utils/sortableHandler';
-import { EmptyStateTemplate } from '../modules/utils/interfaceTemplates';
 
 const Components = {
   TextContent,
@@ -113,6 +112,10 @@ const UserInterfaceBuilder = {
     });
   },
   renderEmptyState: () => {
+    if (document.getElementById('errorContainer') !== null) {
+      document.getElementById('errorContainer').remove();
+    }
+
     document.getElementById('btnPreview').disabled = true;
     document.getElementById('btnSave').disabled = true;
     UserInterfaceBuilder.container.insertAdjacentHTML('afterbegin', EmptyStateTemplate('canvasContainer'));

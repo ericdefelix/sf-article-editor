@@ -95,11 +95,12 @@ const index = {
 
 		ckeditorChecker = setInterval(() => {
 			// window.sessionStorage.kbRTAReady || 
-			if (document.getElementById('sfdc-ckeditor4-css-override') !== null) {
+			if (
+        document.getElementById('sfdc-ckeditor4-css-override') !== null ||
+        window.sessionStorage.kbRTAReady
+      ) {
         clearTimers();
         index.init();
-      } else {
-        // console.log('not yet loaded');
       }
 		}, 200);
 		
@@ -112,9 +113,7 @@ const index = {
 	}
 };
 
-if (window.location.href.includes('/knowledge/publishing/articleEdit')) {
-	index.run();
-}
+if (window.location.href.includes('/knowledge/publishing/articleEdit')) index.run();
 
 
 // Inject script into the page salesforce body to read page variables

@@ -46,10 +46,6 @@
   justify-content: center;
   flex-direction: column;
   margin: auto;
-
-	@media (min-width: 1400px) {
-		width: $min-container-width;
-  }
   
   .sf-accordion-item {
     position: relative;
@@ -59,6 +55,13 @@
         z-index: 2;
       }
     }
+  }
+}
+
+@media (min-width: 1400px) {
+  .canvas-container, .error-message-container {
+    width: $min-container-width;
+    margin: auto;
   }
 }
 
@@ -483,4 +486,16 @@ select.canvas-form-control {
 
 .mce-open:active {
   background-color: $canvas-content-action-gray !important;
+}
+
+.error-message-container {
+  z-index: 2000;
+  background-color: #d03b3b;
+  padding: 0.5rem;
+  border-radius: 0.25rem;
+  color: white;
+  -webkit-box-shadow: 0 0.125rem 1rem rgba(0, 0, 0, 0.2);
+  box-shadow: 0 0.125rem 1rem rgba(0, 0, 0, 0.2);
+  margin-bottom: 1rem;
+  text-align: center;
 }

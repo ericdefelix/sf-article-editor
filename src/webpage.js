@@ -226,7 +226,9 @@ const webpage = {
 			errorLocalStorage.push({
         time: gmtErrorDate,
         errors: errorLogData
-      });
+			});
+			
+			console.log(JSON.stringify(errorLocalStorage));
 
 			localStorage.setItem(
         errorLocalStorageName,
