@@ -4,12 +4,8 @@ import { htmlMockData, imageGalleryMockData } from './modules/utils/mockData';
 
 import { GenerateSanitisedHTML } from './modules/utils/generateSanitisedHTML';
 import HTMLHint from 'htmlhint/dist/htmlhint';
-import ImageGallery from './modules/ImageGallery';
 import UserInterfaceBuilder from './modules/UserInterfaceBuilder';
 import { dataParser } from './modules/utils/dataParser';
-
-// import { imageGalleryMockData, htmlMockData } from './modules/utils/mockData';
-
 
 const editor = {
   crxID: '',
@@ -53,7 +49,6 @@ const editor = {
 
       chrome.storage.local.get(['image_gallery'], objLocalStorage => {
         editor.image_gallery = JSON.parse(objLocalStorage.image_gallery);
-        ImageGallery.render(editor.image_gallery);
       });
 
       chrome.storage.local.get(['instanceHTML'], objLocalStorage => {
@@ -63,7 +58,10 @@ const editor = {
           editor.check_html_errors(ih);
           editor.htmlSection.insertAdjacentHTML('afterbegin', ih);
           editor.existing_data = dataParser(editor.htmlSection);
-          editor.htmlSection.innerHTML = '';
+
+          while (editor.htmlSection.firstChild) {
+            editor.htmlSection.removeChild(editor.htmlSection.firstChild);
+          }
           editor.start_app();          
         }
       });
@@ -74,7 +72,10 @@ const editor = {
       editor.check_html_errors(htmlMockData);
       editor.htmlSection.insertAdjacentHTML('afterbegin', htmlMockData);
       editor.existing_data = dataParser(editor.htmlSection);
-      editor.htmlSection.innerHTML = '';
+
+      while (editor.htmlSection.firstChild) {
+        editor.htmlSection.removeChild(editor.htmlSection.firstChild);
+      }
 
       editor.start_app();
       console.log('Chrome API not available. You are in stand-alone mode');

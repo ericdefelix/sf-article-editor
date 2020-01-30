@@ -1,5 +1,6 @@
 export function NewBtnTemplateCKEDITOR(id) {
-  const iconBase64 = 'data:image/svg+xml;utf8;base64,PD94bWwgdmVyc2lvbj0iMS4wIj8+CjxzdmcgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiBoZWlnaHQ9IjE2cHgiIHZpZXdCb3g9IjAgMCA1MTIgNTEyIiB3aWR0aD0iMTZweCI+PHBhdGggZD0ibTQzMi43MzQzNzUgMGgtMzUzLjQ2ODc1Yy00My43MDcwMzEgMC03OS4yNjU2MjUgMzUuNTU4NTk0LTc5LjI2NTYyNSA3OS4yNjU2MjV2MzQuMjY5NTMxaDUxMnYtMzQuMjY5NTMxYzAtNDMuNzA3MDMxLTM1LjU1ODU5NC03OS4yNjU2MjUtNzkuMjY1NjI1LTc5LjI2NTYyNXptLTM1My40Njg3NSA3MS43NjU2MjVjLTguMjUgMC0xNS02LjcxODc1LTE1LTE1IDAtOC4yNzczNDQgNi43NS0xNSAxNS0xNXMxNSA2LjcyMjY1NiAxNSAxNWMwIDguMjgxMjUtNi43NSAxNS0xNSAxNXptNjQuMjY1NjI1IDBjLTguMjUgMC0xNS02LjcxODc1LTE1LTE1IDAtOC4yNzczNDQgNi43NS0xNSAxNS0xNXMxNSA2LjcyMjY1NiAxNSAxNWMwIDguMjgxMjUtNi43NSAxNS0xNSAxNXptNjQuMjY5NTMxIDBjLTguMjUgMC0xNS02LjcxODc1LTE1LTE1IDAtOC4yNzczNDQgNi43NS0xNSAxNS0xNXMxNSA2LjcyMjY1NiAxNSAxNWMwIDguMjgxMjUtNi43NSAxNS0xNSAxNXptMCAwIiBmaWxsPSIjMDAwMDAwIi8+PHBhdGggZD0ibTAgNDMyLjczNDM3NWMwIDQzLjcwNzAzMSAzNS41NTg1OTQgNzkuMjY1NjI1IDc5LjI2NTYyNSA3OS4yNjU2MjVoMzUzLjQ2ODc1YzQzLjcwNzAzMSAwIDc5LjI2NTYyNS0zNS41NTg1OTQgNzkuMjY1NjI1LTc5LjI2NTYyNXYtMjg5LjIwMzEyNWgtNTEyem0zNDEuNzkyOTY5LTE5OC4yNjE3MTljLTUuODU5Mzc1LTUuODU1NDY4LTUuODU5Mzc1LTE1LjM1NTQ2OCAwLTIxLjIxMDkzNyA1Ljg1OTM3NS01Ljg1OTM3NSAxNS4zNTU0NjktNS44NTkzNzUgMjEuMjE0ODQzIDBsNjQuMjY1NjI2IDY0LjI2NTYyNWM1Ljg1OTM3NCA1Ljg1OTM3NSA1Ljg1OTM3NCAxNS4zNTU0NjggMCAyMS4yMTQ4NDRsLTY0LjI2NTYyNiA2NC4yNjU2MjRjLTIuOTI5Njg3IDIuOTI5Njg4LTYuNzY5NTMxIDQuMzk0NTMyLTEwLjYwOTM3NCA0LjM5NDUzMi0zLjgzNTkzOCAwLTcuNjc1NzgyLTEuNDY0ODQ0LTEwLjYwNTQ2OS00LjM5NDUzMi01Ljg1NTQ2OS01Ljg1NTQ2OC01Ljg1NTQ2OS0xNS4zNTU0NjggMC0yMS4yMTA5MzdsNTMuNjYwMTU2LTUzLjY2MDE1NnptLTEzMS4zNDM3NSAxMTEuMjE4NzUgNjQuMjY5NTMxLTEyOC41MzUxNTZjMy43MDMxMjUtNy40MDYyNSAxMi43MTQ4NDQtMTAuNDEwMTU2IDIwLjEyMTA5NC02LjcwNzAzMSA3LjQxMDE1NiAzLjcwMzEyNSAxMC40MTQwNjIgMTIuNzE0ODQzIDYuNzEwOTM3IDIwLjEyNWwtNjQuMjY5NTMxIDEyOC41MzUxNTZjLTIuNjI1IDUuMjUzOTA2LTcuOTI1NzgxIDguMjkyOTY5LTEzLjQyNTc4MSA4LjI5Mjk2OS0yLjI1MzkwNyAwLTQuNTQyOTY5LS41MDc4MTMtNi42OTUzMTMtMS41ODU5MzgtNy40MTAxNTYtMy43MDMxMjUtMTAuNDE0MDYyLTEyLjcxNDg0NC02LjcxMDkzNy0yMC4xMjV6bS0xMjUuNzIyNjU3LTY4LjE2NDA2MiA2NC4yNjU2MjYtNjQuMjY5NTMyYzUuODU5Mzc0LTUuODU1NDY4IDE1LjM1NTQ2OC01Ljg1NTQ2OCAyMS4yMTQ4NDMgMCA1Ljg1NTQ2OSA1Ljg1OTM3NiA1Ljg1NTQ2OSAxNS4zNTU0NjkgMCAyMS4yMTQ4NDRsLTUzLjY2MDE1NiA1My42NjAxNTYgNTMuNjU2MjUgNTMuNjYwMTU3YzUuODU5Mzc1IDUuODU1NDY5IDUuODU5Mzc1IDE1LjM1NTQ2OSAwIDIxLjIxNDg0My0yLjkyNTc4MSAyLjkyNTc4Mi02Ljc2NTYyNSA0LjM5MDYyNi0xMC42MDU0NjkgNC4zOTA2MjYtMy44MzU5MzcgMC03LjY3NTc4MS0xLjQ2NDg0NC0xMC42MDU0NjgtNC4zOTA2MjZsLTY0LjI2NTYyNi02NC4yNjk1MzFjLTUuODU5Mzc0LTUuODU1NDY5LTUuODU5Mzc0LTE1LjM1MTU2MiAwLTIxLjIxMDkzN3ptMCAwIiBmaWxsPSIjMDAwMDAwIi8+PC9zdmc+Cg==';
+  const iconBase64 =
+    'data:image/svg+xml;utf8;base64,PD94bWwgdmVyc2lvbj0iMS4wIj8+CjxzdmcgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiBoZWlnaHQ9IjE2cHgiIHZpZXdCb3g9IjAgMCA1MTIgNTEyIiB3aWR0aD0iMTZweCI+PHBhdGggZD0ibTQzMi43MzQzNzUgMGgtMzUzLjQ2ODc1Yy00My43MDcwMzEgMC03OS4yNjU2MjUgMzUuNTU4NTk0LTc5LjI2NTYyNSA3OS4yNjU2MjV2MzQuMjY5NTMxaDUxMnYtMzQuMjY5NTMxYzAtNDMuNzA3MDMxLTM1LjU1ODU5NC03OS4yNjU2MjUtNzkuMjY1NjI1LTc5LjI2NTYyNXptLTM1My40Njg3NSA3MS43NjU2MjVjLTguMjUgMC0xNS02LjcxODc1LTE1LTE1IDAtOC4yNzczNDQgNi43NS0xNSAxNS0xNXMxNSA2LjcyMjY1NiAxNSAxNWMwIDguMjgxMjUtNi43NSAxNS0xNSAxNXptNjQuMjY1NjI1IDBjLTguMjUgMC0xNS02LjcxODc1LTE1LTE1IDAtOC4yNzczNDQgNi43NS0xNSAxNS0xNXMxNSA2LjcyMjY1NiAxNSAxNWMwIDguMjgxMjUtNi43NSAxNS0xNSAxNXptNjQuMjY5NTMxIDBjLTguMjUgMC0xNS02LjcxODc1LTE1LTE1IDAtOC4yNzczNDQgNi43NS0xNSAxNS0xNXMxNSA2LjcyMjY1NiAxNSAxNWMwIDguMjgxMjUtNi43NSAxNS0xNSAxNXptMCAwIiBmaWxsPSIjMDAwMDAwIi8+PHBhdGggZD0ibTAgNDMyLjczNDM3NWMwIDQzLjcwNzAzMSAzNS41NTg1OTQgNzkuMjY1NjI1IDc5LjI2NTYyNSA3OS4yNjU2MjVoMzUzLjQ2ODc1YzQzLjcwNzAzMSAwIDc5LjI2NTYyNS0zNS41NTg1OTQgNzkuMjY1NjI1LTc5LjI2NTYyNXYtMjg5LjIwMzEyNWgtNTEyem0zNDEuNzkyOTY5LTE5OC4yNjE3MTljLTUuODU5Mzc1LTUuODU1NDY4LTUuODU5Mzc1LTE1LjM1NTQ2OCAwLTIxLjIxMDkzNyA1Ljg1OTM3NS01Ljg1OTM3NSAxNS4zNTU0NjktNS44NTkzNzUgMjEuMjE0ODQzIDBsNjQuMjY1NjI2IDY0LjI2NTYyNWM1Ljg1OTM3NCA1Ljg1OTM3NSA1Ljg1OTM3NCAxNS4zNTU0NjggMCAyMS4yMTQ4NDRsLTY0LjI2NTYyNiA2NC4yNjU2MjRjLTIuOTI5Njg3IDIuOTI5Njg4LTYuNzY5NTMxIDQuMzk0NTMyLTEwLjYwOTM3NCA0LjM5NDUzMi0zLjgzNTkzOCAwLTcuNjc1NzgyLTEuNDY0ODQ0LTEwLjYwNTQ2OS00LjM5NDUzMi01Ljg1NTQ2OS01Ljg1NTQ2OC01Ljg1NTQ2OS0xNS4zNTU0NjggMC0yMS4yMTA5MzdsNTMuNjYwMTU2LTUzLjY2MDE1NnptLTEzMS4zNDM3NSAxMTEuMjE4NzUgNjQuMjY5NTMxLTEyOC41MzUxNTZjMy43MDMxMjUtNy40MDYyNSAxMi43MTQ4NDQtMTAuNDEwMTU2IDIwLjEyMTA5NC02LjcwNzAzMSA3LjQxMDE1NiAzLjcwMzEyNSAxMC40MTQwNjIgMTIuNzE0ODQzIDYuNzEwOTM3IDIwLjEyNWwtNjQuMjY5NTMxIDEyOC41MzUxNTZjLTIuNjI1IDUuMjUzOTA2LTcuOTI1NzgxIDguMjkyOTY5LTEzLjQyNTc4MSA4LjI5Mjk2OS0yLjI1MzkwNyAwLTQuNTQyOTY5LS41MDc4MTMtNi42OTUzMTMtMS41ODU5MzgtNy40MTAxNTYtMy43MDMxMjUtMTAuNDE0MDYyLTEyLjcxNDg0NC02LjcxMDkzNy0yMC4xMjV6bS0xMjUuNzIyNjU3LTY4LjE2NDA2MiA2NC4yNjU2MjYtNjQuMjY5NTMyYzUuODU5Mzc0LTUuODU1NDY4IDE1LjM1NTQ2OC01Ljg1NTQ2OCAyMS4yMTQ4NDMgMCA1Ljg1NTQ2OSA1Ljg1OTM3NiA1Ljg1NTQ2OSAxNS4zNTU0NjkgMCAyMS4yMTQ4NDRsLTUzLjY2MDE1NiA1My42NjAxNTYgNTMuNjU2MjUgNTMuNjYwMTU3YzUuODU5Mzc1IDUuODU1NDY5IDUuODU5Mzc1IDE1LjM1NTQ2OSAwIDIxLjIxNDg0My0yLjkyNTc4MSAyLjkyNTc4Mi02Ljc2NTYyNSA0LjM5MDYyNi0xMC42MDU0NjkgNC4zOTA2MjYtMy44MzU5MzcgMC03LjY3NTc4MS0xLjQ2NDg0NC0xMC42MDU0NjgtNC4zOTA2MjZsLTY0LjI2NTYyNi02NC4yNjk1MzFjLTUuODU5Mzc0LTUuODU1NDY5LTUuODU5Mzc0LTE1LjM1MTU2MiAwLTIxLjIxMDkzN3ptMCAwIiBmaWxsPSIjMDAwMDAwIi8+PC9zdmc+Cg==';
   const inlineCSS = `background-image:url('${iconBase64}');background-position:0 0; background-size:auto;`;
 
   return `<span id="custom_cke_${id}" class="cke_toolbar" role="toolbar">
@@ -16,12 +17,12 @@ export function NewBtnTemplateCKEDITOR(id) {
 					</span>`;
 }
 
-export function ContentBlockTemplate(params) {	
+export function ContentBlockTemplate(params) {
   return `<section class="canvas-content-block" id="${params.id}">
 		<div class="canvas-content-config">
 			<div class="canvas-content-draggable ${params.draggableClass}"></div>
 			<span class="canvas-content-label">${params.type}</span>
-			${ params.controlsTemplate}
+			${params.controlsTemplate}
 			<button class="canvas-btn canvas-btn-xs" data-action="toggle-view-component" data-target="${params.id}">
 				<i class="icon-collapse"></i>
 			</button>
@@ -30,9 +31,9 @@ export function ContentBlockTemplate(params) {
 			</button>
 		</div>
 		<div class="canvas-content-snippet" id="snippet-${params.id}">
-			${ params.componentTemplate}
+			${params.componentTemplate}
 		</div>
-		${ params.addTemplate}
+		${params.addTemplate}
 	</section>`;
 }
 
@@ -49,7 +50,7 @@ export function EmptyStateTemplate(containerID) {
 }
 
 export function AddContentBlockBtnTemplate(containerID) {
-	return `<div class="canvas-content-action canvas-add-component">
+  return `<div class="canvas-content-action canvas-add-component">
 			<div class="content-action-hotspot">
 				<button type="button" class="canvas-btn canvas-btn-xs" data-action="select-component" data-node-level="main" data-target="${containerID}">
 					<i class="icon-plus">&#43;</i>
@@ -59,7 +60,7 @@ export function AddContentBlockBtnTemplate(containerID) {
 }
 
 export function AddSubContentBlockBtnTemplate(containerID) {
-	return `<div class="canvas-add-component">
+  return `<div class="canvas-add-component">
 			<div class="subcontent-action-hotspot">
 				<button type="button" class="canvas-btn canvas-btn-xs" data-action="select-component" data-node-level="sub" data-target="canvasSubContainer_${containerID}"><i class="icon-plus">&#43;</i> Add Content</button>
 			</div>
@@ -67,7 +68,7 @@ export function AddSubContentBlockBtnTemplate(containerID) {
 }
 
 export function AddDeleteSubContentBlockBtnTemplate(containerID) {
-	return `<div class="canvas-add-component" >
+  return `<div class="canvas-add-component" >
 			<div class="subcontent-action-hotspot">
 				<button type="button" class="canvas-btn canvas-btn-xs" data-action="select-component" data-node-level="sub" data-target="canvasSubContainer_${containerID}"><i class="icon-plus">&#43;</i> Add Content</button>
 				<button type="button" class="canvas-btn canvas-btn-xs" data-action="remove-bullet" data-target="${containerID}">Remove Bullet Point</button>
@@ -76,11 +77,25 @@ export function AddDeleteSubContentBlockBtnTemplate(containerID) {
 }
 
 export function ImageGalleryTemplate() {
-	return `<div class="modal-editor-image-gallery" id="modalImageGallery" style="display: none;">
+  return `<div class="modal-editor-image-gallery" id="modalImageGallery" style="display: none;">
 			<div class="img-gallery-list">
 				<label>Select Image</label>
 				<button type="button" id="btnCloseImgGallery" class="canvas-btn canvas-btn-xs"><i class="icon-delete"></i></button>
-				<div class="img-gallery-scroll"></div>
+				<div class="img-gallery-scroll" id="imgGalleryScroll"></div>
 			</div>
 		</div>`;
+}
+
+export function ImageGalleryItemTemplate(data) {
+	let list = '';
+
+	data.forEach(img => {
+		list += `<div class="img-gallery-item" data-value="${img.src}"><div class="img-gallery-thumbnail" style="background-image: url(${img.src});"></div><span class="img-gallery-label">${img.alt}</span></div>`;
+	});
+
+  return list;
+}
+
+export function ImageGalleryEmpty() {
+	return '<p class="text-center img-gallery-info">Your Article Image Gallery is currently empty.</p>';
 }

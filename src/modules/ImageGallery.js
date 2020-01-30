@@ -1,10 +1,15 @@
 /* eslint-disable quotes */
-import { ImageGalleryTemplate } from '../modules/utils/interfaceTemplates';
+import {
+  ImageGalleryTemplate,
+  ImageGalleryItemTemplate,
+  ImageGalleryEmpty
+} from "../modules/utils/interfaceTemplates";
 
 const ImageGallery = {
   container: null,
+  scroll: null,
   init: (params) => {
-    document.body.insertAdjacentHTML('beforeend', ImageGalleryTemplate()); 
+    document.querySelector('body').insertAdjacentHTML('beforeend', ImageGalleryTemplate());
     ImageGallery.container = document.getElementById('modalImageGallery');
     ImageGallery.listeners();
     ImageGallery.render(params.data);
@@ -20,11 +25,14 @@ const ImageGallery = {
       }
     });
     
-    imageGalleryListObserver.observe(ImageGallery.container.querySelector('.img-gallery-scroll'), {
-      attributes: false,
-      subtree: false,
-      childList: true
-    });
+    imageGalleryListObserver.observe(
+      document.getElementById('imgGalleryScroll'),
+      {
+        attributes: false,
+        subtree: false,
+        childList: true
+      }
+    );
 
     document.addEventListener('click', (event) => {
       const t = event.target;
@@ -38,21 +46,16 @@ const ImageGallery = {
 
   },
   render: (data) => {
-    let list = '';
+    // while (ImageGallery.scroll.firstChild) {
+    //   ImageGallery.scroll.removeChild(ImageGallery.scroll.firstChild);
+    // }
 
-    data.forEach(img => {
-      list += `<div class="img-gallery-item" data-value="${img.src}">
-        <div class="img-gallery-thumbnail" style="background-image: url(${img.src});"></div>
-        <span class="img-gallery-label">${img.alt}</span>
-        </div>`;
-    });
-
-    const emptyList = `<p class="text-center img-gallery-info">Your Article Image Gallery is currently empty.</p>`;
-
-    ImageGallery.container.querySelector('.img-gallery-scroll').innerHTML = '';
-    ImageGallery.container
-      .querySelector('.img-gallery-scroll')
-      .insertAdjacentHTML('afterbegin', data.length ? list : emptyList);
+    document
+      .getElementById('imgGalleryScroll')
+      .insertAdjacentHTML(
+        'afterbegin',
+        data.length ? ImageGalleryItemTemplate(data) : ImageGalleryEmpty()
+      );
   },
   select_value: function () {
     const filepickerInput = document.querySelector('.mce-filepicker .mce-textbox');
