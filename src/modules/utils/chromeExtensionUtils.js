@@ -77,7 +77,7 @@ export function GetComponentType(HTMLNode) {
 }
 
 export function DataTemplate () {
-	return { html: '', type: '', nodeLevel: '', hasSubnodes: false, subnodes: [] };
+	return { html: '', type: '', nodeLevel: '', hasSubnodes: false };
 };
 
 export function UnwrapElement(wrapper) {
@@ -115,25 +115,25 @@ export function IsNullOrWhiteSpace(str) {
 	return (!str || str.length === 0 || /^\s*$/.test(str));
 }
 
-export function ExtractSubnodes(params, ComponentParser) {
-	const data = { containers: [], elements: [] };
-	const titles = params.titleSelector === '' ? null : [...params.htmlNode.querySelectorAll(params.titleSelector)];
+// export function ExtractSubnodes(params, ComponentParser) {
+// 	const data = { containers: [], elements: [] };
+// 	const titles = params.titleSelector === '' ? null : [...params.htmlNode.querySelectorAll(params.titleSelector)];
 
-	params.htmlNode.querySelectorAll(params.containerSelector).forEach((container, index) => {		
-		const elements = [];
-		if (container.children.length !== 0) {
-			[...container.children].forEach(child => {
-				const subData = ComponentParser(child);
-				subData.nodeLevel = 2;
-				if (child.nodeType === 1) elements.push(subData);
-			});
-		}
+// 	params.htmlNode.querySelectorAll(params.containerSelector).forEach((container, index) => {		
+// 		const elements = [];
+// 		if (container.children.length !== 0) {
+// 			[...container.children].forEach(child => {
+// 				const subData = ComponentParser(child);
+// 				subData.nodeLevel = 2;
+// 				if (child.nodeType === 1) elements.push(subData);
+// 			});
+// 		}
 
-		data.elements.push(elements);
+// 		data.elements.push(elements);
 
-		container.innerHTML = '';
-		data.containers.push({ dom: container, title: titles === null ? null : titles[index].textContent });
-	});
+// 		container.innerHTML = '';
+// 		data.containers.push({ dom: container, title: titles === null ? null : titles[index].textContent });
+// 	});
 
-	return data;
-}
+// 	return data;
+// }

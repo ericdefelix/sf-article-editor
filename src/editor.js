@@ -188,6 +188,9 @@ const editor = {
     };
 
     const htmlHint = HTMLHint.verify(htmlString, config);
+
+    console.log(htmlHint);
+    
     const request = {
       method: 'recordError',
       origin: window.location.origin,
