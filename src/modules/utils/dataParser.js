@@ -1,4 +1,5 @@
 import { ComponentParser } from '../utils/componentHelpers';
+import { NormaliseHTMLData } from '../utils/chromeExtensionUtils';
 
 export function dataParser(htmlSection) {
   

@@ -1,4 +1,5 @@
-export const htmlMockData = `
+export const htmlMockData = '';
+export const htmlMockData1 = `
 <span>atsfasdfsd </span>
 
 tsetasdfas df

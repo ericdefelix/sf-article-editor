@@ -106,13 +106,17 @@ export function TinyMCEHelper(contentEditorAppConfig) {
 		plugins: contentEditorAppConfig.config.plugins,
 		file_picker_callback: function (cb, value) {
 			// console.log(cb,value);
-			// ImageGallery.run(contentEditorAppConfig.images);		
+			// ImageGallery.run(contentEditorAppConfig.images);
 		}
 	};
 }
 
 export function IsNullOrWhiteSpace(str) {
 	return (!str || str.length === 0 || /^\s*$/.test(str));
+}
+
+export function NormaliseHTMLData(element, nodeList) {
+
 }
 
 // export function ExtractSubnodes(params, ComponentParser) {

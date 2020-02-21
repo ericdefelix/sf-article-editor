@@ -1,8 +1,8 @@
 /* eslint-disable quotes */
 import {
-  ImageGalleryTemplate,
+  ImageGalleryEmpty,
   ImageGalleryItemTemplate,
-  ImageGalleryEmpty
+  ImageGalleryTemplate
 } from "../modules/utils/interfaceTemplates";
 
 const ImageGallery = {
@@ -37,7 +37,7 @@ const ImageGallery = {
     document.addEventListener('click', (event) => {
       const t = event.target;
       if (t.classList.value.includes('mce-i-browse') ||
-        (t.parentNode.nodeName === 'BUTTON' && t.id.includes('-action') ||
+        (t.parentNode.nodeName === 'BUTTON' && t.id.includes('-action') &&
           t.classList.value.includes('mce-open'))
       ) {
         ImageGallery.toggle_view();
@@ -46,10 +46,6 @@ const ImageGallery = {
 
   },
   render: (data) => {
-    // while (ImageGallery.scroll.firstChild) {
-    //   ImageGallery.scroll.removeChild(ImageGallery.scroll.firstChild);
-    // }
-
     document
       .getElementById('imgGalleryScroll')
       .insertAdjacentHTML(
