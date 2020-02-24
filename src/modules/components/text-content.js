@@ -48,8 +48,12 @@ export default class TextContent {
         ]
       },
       indentation: '15px',
-      plugins: 'lists advlist link image table imagetools',
-      toolbar: 'undo redo | formatselect removeformat | bold italic strikethrough | alignleft aligncenter alignright alignjustify | outdent indent | link image table | numlist bullist'
+      plugins: 'lists advlist link image table imagetools paste',
+      toolbar: 'undo redo | formatselect removeformat | bold italic strikethrough | alignleft aligncenter alignright alignjustify | outdent indent | link image table | numlist bullist',
+      paste_postprocess: function (plugin, args) {
+        console.log(args.node);
+        
+      }
     };
   }
 
