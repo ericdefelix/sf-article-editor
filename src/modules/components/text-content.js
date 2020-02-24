@@ -28,9 +28,31 @@ export default class TextContent {
     this.id = GenerateID();
     this.cssClass = 'sf-editor-content';
     this.contentEditorConfig = {
+      formats: {
+        removeformat: [
+          {
+            selector: 'h1,h2,h3,h4,h5,h6',
+            remove: 'all',
+            split: false,
+            expand: false,
+            block_expand: true,
+            deep: true
+          },
+          {
+            selector: 'a,b,strong,em,i,font,u,strike,sub,sup,dfn,code,samp,kbd,var,cite,mark,q,del,ins',
+            remove: 'all',
+            split: true,
+            expand: false,
+            deep: true
+          }
+        ]
+      },
       indentation: '15px',
-      plugins: 'lists advlist link image table imagetools',
-      toolbar: 'undo redo | formatselect | bold italic strikethrough | alignleft aligncenter alignright alignjustify | link image table | numlist bullist'
+      plugins: 'lists advlist link image table imagetools paste',
+      toolbar: 'undo redo | formatselect removeformat | bold italic strikethrough | alignleft aligncenter alignright alignjustify | outdent indent | link image table | numlist bullist',
+      paste_postprocess: function (plugin, args) {
+        console.log(args.node);
+      }
     };
   }
 

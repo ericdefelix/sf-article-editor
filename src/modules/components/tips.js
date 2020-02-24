@@ -1,8 +1,8 @@
-import { GenerateID, TinyMCEHelper, DataTemplate } from '../utils/chromeExtensionUtils';
 import {
-  ContentBlockTemplate,
-  AddContentBlockBtnTemplate
+  AddContentBlockBtnTemplate,
+  ContentBlockTemplate
 } from '../utils/interfaceTemplates';
+import { DataTemplate, GenerateID, TinyMCEHelper } from '../utils/chromeExtensionUtils';
 
 export const TipsLabel = 'Tips';
 
@@ -25,7 +25,7 @@ export default class Tips {
     this.nodeObject = null;
     this.contentEditorConfig = {
       plugins: 'link image table',
-      toolbar: 'undo redo | formatselect | bold italic strikethrough | alignleft aligncenter alignright alignjustify | link image table',
+      toolbar: 'undo redo | formatselect | bold italic strikethrough | alignleft aligncenter alignright alignjustify | outdent indent | link image table',
     };
     this.types = {
       'info'  : 'Info',

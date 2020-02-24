@@ -28,7 +28,7 @@ export default class Info {
     this.cssClass = 'sf-well';
     this.contentEditorConfig = {
       plugins: 'link image table',
-      toolbar: 'undo redo | formatselect | bold italic strikethrough | alignleft aligncenter alignright alignjustify | link image table'
+      toolbar: 'undo redo | formatselect | bold italic strikethrough | alignleft aligncenter alignright alignjustify | outdent indent | link image table'
     };
   }
 

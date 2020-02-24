@@ -1,10 +1,14 @@
 import { ComponentParser } from '../utils/componentHelpers';
+import { NormaliseHTMLData } from '../utils/chromeExtensionUtils';
 
 export function dataParser(htmlSection) {
+  
   const isEmpty = (item) => {
     return item.textContent.trim().length === 0 ? true : false;
   };
   const nodesData = [];
+
+  // Data formatter
   const dataFormatter = (element, nodeList) => {
     let lastIgnoreIndex = -1;
     const newList = [];
@@ -40,6 +44,7 @@ export function dataParser(htmlSection) {
       }
     });
   };
+  // Data formatter
 
   [...htmlSection.childNodes].forEach(item => {
     if (isEmpty(item)) {
@@ -49,6 +54,7 @@ export function dataParser(htmlSection) {
 
   dataFormatter(htmlSection, htmlSection.childNodes);
 
+  // Model data
   [...htmlSection.childNodes].forEach(nodeMain => {
     const data = ComponentParser(nodeMain);
     const subcontainers = [];
@@ -77,5 +83,7 @@ export function dataParser(htmlSection) {
     nodesData.push(data);
   });
 
+  console.log(nodesData);
+  
   return nodesData;
 }

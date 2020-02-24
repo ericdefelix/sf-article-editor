@@ -153,11 +153,6 @@ export default class StyledLists {
         listContainer.insertAdjacentHTML('beforeend', numberingSectionTemplateFxn(newListItemID));
       };
 
-      // HTMLObject.querySelector('select').onchange = function () {
-      //   const listDOM = document.createElement(this.value);
-      //   HTMLObject.querySelector('.canvas-content-snippet').appendChild(listDOM);
-      // };
-
       setButtonStates();
 
     } catch (error) {

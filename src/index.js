@@ -94,8 +94,9 @@ const index = {
 		};
 
 		ckeditorChecker = setInterval(() => {
-			// window.sessionStorage.kbRTAReady || 
+			// window.kbRTAReady || 
 			if (
+				window.kbRTAReady || 
         document.getElementById('sfdc-ckeditor4-css-override') !== null 
       ) {
         clearTimers();
@@ -104,7 +105,6 @@ const index = {
 		}, 200);
 		
 		ckeditorCheckerLimiter = setTimeout(() => {
-			// console.log(document.getElementById('sfdc-ckeditor4-css-override'));
 			clearTimers();
 			console.log('index.js init checker is taking too long. Something wrong with your connection');
 			
