@@ -52,7 +52,6 @@ export default class TextContent {
       toolbar: 'undo redo | formatselect removeformat | bold italic strikethrough | alignleft aligncenter alignright alignjustify | outdent indent | link image table | numlist bullist',
       paste_postprocess: function (plugin, args) {
         console.log(args.node);
-        
       }
     };
   }
